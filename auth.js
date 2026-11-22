@@ -63,6 +63,8 @@ async function ouvrirApp(session) {
   afficherEcran('chargement')
   await chargerProfil()
   if (!_appDemarree) return // déconnexion pendant le chargement
+  await chargerDernierePesee()   // le poids actuel vient de la dernière pesée
+  await verifierPhase()          // fin de la stabilisation éventuelle
 
   afficherEcran('app')
   const pageDemandee = location.hash.replace('#', '')

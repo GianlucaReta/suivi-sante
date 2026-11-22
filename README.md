@@ -30,13 +30,14 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 | `journal.js` | Journal alimentaire, recherche Ciqual, scan Open Food Facts, photos |
 | `menus.js` | Menus de la semaine, portions ajustées, liste de courses |
 | `sport.js` | Planning des séances avec report, séance guidée, progression |
+| `suivi.js` | Bilan du soir, pesée hebdomadaire, module sucre, cycle menstruel |
 | `exercices.json` | Exercices présélectionnés (sans risque pour la nuque) |
 | `import-exercices.js` | Récupère les images wger et génère le SQL d'import des exercices |
 | `recettes.json` | Base de recettes (ingrédients reliés aux noms Ciqual) |
 | `import-recettes.js` | Relie les recettes aux codes Ciqual et génère le SQL d'import |
 | `init.js` | Démarrage (chargé en dernier) |
 | `manifest.json`, `service-worker.js`, `icons/` | Installation sur iPhone (PWA), cache, notifications |
-| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre |
+| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre (coller tout le fichier et cliquer sur **Run** sans rien sélectionner) |
 | `import-ciqual.js` | Conversion de la table Ciqual pour l'import (lancé une fois) |
 
 Les modules s'ajoutent phase par phase (`menus.js`, `sport.js`…). Ce sont des `<script>` classiques : toutes les fonctions sont globales.

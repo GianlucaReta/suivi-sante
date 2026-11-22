@@ -411,6 +411,124 @@ function verifierProgression({ niveau, dateNiveau, seancesFaites, seancesParSema
   return { monter: true }
 }
 
+// ═════════════════════════════════════════════════════════════
+// SUIVI : bilan du soir, cycle, sucre
+// ═════════════════════════════════════════════════════════════
+
+// Dépense du jour : calories au repos + une part seulement des calories actives de la montre
+function depenseAjustee(kcalRepos, kcalActives, pct = 50) {
+  if (kcalRepos == null && kcalActives == null) return null
+  return Math.round((Number(kcalRepos) || 0) + (Number(kcalActives) || 0) * pct / 100)
+}
+
+// Message du soir : choisi par règles, toujours bienveillant
+function messageDuSoir({ deficit, proteinesAtteintes, sportFait, sommeilMin, kcalMangees, graine = '' }) {
+  const alea = aleatoireGraine('soir' + graine)
+  const un = liste => liste[Math.floor(alea() * liste.length)]
+  const morceaux = []
+  if (kcalMangees === 0) return 'Rien de noté aujourd\'hui dans le journal : ce n\'est pas grave, demain est un autre jour.'
+  if (deficit != null && deficit >= 250 && deficit <= 800) morceaux.push(un(['Belle journée, pile dans le bon rythme.', 'Journée réussie : ton déficit est juste comme il faut.', 'Tu avances à un rythme sain, continue comme ça.']))
+  else if (deficit != null && deficit > 800) morceaux.push('Grosse dépense aujourd\'hui : pense à bien manger demain pour récupérer.')
+  else if (deficit != null && deficit >= 0) morceaux.push(un(['Journée à l\'équilibre, c\'est très bien aussi.', 'Journée stable : la régularité compte plus que la perfection.']))
+  else if (deficit != null) morceaux.push(un(['Un peu au-dessus aujourd\'hui, et c\'est normal de temps en temps. C\'est la semaine qui compte.', 'Journée plus gourmande : aucun souci, on reprend le rythme demain.']))
+  if (proteinesAtteintes) morceaux.push(un(['Objectif protéines atteint 💪', 'Protéines au rendez-vous, tes muscles te remercient.']))
+  if (sportFait) morceaux.push(un(['Et une séance de sport en plus, bravo !', 'Bravo pour la séance du jour.']))
+  if (sommeilMin != null && sommeilMin < 390) morceaux.push('Nuit un peu courte : essaie de te coucher plus tôt ce soir, ça aide aussi pour les envies de sucre.')
+  return morceaux.join(' ') || 'Merci d\'avoir pris une minute pour faire le point.'
+}
+
+// Phase du cycle estimée à partir des débuts de règles saisis
+function phaseCycle(cycles, dateIso) {
+  const debuts = cycles.map(c => ({ ...c, t: new Date(c.date_debut + 'T12:00:00').getTime() })).sort((a, b) => a.t - b.t)
+  const t = new Date(dateIso + 'T12:00:00').getTime()
+  const passe = debuts.filter(c => c.t <= t)
+  if (!passe.length) return null
+  // Durée moyenne des derniers cycles (28 jours par défaut), bornée entre 21 et 40 jours
+  const ecarts = []
+  for (let i = 1; i < debuts.length; i++) ecarts.push((debuts[i].t - debuts[i - 1].t) / 86400000)
+  const recents = ecarts.slice(-6).filter(e => e >= 18 && e <= 45)
+  const longueur = Math.round(Math.min(40, Math.max(21, recents.length ? recents.reduce((a, b) => a + b, 0) / recents.length : 28)))
+  const dernier = passe.at(-1)
+  const jour = Math.floor((t - dernier.t) / 86400000) + 1
+  if (jour > longueur + 10) return { jour, longueur, phase: 'inconnue' }   // pas de saisie récente
+  const ovulation = longueur - 14
+  let phase
+  if (jour <= dernier.duree_regles) phase = 'regles'
+  else if (jour < ovulation - 1) phase = 'folliculaire'
+  else if (jour <= ovulation + 1) phase = 'ovulation'
+  else phase = 'luteale'
+  const prochaines = new Date(dernier.t + longueur * 86400000)
+  return { jour, longueur, phase, prochaines }
+}
+
+// Série de jours sans cookie ni chocolat (aujourd'hui compris s'il n'y en a pas encore)
+function serieSansCraquage(datesSucreries, aujourdhui, debut) {
+  const dates = new Set(datesSucreries)
+  const jourMoins = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() - n); return dateISOPure(d) }
+  let actuelle = 0
+  for (let i = 0; ; i++) {
+    const d = jourMoins(aujourdhui, i)
+    if (d < debut || dates.has(d)) break
+    actuelle++
+  }
+  let record = 0, courant = 0
+  for (let d = debut; d <= aujourdhui; d = jourMoins(d, -1)) {
+    if (dates.has(d)) courant = 0
+    else { courant++; record = Math.max(record, courant) }
+  }
+  return { actuelle, record }
+}
+const BADGES_SERIE = [3, 7, 14, 21, 30, 60, 100]
+
+function dateISOPure(d) {
+  const p = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
+}
+
+// Moments et déclencheurs les plus fréquents des envies
+const TRANCHES_HORAIRES = [['matin', 'le matin', 5, 12], ['midi', 'en début d\'après-midi', 12, 16], ['gouter', 'en fin d\'après-midi', 16, 19], ['soir', 'le soir', 19, 23], ['nuit', 'la nuit', 23, 29]]
+function analyserEnvies(envies) {
+  const moments = {}, declencheurs = {}
+  for (const e of envies) {
+    let h = new Date(e.moment).getHours()
+    if (h < 5) h += 24
+    const tr = TRANCHES_HORAIRES.find(([, , a, b]) => h >= a && h < b)
+    if (tr) moments[tr[0]] = (moments[tr[0]] || 0) + 1
+    if (e.declencheur) declencheurs[e.declencheur] = (declencheurs[e.declencheur] || 0) + 1
+  }
+  const trier = o => Object.entries(o).sort((a, b) => b[1] - a[1])
+  return { moments: trier(moments), declencheurs: trier(declencheurs), total: envies.length,
+    satisfaites: envies.filter(e => e.satisfaite === true).length }
+}
+
+// Lien sommeil court (< 7 h) / envies de sucre du jour, s'il y a assez de données et un vrai écart
+function lienSommeilEnvies(bilans, envies, seuilMin = 420) {
+  const parJour = {}
+  for (const e of envies) { const d = dateISOPure(new Date(e.moment)); parJour[d] = (parJour[d] || 0) + 1 }
+  const court = [], long = []
+  for (const b of bilans) {
+    if (b.sommeil_min == null) continue
+    ;(b.sommeil_min < seuilMin ? court : long).push(parJour[b.date] || 0)
+  }
+  if (court.length < 4 || long.length < 4) return null
+  const moy = a => a.reduce((x, y) => x + y, 0) / a.length
+  const mc = moy(court), ml = moy(long)
+  if (mc < 0.5 || mc < ml * 1.3) return null
+  return { moyCourt: Math.round(mc * 10) / 10, moyLong: Math.round(ml * 10) / 10, joursCourts: court.length, joursLongs: long.length }
+}
+
+// Sucres ajoutés : moyenne par jour (jours avec un journal) sur 7 jours, comparée aux 4 semaines précédentes
+function moyennesSucresAjoutes(lignesJournal, aujourdhui) {
+  const parJour = {}
+  for (const l of lignesJournal) parJour[l.date] = (parJour[l.date] || 0) + Number(l.sucres_ajoutes || 0)
+  const ilYa = n => { const d = new Date(aujourdhui + 'T12:00:00'); d.setDate(d.getDate() - n); return dateISOPure(d) }
+  const moyenne = (de, a) => {
+    const jours = Object.keys(parJour).filter(d => d > ilYa(a) && d <= ilYa(de))
+    return jours.length ? Math.round(jours.reduce((s, d) => s + parJour[d], 0) / jours.length) : null
+  }
+  return { semaine: moyenne(0, 7), avant: moyenne(7, 35) }
+}
+
 // Export pour les tests Node (ignoré dans le navigateur)
 if (typeof module !== 'undefined') {
   module.exports = {
@@ -421,5 +539,7 @@ if (typeof module !== 'undefined') {
     adapterPortionsRestantes, cumulerCourses,
     SPORT, aleatoireGraine, exercicesDisponibles, valeurExercice, dureeExercice, construireSeance,
     joursDeSeance, dateDuJour, reporterSeances, verifierProgression,
+    depenseAjustee, messageDuSoir, phaseCycle, serieSansCraquage, BADGES_SERIE, analyserEnvies,
+    lienSommeilEnvies, moyennesSucresAjoutes,
   }
 }

@@ -236,4 +236,64 @@ test('progression toutes les deux semaines, jamais après une séance difficile'
   assert.equal(c.verifierProgression({ ...base, seancesFaites: faites.slice(0, 1), aujourdhui: '2026-11-16' }).raison, 'pas assez de séances')
 })
 
+// ── Suivi ────────────────────────────────────────────────────
+test('dépense ajustée : 50 % des calories actives par défaut', () => {
+  assert.equal(c.depenseAjustee(1400, 500), 1650)
+  assert.equal(c.depenseAjustee(1400, 500, 30), 1550)
+  assert.equal(c.depenseAjustee(null, null), null)
+})
+
+test('message du soir jamais culpabilisant', () => {
+  const surplus = c.messageDuSoir({ deficit: -300, proteinesAtteintes: false, kcalMangees: 2000 })
+  assert.ok(/normal|aucun souci/i.test(surplus), surplus)
+  assert.ok(!/(mauvais|échec|raté|trop mangé|honte)/i.test(surplus))
+  assert.ok(/protéines/i.test(c.messageDuSoir({ deficit: 400, proteinesAtteintes: true, kcalMangees: 1400 })))
+})
+
+test('phase du cycle estimée', () => {
+  const cycles = [{ date_debut: '2026-09-01', duree_regles: 5 }, { date_debut: '2026-09-29', duree_regles: 5 }, { date_debut: '2026-10-27', duree_regles: 5 }]
+  assert.equal(c.phaseCycle(cycles, '2026-10-28').phase, 'regles')
+  assert.equal(c.phaseCycle(cycles, '2026-11-02').phase, 'folliculaire')
+  assert.equal(c.phaseCycle(cycles, '2026-11-09').phase, 'ovulation')   // jour 14 d'un cycle de 28 jours
+  assert.equal(c.phaseCycle(cycles, '2026-11-18').phase, 'luteale')
+  assert.equal(c.phaseCycle(cycles, '2026-11-18').longueur, 28)
+  assert.equal(c.phaseCycle(cycles, '2026-08-01'), null)
+})
+
+test('série sans craquage et record', () => {
+  const s = c.serieSansCraquage(['2026-11-10', '2026-11-18'], '2026-11-22', '2026-11-01')
+  assert.deepEqual(s, { actuelle: 4, record: 9 })   // du 19 au 22 ; record du 1er au 9
+  assert.equal(c.serieSansCraquage(['2026-11-22'], '2026-11-22', '2026-11-01').actuelle, 0)
+})
+
+test('moments et déclencheurs fréquents des envies', () => {
+  const env = [
+    { moment: '2026-11-20T21:10:00', declencheur: 'ennui', satisfaite: true },
+    { moment: '2026-11-21T20:30:00', declencheur: 'ennui', satisfaite: false },
+    { moment: '2026-11-21T16:30:00', declencheur: 'fatigue', satisfaite: false },
+  ]
+  const a = c.analyserEnvies(env)
+  assert.deepEqual(a.moments[0], ['soir', 2])
+  assert.deepEqual(a.declencheurs[0], ['ennui', 2])
+  assert.equal(a.satisfaites, 1)
+})
+
+test('lien sommeil court / envies seulement si les données le montrent', () => {
+  const bilans = [], envies = []
+  for (let i = 1; i <= 10; i++) {
+    const d = `2026-11-${String(i).padStart(2, '0')}`
+    const court = i % 2 === 0
+    bilans.push({ date: d, sommeil_min: court ? 360 : 480 })
+    for (let k = 0; k < (court ? 3 : 1); k++) envies.push({ moment: `${d}T20:00:00` })
+  }
+  const l = c.lienSommeilEnvies(bilans, envies)
+  assert.deepEqual([l.moyCourt, l.moyLong], [3, 1])
+  assert.equal(c.lienSommeilEnvies(bilans.slice(0, 4), envies), null)   // pas assez de jours
+})
+
+test('sucres ajoutés : semaine comparée aux 4 précédentes', () => {
+  const lignes = [{ date: '2026-11-21', sucres_ajoutes: 20 }, { date: '2026-11-20', sucres_ajoutes: 10 }, { date: '2026-11-05', sucres_ajoutes: 40 }]
+  assert.deepEqual(c.moyennesSucresAjoutes(lignes, '2026-11-22'), { semaine: 15, avant: 40 })
+})
+
 console.log(`\n${ok} test(s) réussi(s)`)
