@@ -16,6 +16,7 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
   2. Suivre la section **« Importer la table Ciqual »** ci-dessous (export CSV depuis Numbers, `node import-ciqual.js`, import dans Supabase).
   3. Compléter la base de recettes jusqu'à 150 à 200 recettes (demander à Claude, avec le fichier Ciqual sous la main pour reprendre les noms exacts), puis la relier aux codes Ciqual (voir la section « Importer les recettes »).
   - En attendant : le scan de code-barres et la saisie libre fonctionnent. La recherche d'aliments et les recettes restent vides tant que Ciqual n'est pas importée.
+- [ ] **Vérifier les protéines des menus** (après Ciqual) : les calories des menus suivent la cible du jour, mais rien ne garantit encore que le total de protéines prévu atteint 1,6 à 1,8 g/kg. À ajouter : un contrôle du menu, avec un message doux et une collation protéinée suggérée si le total est trop bas.
 
 ## Utilisation au quotidien
 
