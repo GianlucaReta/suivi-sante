@@ -6,7 +6,7 @@
 // Clé publique (publishable / anon) uniquement. Jamais la clé service_role ici.
 // La sécurité repose sur la RLS côté Supabase (voir sql/).
 const SUPABASE_URL = 'https://uwzsqkvzshrnxvpdjelo.supabase.co'
-const SUPABASE_KEY = 'VOTRE_CLE_PUBLIQUE'
+const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 
 const APP_VERSION = '0.1.0'
 
