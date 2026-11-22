@@ -1,0 +1,15 @@
+# Contient le profil personnel : ne pas publier
+prompt-claude-code-site-suivi.md
+
+# Fichiers sources volumineux / secrets (imports ponctuels)
+*.csv
+*.xlsx
+*.xls
+.env
+.env.*
+node_modules/
+
+# Système / outils
+.DS_Store
+.claude/
+supabase/.temp/

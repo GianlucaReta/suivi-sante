@@ -1,0 +1,125 @@
+# Suivi santé
+
+Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installable sur l'écran d'accueil) et utilisable sur ordinateur.
+
+- HTML, CSS et JavaScript natif, sans framework ni étape de build
+- Données : Supabase (projet dédié, Row Level Security sur toutes les tables)
+- Hébergement : GitHub Pages
+- Connexion : code à 6 chiffres reçu par e-mail, sans mot de passe
+
+> Ce README est complété à chaque phase. La version complète (utilisation, vérifications) arrive en phase 9.
+
+## Organisation des fichiers
+
+| Fichier | Rôle |
+|---|---|
+| `index.html` | Toutes les pages et fenêtres |
+| `style.css` | Styles. Couleurs, polices et espacements en variables dans `:root` (mode sombre inclus) |
+| `app.js` | Configuration Supabase, client `db`, navigation, outils communs (`esc`, `afficherToast`, `gererErreur`, `dateISO`) |
+| `auth.js` | Connexion par code, session, déconnexion, détection d'un serveur en pause |
+| `init.js` | Démarrage (chargé en dernier) |
+| `manifest.json`, `service-worker.js`, `icons/` | Installation sur iPhone (PWA), cache, notifications |
+| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre |
+
+Les modules suivants (`profil.js`, `journal.js`, `menus.js`…) s'ajoutent phase par phase. Ce sont des `<script>` classiques : toutes les fonctions sont globales.
+
+---
+
+## Installation
+
+### 1. Créer le projet Supabase
+
+1. Sur [supabase.com](https://supabase.com) → **New project**.
+   - Nom : `suivi-sante`
+   - Région : **West EU (Paris)**
+   - Mot de passe de la base : génère-le et garde-le dans ton gestionnaire de mots de passe. Le site n'en a pas besoin.
+2. Une fois le projet prêt : **SQL Editor** → **New query** → colle le contenu de `sql/01-socle.sql` → **Run**.
+   La dernière requête doit renvoyer **0 ligne**, ce qui confirme que toutes les tables ont la RLS.
+
+### 2. Régler la connexion par code
+
+Dans **Authentication** :
+
+1. **Sign In / Providers** :
+   - Sur la page elle-même, section **User Signups** en haut : **Allow new users to sign up** **désactivé**, puis **Save changes**. Personne ne peut se créer de compte. Les comptes sont ajoutés à la main (étape 3).
+   - Clic sur **Email** : provider activé, **Email OTP Length** `6`, **Email OTP Expiration** `900` secondes (15 min).
+2. **Envoi des e-mails (SMTP)** : sans SMTP personnalisé, Supabase interdit de modifier le modèle d'e-mail, et le modèle par défaut contient un lien, pas de code. On branche donc une boîte Gmail (gratuit, 500 e-mails par jour) :
+   1. Sur le compte Google qui enverra les codes (la validation en deux étapes doit être activée) : [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) → nom `Supabase` → **Créer**. Note le mot de passe de 16 lettres affiché.
+   2. Supabase → **Authentication → Emails → SMTP Settings** → **Enable custom SMTP** :
+      - Sender email : l'adresse Gmail ; Sender name : `Suivi santé`
+      - Host : `smtp.gmail.com` ; Port : `465`
+      - Username : l'adresse Gmail ; Password : le mot de passe de 16 lettres
+      - **Save changes**
+   3. **Authentication → Rate Limits** : passe la limite d'envoi d'e-mails à `10` par heure. C'est largement suffisant et ça limite les abus.
+3. **Emails → Templates → Magic link or OTP** (modifiable une fois le SMTP branché) : le site envoie un code, pas un lien. Remplace le sujet et le contenu (bouton **Source**) :
+   - Sujet : `Ton code de connexion : {{ .Token }}`
+   - Contenu :
+     ```html
+     <h2>Ton code de connexion</h2>
+     <p>Saisis ce code dans Suivi santé :</p>
+     <p style="font-size:28px;font-weight:bold;letter-spacing:6px;">{{ .Token }}</p>
+     <p>Il est valable 15 minutes. Si tu n'as rien demandé, ignore cet e-mail.</p>
+     ```
+4. **URL Configuration** → **Site URL** : `https://gianlucareta.github.io/suivi-sante/`
+
+> Comme la session reste ouverte, il n'y a besoin d'un code qu'à la première connexion sur chaque appareil.
+
+### 3. Créer le compte de l’utilisatrice
+
+**Authentication → Users → Add user → Create new user** :
+- son adresse e-mail ;
+- un mot de passe long au hasard (il ne servira jamais) ;
+- coche **Auto Confirm User**.
+
+Le profil est créé automatiquement par le script SQL. Un deuxième compte s'ajoutera plus tard de la même façon.
+
+### 4. Brancher le site sur Supabase
+
+L'URL de l'API est `https://<identifiant-du-projet>.supabase.co`. L'identifiant est celui qu'on voit dans l'adresse du dashboard (`…/dashboard/project/<identifiant>`). Pour la clé : **Project Settings → API Keys** → clé **publishable** (`sb_publishable_…`). Les deux se mettent en haut de `app.js` :
+
+```js
+const SUPABASE_URL = 'https://uwzsqkvzshrnxvpdjelo.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_…'
+```
+
+⚠️ Ne mets **jamais** la clé *secret* / *service_role* dans le code. Elle donnerait accès à tout en contournant la RLS.
+
+### 5. Mettre en ligne sur GitHub Pages
+
+1. Sur GitHub : **New repository** → nom `suivi-sante`, **Public**, sans README.
+2. Dans ce dossier :
+   ```bash
+   git remote add origin https://github.com/GianlucaReta/suivi-sante.git
+   ```
+   ```bash
+   git push -u origin main
+   ```
+3. Sur GitHub : **Settings → Pages** → *Deploy from a branch* → `main` / `/ (root)` → **Save**.
+   Le site est en ligne au bout d'une minute environ, à l'adresse `https://gianlucareta.github.io/suivi-sante/`.
+
+À chaque mise en ligne, change `CACHE_VERSION` dans `service-worker.js` et `APP_VERSION` dans `app.js`. Les téléphones récupèrent ainsi la nouvelle version.
+
+### 6. Installer le site sur l'iPhone
+
+1. Ouvre l'adresse du site dans **Safari** (pas Chrome).
+2. Bouton **Partager** → **Sur l'écran d'accueil** → **Ajouter**.
+3. Ouvre l'app depuis l'icône, puis connecte-toi avec le code reçu par e-mail.
+
+La session de l'app installée est séparée de celle de Safari. Connecte-toi bien **dans l'app**. Elle reste connectée jusqu'à un clic sur « Se déconnecter ».
+
+---
+
+## Projet en pause
+
+Un projet Supabase gratuit se met en pause après **7 jours sans activité**. Le site affiche alors « Le serveur ne répond pas ».
+
+Pour le relancer : [supabase.com](https://supabase.com) → le projet → **Restore project**. Le redémarrage prend quelques minutes. Aucune donnée n'est perdue.
+
+---
+
+## Sécurité
+
+- RLS activée sur chaque table. Chaque ligne est liée à `user_id` et n'est visible que par son propriétaire.
+- Seule la clé publique figure dans le code.
+- Aucune donnée personnelle dans le dépôt.
+- Les photos sont dans un bucket privé, rangées par utilisateur, et affichées par URL signée temporaire.
