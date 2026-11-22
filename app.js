@@ -8,7 +8,11 @@
 const SUPABASE_URL = 'https://uwzsqkvzshrnxvpdjelo.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 
-const APP_VERSION = '0.7.0'
+// Clé publique VAPID (notifications) : générée par generer-vapid.js. Publique, elle peut être dans le code.
+// La clé privée correspondante est seulement dans les secrets Supabase.
+const VAPID_PUBLIC_KEY = ''
+
+const APP_VERSION = '0.8.0'
 
 const SUPABASE_CONFIGURE = !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_KEY.includes('VOTRE_CLE')
 
@@ -114,6 +118,7 @@ function chargerReglages() {
   document.getElementById('reglages-version').textContent = APP_VERSION
   afficherThemeActif()
   chargerReglagesProfil()
+  chargerReglagesNotifications()
   chargerStockage()
 }
 

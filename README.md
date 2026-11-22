@@ -32,6 +32,9 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 | `sport.js` | Planning des séances avec report, séance guidée, progression |
 | `suivi.js` | Bilan du soir, pesée hebdomadaire, module sucre, cycle menstruel |
 | `graphiques.js` | Courbes semaine / mois (Chart.js), projection, bilan hebdomadaire du dimanche |
+| `notifications.js` | Activation des notifications sur l'appareil, réglage des rappels |
+| `supabase/functions/envoyer-rappels/` | Edge Function qui envoie les rappels (Web Push) |
+| `generer-vapid.js` | Génère les clés VAPID des notifications (une seule fois) |
 | `exercices.json` | Exercices présélectionnés (sans risque pour la nuque) |
 | `import-exercices.js` | Récupère les images wger et génère le SQL d'import des exercices |
 | `recettes.json` | Base de recettes (ingrédients reliés aux noms Ciqual) |
@@ -61,6 +64,36 @@ La table Ciqual de l'ANSES donne la composition de ~3 200 aliments de base. Elle
 6. Vérifier dans le SQL Editor : `select count(*) from aliments_ciqual;` doit donner environ 3 000 à 3 500.
 
 Pas besoin de clé secrète : le script ne fait que convertir un fichier sur ton ordinateur, et l'import passe par le dashboard.
+
+## Notifications (une seule fois)
+
+Les rappels sont envoyés par l'Edge Function `envoyer-rappels`, appelée toutes les 15 minutes par `pg_cron`. Elle n'envoie un rappel que s'il est utile (par exemple, pas de rappel de bilan si le bilan est déjà fait), une seule fois par jour.
+
+1. **Tables** : exécuter `sql/08-notifications.sql` dans le SQL Editor.
+2. **Clés VAPID** : dans le Terminal, depuis ce dossier :
+   ```bash
+   node generer-vapid.js
+   ```
+   - la **clé publique** va dans `app.js` (`VAPID_PUBLIC_KEY`) : elle peut être publiée ;
+   - la **clé privée** ne va **que** dans les secrets Supabase (étape 3). Jamais dans un fichier, un message ou une capture.
+3. **Secrets** : Supabase → **Edge Functions** → **Secrets** (ou Project Settings → Edge Functions) → ajouter :
+   - `VAPID_PUBLIC_KEY` : la clé publique
+   - `VAPID_PRIVATE_KEY` : la clé privée
+   - `VAPID_SUBJECT` : `https://gianlucareta.github.io/suivi-sante/`
+   - `CRON_SECRET` : une longue valeur au hasard, générée avec :
+     ```bash
+     node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+     ```
+4. **Déployer la fonction** : Supabase → **Edge Functions** → **Deploy a new function** → **Via Editor** → nom `envoyer-rappels` → coller le contenu de `supabase/functions/envoyer-rappels/index.ts` → **Deploy**. Puis, dans les réglages de la fonction, **désactiver « Verify JWT »** (la fonction vérifie elle-même le secret du cron ou la session).
+   Avec la CLI, c'est équivalent à :
+   ```bash
+   npx supabase functions deploy envoyer-rappels --no-verify-jwt --project-ref uwzsqkvzshrnxvpdjelo
+   ```
+5. **Planification** : ouvrir `sql/08b-planification.sql` dans le SQL Editor, remplacer `COLLE-ICI-LE-CRON-SECRET` par la valeur de `CRON_SECRET` **dans l'éditeur seulement** (pas dans le fichier), puis **Run**. La dernière requête doit afficher la tâche `rappels-push`.
+6. **Sur l'iPhone** (iOS 16.4 ou plus récent) : ouvrir l'app **depuis l'icône de l'écran d'accueil** → **Réglages** → **Activer les notifications** → **Autoriser** → **M'envoyer un test**.
+   Les rappels se règlent un par un dans la même carte (activé ou non, heure, jour pour la pesée et le menu).
+
+Si les notifications ont été refusées par erreur : **Réglages de l'iPhone → Notifications → Suivi santé → Autoriser**.
 
 ## Importer les exercices
 
