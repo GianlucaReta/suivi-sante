@@ -8,7 +8,7 @@
 const SUPABASE_URL = 'https://uwzsqkvzshrnxvpdjelo.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 
-const APP_VERSION = '0.6.0'
+const APP_VERSION = '0.7.0'
 
 const SUPABASE_CONFIGURE = !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_KEY.includes('VOTRE_CLE')
 
@@ -103,6 +103,7 @@ function chargerAujourdhui() {
     </div>`
   chargerResumeJour()
   chargerRaccourcisSuivi()
+  chargerBilanSemaineAujourdhui()
   chargerSeanceDuJour()
   chargerMenuDuJour()
 }

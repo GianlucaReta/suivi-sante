@@ -529,6 +529,73 @@ function moyennesSucresAjoutes(lignesJournal, aujourdhui) {
   return { semaine: moyenne(0, 7), avant: moyenne(7, 35) }
 }
 
+// ═════════════════════════════════════════════════════════════
+// GRAPHIQUES ET BILANS
+// ═════════════════════════════════════════════════════════════
+
+// Projection de la date d'arrivée à l'objectif, au rythme réel des 6 dernières semaines
+// (droite de tendance sur les pesées). null si pas assez de données ou si le poids ne baisse pas.
+function projectionObjectif(pesees, objectif, aujourdhui) {
+  const fin = new Date(aujourdhui + 'T12:00:00').getTime()
+  const points = pesees
+    .map(p => ({ x: (new Date(p.date + 'T12:00:00').getTime() - fin) / 86400000, y: Number(p.poids) }))
+    .filter(p => p.x >= -42 && p.x <= 0)
+  if (points.length < 2) return { raison: 'pas assez de pesées' }
+  const etendue = Math.max(...points.map(p => p.x)) - Math.min(...points.map(p => p.x))
+  if (etendue < 10) return { raison: 'pas assez de recul' }
+  const n = points.length
+  const mx = points.reduce((s, p) => s + p.x, 0) / n
+  const my = points.reduce((s, p) => s + p.y, 0) / n
+  const pente = points.reduce((s, p) => s + (p.x - mx) * (p.y - my), 0) / points.reduce((s, p) => s + (p.x - mx) ** 2, 0)
+  const poidsAujourdhui = my + pente * (0 - mx)
+  const parSemaine = Math.round(-pente * 7 * 100) / 100
+  if (pente >= -0.005) return { raison: 'stable', parSemaine }
+  if (poidsAujourdhui <= objectif) return { atteint: true, parSemaine }
+  const jours = Math.ceil((poidsAujourdhui - objectif) / -pente)
+  return { date: dateISOPure(new Date(fin + jours * 86400000)), jours, parSemaine, poidsAujourdhui: Math.round(poidsAujourdhui * 10) / 10 }
+}
+
+// Bilan de la semaine (chaque dimanche) : points forts, tendance sucre, conseil. Règles fixes, ton bienveillant.
+function bilanSemaine(s) {
+  const jours = s.jours || []
+  const journal = jours.filter(j => j.kcal > 0)
+  const moy = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null
+  const joursProteines = journal.filter(j => s.cibleProteines && j.proteines >= s.cibleProteines * 0.95).length
+  const kcalMoy = moy(journal.map(j => j.kcal))
+  const nuits = jours.filter(j => j.sommeil_min != null).map(j => j.sommeil_min)
+  const sommeilMoy = moy(nuits)
+  const sucreries = jours.reduce((a, j) => a + (j.sucreries || 0), 0)
+  const enviesPassees = jours.reduce((a, j) => a + (j.enviesPassees || 0), 0)
+  const variationPoids = s.poidsDebut != null && s.poidsFin != null ? Math.round((s.poidsFin - s.poidsDebut) * 10) / 10 : null
+
+  const forts = []
+  if (s.seancesPrevues > 0 && s.seancesFaites >= s.seancesPrevues) forts.push(`Toutes tes séances faites (${s.seancesFaites}/${s.seancesPrevues}) 💪`)
+  else if (s.seancesFaites > 0) forts.push(`${s.seancesFaites} séance${s.seancesFaites > 1 ? 's' : ''} de sport cette semaine`)
+  if (variationPoids != null && variationPoids < 0) forts.push(`${String(variationPoids).replace('.', ',')} kg sur la semaine`)
+  if (joursProteines >= 4) forts.push(`Objectif protéines atteint ${joursProteines} jours sur 7`)
+  if (kcalMoy != null && s.cibleKcal && kcalMoy >= s.cibleKcal - 200 && kcalMoy <= s.cibleKcal + 100) forts.push('Calories bien dans ta cible en moyenne')
+  if (journal.length >= 5) forts.push(`Journal rempli ${journal.length} jours sur 7 : la régularité paie`)
+  if (sommeilMoy != null && sommeilMoy >= 420) forts.push(`Bonnes nuits : ${Math.floor(sommeilMoy / 60)} h ${String(Math.round(sommeilMoy % 60)).padStart(2, '0')} en moyenne`)
+  if (enviesPassees > 0) forts.push(`${enviesPassees} envie${enviesPassees > 1 ? 's' : ''} de sucre passée${enviesPassees > 1 ? 's' : ''} sans craquer`)
+  if (!forts.length) forts.push('Tu as pris le temps de suivre ta semaine : c\'est déjà une vraie force.')
+
+  let tendanceSucre
+  if (s.sucreriesAvant == null) tendanceSucre = `${sucreries} cookie(s) ou carré(s) de chocolat cette semaine.`
+  else if (sucreries < s.sucreriesAvant) tendanceSucre = `En baisse : ${sucreries} cookie(s) ou carré(s) de chocolat, contre ${s.sucreriesAvant} la semaine d'avant. Bravo !`
+  else if (sucreries === s.sucreriesAvant) tendanceSucre = `Stable : ${sucreries} cookie(s) ou carré(s) de chocolat, comme la semaine d'avant.`
+  else tendanceSucre = `${sucreries} cookie(s) ou carré(s) de chocolat, contre ${s.sucreriesAvant} la semaine d'avant. Pas de quota : on regarde juste la tendance sur plusieurs semaines.`
+
+  let conseil
+  if (journal.length >= 3 && joursProteines < 3) conseil = 'Pour la semaine prochaine : ajoute une source de protéines à chaque repas (œufs, fromage blanc, poulet, lentilles…). C\'est ce qui aide le plus à garder les muscles et à avoir moins faim.'
+  else if (sommeilMoy != null && sommeilMoy < 390) conseil = 'Pour la semaine prochaine : vise 30 minutes de sommeil en plus. Les nuits courtes augmentent souvent la faim et les envies de sucre.'
+  else if (s.seancesPrevues > 0 && s.seancesFaites < s.seancesPrevues / 2) conseil = 'Pour la semaine prochaine : choisis à l\'avance le moment de tes séances, même courtes. 20 minutes suffisent.'
+  else if (s.sucreriesAvant != null && sucreries > s.sucreriesAvant) conseil = 'Pour la semaine prochaine : quand une envie arrive, essaie d\'abord une de tes alternatives et attends 10 minutes.'
+  else if (journal.length < 4) conseil = 'Pour la semaine prochaine : note tes repas au moins 4 jours, même approximativement. Les repères deviendront plus justes.'
+  else conseil = 'Pour la semaine prochaine : garde le même rythme, il te réussit.'
+
+  return { pointsForts: forts.slice(0, 3), tendanceSucre, conseil, kcalMoy: kcalMoy != null ? Math.round(kcalMoy) : null, sommeilMoy, variationPoids }
+}
+
 // Export pour les tests Node (ignoré dans le navigateur)
 if (typeof module !== 'undefined') {
   module.exports = {
@@ -540,6 +607,6 @@ if (typeof module !== 'undefined') {
     SPORT, aleatoireGraine, exercicesDisponibles, valeurExercice, dureeExercice, construireSeance,
     joursDeSeance, dateDuJour, reporterSeances, verifierProgression,
     depenseAjustee, messageDuSoir, phaseCycle, serieSansCraquage, BADGES_SERIE, analyserEnvies,
-    lienSommeilEnvies, moyennesSucresAjoutes,
+    lienSommeilEnvies, moyennesSucresAjoutes, projectionObjectif, bilanSemaine,
   }
 }

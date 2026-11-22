@@ -296,4 +296,27 @@ test('sucres ajoutés : semaine comparée aux 4 précédentes', () => {
   assert.deepEqual(c.moyennesSucresAjoutes(lignes, '2026-11-22'), { semaine: 15, avant: 40 })
 })
 
+// ── Graphiques et bilans ─────────────────────────────────────
+test('projection : arrivée à l\'objectif au rythme réel', () => {
+  const pesees = [{ date: '2026-10-25', poids: 65 }, { date: '2026-11-01', poids: 64.5 }, { date: '2026-11-08', poids: 64 }, { date: '2026-11-15', poids: 63.5 }, { date: '2026-11-22', poids: 63 }]
+  const p = c.projectionObjectif(pesees, 55, '2026-11-22')
+  assert.equal(p.parSemaine, 0.5)
+  assert.equal(p.jours, 112)   // 8 kg à 0,5 kg/semaine = 16 semaines
+  assert.equal(p.date, '2027-03-14')
+  assert.equal(c.projectionObjectif(pesees.slice(-1), 55, '2026-11-22').raison, 'pas assez de pesées')
+  assert.equal(c.projectionObjectif([{ date: '2026-11-01', poids: 63 }, { date: '2026-11-22', poids: 63.4 }], 55, '2026-11-22').raison, 'stable')
+})
+
+test('bilan de la semaine : points forts, tendance sucre, conseil', () => {
+  const jours = Array.from({ length: 7 }, (_, i) => ({ kcal: 1450, proteines: i < 2 ? 110 : 70, sommeil_min: 480, sucreries: i === 0 ? 1 : 0, enviesPassees: i === 3 ? 1 : 0 }))
+  const b = c.bilanSemaine({ jours, cibleKcal: 1460, cibleProteines: 110, seancesFaites: 3, seancesPrevues: 3, sucreriesAvant: 4, poidsDebut: 63.5, poidsFin: 63 })
+  assert.equal(b.pointsForts[0], 'Toutes tes séances faites (3/3) 💪')
+  assert.equal(b.pointsForts[1], '-0,5 kg sur la semaine')
+  assert.ok(/En baisse/.test(b.tendanceSucre))
+  assert.ok(/protéines/.test(b.conseil))
+  const vide = c.bilanSemaine({ jours: [], seancesFaites: 0, seancesPrevues: 0 })
+  assert.equal(vide.pointsForts.length, 1)
+  assert.ok(!/(échec|raté|mauvais)/i.test(JSON.stringify(vide)))
+})
+
 console.log(`\n${ok} test(s) réussi(s)`)

@@ -3,7 +3,7 @@
 // Dépend de : app.js, calculs.js, profil.js, journal.js (totaux), sport.js
 // ─────────────────────────────────────────────────────────────
 
-const ONGLETS_SUIVI = [['bilan', 'Bilan'], ['pesee', 'Pesée'], ['sucre', 'Sucre'], ['cycle', 'Cycle']]
+const ONGLETS_SUIVI = [['bilan', 'Bilan'], ['pesee', 'Pesée'], ['sucre', 'Sucre'], ['cycle', 'Cycle'], ['courbes', 'Courbes']]
 const EMOJIS_ECHELLE = ['😞', '😕', '😐', '🙂', '😄']
 const DECLENCHEURS = [['stress', 'Stress'], ['ennui', 'Ennui'], ['fatigue', 'Fatigue'], ['apres_repas', 'Après un repas'], ['soir', 'Le soir'], ['emotion', 'Émotion'], ['recompense', 'Envie de me faire plaisir'], ['autre', 'Autre']]
 const IDEES_ALTERNATIVES = ['Un thé ou une infusion', 'Un fruit', 'Un yaourt nature avec un peu de miel', 'Un carré de chocolat noir 70 %', 'Une poignée d\'amandes',
@@ -35,6 +35,8 @@ async function chargerSuivi() {
   if (ongletSuivi === 'pesee') await afficherPesees()
   if (ongletSuivi === 'sucre') await afficherSucre()
   if (ongletSuivi === 'cycle') await afficherCycle()
+  if (ongletSuivi !== 'courbes') detruireGraphiques()
+  if (ongletSuivi === 'courbes') await afficherCourbes()
 }
 
 function boutonsEchelle(champ, valeur, fn = 'choisirEchelleBilan') {

@@ -31,6 +31,7 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 | `menus.js` | Menus de la semaine, portions ajustées, liste de courses |
 | `sport.js` | Planning des séances avec report, séance guidée, progression |
 | `suivi.js` | Bilan du soir, pesée hebdomadaire, module sucre, cycle menstruel |
+| `graphiques.js` | Courbes semaine / mois (Chart.js), projection, bilan hebdomadaire du dimanche |
 | `exercices.json` | Exercices présélectionnés (sans risque pour la nuque) |
 | `import-exercices.js` | Récupère les images wger et génère le SQL d'import des exercices |
 | `recettes.json` | Base de recettes (ingrédients reliés aux noms Ciqual) |
@@ -100,6 +101,15 @@ Les recettes sont décrites dans `recettes.json`. Chaque ingrédient porte le **
    - Mot de passe de la base : génère-le et garde-le dans ton gestionnaire de mots de passe. Le site n'en a pas besoin.
 2. Une fois le projet prêt : **SQL Editor** → **New query** → colle le contenu de `sql/01-socle.sql` → **Run**.
    La dernière requête doit renvoyer **0 ligne**, ce qui confirme que toutes les tables ont la RLS.
+
+### Astuce : renommer une requête dans le SQL Editor
+
+Une requête doit d'abord être enregistrée pour pouvoir être renommée :
+
+1. Clique sur **Save** (ou Cmd + S) : la requête apparaît dans la colonne de gauche, sous **PRIVATE**.
+2. Survole-la : un bouton **⋯** apparaît. Choisis **Rename query** (ou fais un clic droit sur la requête).
+
+Ce n'est pas obligatoire : les scripts de référence sont dans le dossier `sql/` du projet, numérotés dans l'ordre. Les onglets « Untitled query » peuvent être fermés une fois exécutés.
 
 ### 2. Régler la connexion par code
 

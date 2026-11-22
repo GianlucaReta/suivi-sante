@@ -68,6 +68,13 @@
   --safe-bottom:  env(safe-area-inset-bottom, 0px);
   --safe-top:     env(safe-area-inset-top, 0px);
 
+  /* Graphiques : 3 premières couleurs de la palette de référence (validées pour le daltonisme) */
+  --serie-1:       #2a78d6;
+  --serie-2:       #eb6834;
+  --serie-3:       #1baf7a;
+  --bande-regles:  rgba(227, 73, 72, 0.09);
+  --bande-luteale: rgba(98, 80, 214, 0.08);
+
   color-scheme: light;
 }
 
@@ -95,6 +102,11 @@
     --danger-bg:   #3A2321;
     --shadow:      0 1px 3px rgba(0,0,0,0.4);
     --shadow-lg:   0 12px 28px rgba(0,0,0,0.5);
+    --serie-1:     #3987e5;
+    --serie-2:     #d95926;
+    --serie-3:     #199e70;
+    --bande-regles:  rgba(230, 103, 103, 0.14);
+    --bande-luteale: rgba(144, 133, 233, 0.13);
     color-scheme: dark;
   }
 }
@@ -120,6 +132,11 @@
   --danger-bg:   #3A2321;
   --shadow:      0 1px 3px rgba(0,0,0,0.4);
   --shadow-lg:   0 12px 28px rgba(0,0,0,0.5);
+  --serie-1:     #3987e5;
+  --serie-2:     #d95926;
+  --serie-3:     #199e70;
+  --bande-regles:  rgba(230, 103, 103, 0.14);
+  --bande-luteale: rgba(144, 133, 233, 0.13);
   color-scheme: dark;
 }
 
@@ -804,3 +821,15 @@ select.input { appearance: none; -webkit-appearance: none; background-image: lin
 .bs-choco { background: var(--brand-deep); }
 .pastille { display: inline-block; width: 9px; height: 9px; border-radius: 2px; vertical-align: middle; margin: 0 2px 0 6px; }
 .legende .pastille:first-child { margin-left: 0; }
+
+/* ── Graphiques et bilans ──────────────────────────────────── */
+.graphique { position: relative; height: 220px; margin: var(--sp-2) 0 var(--sp-3); }
+.graphique-petit { height: 160px; }
+.sous-titre-carte { font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: var(--sp-3); }
+.liste-bilan { padding-left: 20px; font-size: var(--fs-sm); color: var(--ink-soft); margin: var(--sp-1) 0; }
+.liste-bilan li { margin-bottom: 4px; }
+.reperes-3 { grid-template-columns: repeat(3, 1fr); }
+.table-donnees { width: 100%; border-collapse: collapse; font-size: var(--fs-xs); margin-top: var(--sp-2); }
+.table-donnees th, .table-donnees td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--border-soft); }
+.table-donnees th { color: var(--muted); font-weight: var(--fw-medium); }
+#suivi-contenu > .segmente button { padding: 8px 2px; font-size: 12px; }
