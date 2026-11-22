@@ -10,7 +10,7 @@ const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 
 // Clé publique VAPID (notifications) : générée par generer-vapid.js. Publique, elle peut être dans le code.
 // La clé privée correspondante est seulement dans les secrets Supabase.
-const VAPID_PUBLIC_KEY = ''
+const VAPID_PUBLIC_KEY = 'BKgpiCoIeOnZHPbybYc60n9EVdPEXekNwRdx2_o3_-q2qU9Zx7q3j0Hyw7nTqtw8QuU_yfJS3vU-j147hvCct60'
 
 const APP_VERSION = '0.8.0'
 
