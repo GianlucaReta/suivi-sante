@@ -126,12 +126,13 @@
         <p class="page-sous-titre" id="aujourdhui-date"></p>
       </div>
       <div id="aujourdhui-reperes"></div>
+      <div id="aujourdhui-resume"></div>
     </section>
 
     <!-- REPAS -->
     <section id="page-journal" class="page">
       <div class="page-header"><h1 class="page-title">Repas</h1></div>
-      <div class="bientot">Le journal alimentaire arrive à l'étape 3.</div>
+      <div id="journal-contenu"><div class="spinner" style="margin:var(--sp-6) auto;"></div></div>
     </section>
 
     <!-- MENUS -->
@@ -157,6 +158,7 @@
       <div class="page-header"><h1 class="page-title">Réglages</h1></div>
 
       <div id="reglages-profil"></div>
+      <div id="reglages-stockage"></div>
 
       <div class="carte">
         <div class="carte-titre">Compte</div>
@@ -191,12 +193,24 @@
   </div>
 </div>
 
+<!-- ── Fenêtre glissante (ajout d'aliment, scan, photo…) ── -->
+<div id="feuille-fond" class="feuille-fond hidden" onclick="if (event.target === this) fermerFeuille()">
+  <div class="feuille" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">
+    <div class="feuille-tete">
+      <h2 id="feuille-titre" class="feuille-titre"></h2>
+      <button class="btn btn-lien feuille-fermer" onclick="fermerFeuille()" aria-label="Fermer">✕</button>
+    </div>
+    <div id="feuille-corps" class="feuille-corps"></div>
+  </div>
+</div>
+
 <div id="toast-zone" class="toast-zone" aria-live="polite"></div>
 
 <!-- Ordre important : app.js (config + outils) d'abord, init.js en dernier -->
 <script src="app.js"></script>
 <script src="calculs.js"></script>
 <script src="profil.js"></script>
+<script src="journal.js"></script>
 <script src="auth.js"></script>
 <script src="init.js"></script>
 </body>

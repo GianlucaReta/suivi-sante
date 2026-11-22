@@ -8,7 +8,7 @@
 const SUPABASE_URL = 'https://uwzsqkvzshrnxvpdjelo.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 
-const APP_VERSION = '0.2.0'
+const APP_VERSION = '0.3.0'
 
 const SUPABASE_CONFIGURE = !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_KEY.includes('VOTRE_CLE')
 
@@ -48,8 +48,34 @@ function showPage(page) {
 // Recharge les données d'une page (aussi appelé au retour au premier plan, sans remonter en haut)
 function chargerPage(page) {
   if (page === 'aujourdhui') chargerAujourdhui()
+  if (page === 'journal')    chargerJournal()
   if (page === 'reglages')   chargerReglages()
 }
+
+// ── FENÊTRE GLISSANTE (« feuille ») ──────────────────────────
+let _feuilleOnFermer = null
+
+function ouvrirFeuille(titre, html, { onFermer = null } = {}) {
+  // Un nouveau contenu remplace l'ancien : on prévient l'ancien (ex. arrêt de la caméra)
+  if (_feuilleOnFermer && _feuilleOnFermer !== onFermer) { const f = _feuilleOnFermer; _feuilleOnFermer = null; f() }
+  _feuilleOnFermer = onFermer
+  document.getElementById('feuille-titre').textContent = titre
+  document.getElementById('feuille-corps').innerHTML = html
+  document.getElementById('feuille-corps').scrollTop = 0
+  document.getElementById('feuille-fond').classList.remove('hidden')
+  document.body.classList.add('sans-defilement')
+}
+
+function fermerFeuille() {
+  if (_feuilleOnFermer) { const f = _feuilleOnFermer; _feuilleOnFermer = null; f() }
+  document.getElementById('feuille-fond').classList.add('hidden')
+  document.getElementById('feuille-corps').innerHTML = ''
+  if (document.getElementById('questionnaire').classList.contains('hidden')) document.body.classList.remove('sans-defilement')
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !document.getElementById('feuille-fond').classList.contains('hidden')) fermerFeuille()
+})
 
 // ── AUJOURD'HUI ──────────────────────────────────────────────
 function chargerAujourdhui() {
@@ -71,8 +97,8 @@ function chargerAujourdhui() {
     <div class="carte">
       <div class="carte-titre">Tes repères du jour</div>
       ${renduCarteObjectifs({ ...o, cible: cibleKcalDuJour() ?? o.cible, proteines: { ...o.proteines, cible: profil.cible_proteines ?? o.proteines.cible } }, profil)}
-    </div>
-    <div class="bientot">Le suivi de tes repas de la journée arrive à l'étape 3.</div>`
+    </div>`
+  chargerResumeJour()
 }
 
 // ── RÉGLAGES ─────────────────────────────────────────────────
@@ -81,6 +107,7 @@ function chargerReglages() {
   document.getElementById('reglages-version').textContent = APP_VERSION
   afficherThemeActif()
   chargerReglagesProfil()
+  chargerStockage()
 }
 
 function changerTheme(theme) {

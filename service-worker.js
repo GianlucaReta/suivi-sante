@@ -3,7 +3,7 @@
 // Changer CACHE_VERSION à chaque mise en ligne pour forcer la mise à jour.
 // ─────────────────────────────────────────────────────────────
 
-const CACHE_VERSION = 'ss-v0.2.0'
+const CACHE_VERSION = 'ss-v0.3.0'
 
 const FICHIERS_APP = [
   './',
@@ -12,6 +12,7 @@ const FICHIERS_APP = [
   'app.js',
   'calculs.js',
   'profil.js',
+  'journal.js',
   'auth.js',
   'init.js',
   'manifest.json',

@@ -578,3 +578,129 @@ body.sans-defilement { overflow: hidden; }
 .ligne-action > span:first-child { flex-shrink: 0; }
 .ligne-action .ligne-valeur { flex: 1; word-break: normal; }
 .details summary { cursor: pointer; color: var(--brand); font-size: var(--fs-sm); padding: var(--sp-3) 0 var(--sp-1); }
+
+/* ── Fenêtre glissante (feuille) ───────────────────────────── */
+.feuille-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 850;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.feuille {
+  width: 100%;
+  max-height: calc(100dvh - var(--safe-top) - 24px);
+  background: var(--bg);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: monter 0.22s ease-out;
+}
+@keyframes monter { from { transform: translateY(40px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+.feuille-tete {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-4) var(--sp-2);
+  border-bottom: 1px solid var(--border-soft);
+}
+.feuille-titre { flex: 1; font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+.feuille-fermer { font-size: 18px; color: var(--muted); }
+.feuille-corps {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--sp-4) var(--sp-4) calc(var(--sp-5) + var(--safe-bottom));
+}
+.feuille-actions { display: flex; gap: var(--sp-3); margin-top: var(--sp-4); }
+.feuille-actions .btn { flex: 1; }
+@media (min-width: 700px) {
+  .feuille-fond { align-items: center; }
+  .feuille { max-width: 540px; max-height: 88vh; border-radius: var(--radius); }
+}
+
+/* ── Journal ───────────────────────────────────────────────── */
+.nav-jour { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+.nav-jour .btn { width: 44px; padding: 0; font-size: 22px; }
+.nav-jour-libelle { flex: 1; text-align: center; font-weight: var(--fw-medium); }
+.nav-jour-libelle::first-letter { text-transform: uppercase; }
+
+.total-ligne { margin-bottom: var(--sp-3); }
+.total-tete { display: flex; justify-content: space-between; font-size: var(--fs-sm); margin-bottom: 4px; }
+.total-sous { padding-left: var(--sp-3); color: var(--muted); }
+.total-valeur { color: var(--muted); }
+.total-valeur strong { color: var(--ink); font-weight: var(--fw-bold); }
+.barre { height: 6px; background: var(--surface-alt); border-radius: var(--radius-pill); overflow: hidden; }
+.barre-remplie { height: 100%; background: var(--brand); border-radius: var(--radius-pill); transition: width 0.3s; }
+.barre-haute { background: var(--warn); }
+.barre-atteinte { background: var(--success); }
+
+.repas-tete { display: flex; align-items: center; gap: var(--sp-2); }
+.repas-tete .carte-titre { flex: 1; }
+.repas-kcal { font-size: var(--fs-sm); color: var(--muted); }
+.btn-icone { width: 40px; min-height: 40px; padding: 0; font-size: 18px; }
+.btn-icone input { display: none; }
+.entree {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 var(--sp-3);
+  text-align: left;
+  font-family: inherit;
+  color: var(--ink);
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border-soft);
+  padding: var(--sp-3) 0;
+  margin-top: var(--sp-2);
+  cursor: pointer;
+}
+.entree-nom { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.entree-detail { grid-column: 1; font-size: var(--fs-xs); color: var(--muted); }
+.entree-kcal { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-size: var(--fs-sm); color: var(--ink-soft); white-space: nowrap; }
+.miniatures { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-3); }
+.miniature { width: 64px; height: 64px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); padding: 0; background: var(--surface-alt); cursor: pointer; }
+.miniature img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-grande { width: 100%; border-radius: var(--radius-sm); display: block; }
+
+/* ── Recherche d'aliments ──────────────────────────────────── */
+.recherche-barre { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+.recherche-barre .input { flex: 1; }
+.recherche-barre .btn { flex-shrink: 0; padding: 0 12px; }
+.resultats-titre { font-size: var(--fs-xs); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin: var(--sp-2) 0; }
+.resultat {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  font-family: inherit;
+  color: var(--ink);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-soft);
+  padding: var(--sp-3) 0;
+  cursor: pointer;
+}
+.resultat-nom { font-size: var(--fs-sm); }
+.resultat-marque { color: var(--muted); font-size: var(--fs-xs); }
+.resultat-detail { font-size: var(--fs-xs); color: var(--muted); }
+
+.aliment-tete { margin-bottom: var(--sp-4); }
+.aliment-nom { font-size: var(--fs-base); font-weight: var(--fw-bold); margin-bottom: 2px; }
+.puce-choix.active { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-deep); text-decoration: none; }
+.puce-g { color: var(--muted); font-size: var(--fs-xs); }
+.input-unite { position: relative; }
+.input-unite .input { padding-right: 36px; }
+.input-unite span { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.valeurs { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); margin-bottom: var(--sp-4); }
+.valeur { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--sp-2); text-align: center; }
+.valeur-nombre { display: block; font-weight: var(--fw-bold); }
+.valeur-lib { display: block; font-size: 11px; color: var(--muted); }
+select.input { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+
+/* ── Scanner ───────────────────────────────────────────────── */
+.scan-zone { width: 100%; min-height: 240px; background: #000; border-radius: var(--radius-sm); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.scan-zone video { width: 100% !important; height: auto !important; display: block; }

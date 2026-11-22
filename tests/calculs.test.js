@@ -83,4 +83,29 @@ test('poids minimum sain (IMC 18,5) à 166 cm ≈ 51 kg', () => {
   assert.equal(c.poidsMinSain(166), 51)
 })
 
+test('objectifs nutritionnels cohérents avec la cible', () => {
+  const o = c.objectifsNutriments(1460, 110)
+  assert.equal(o.lipides, 49)
+  assert.ok(Math.abs(o.proteines * 4 + o.lipides * 9 + o.glucides * 4 - 1460) < 10)
+  assert.equal(o.sucres, 37)
+})
+
+test('repères visuels selon le type d\'aliment', () => {
+  assert.equal(c.grammesRepere('poing', 'feculent'), 150)
+  assert.equal(c.grammesRepere('poing', 'legume', 0.5), 50)
+  assert.equal(c.grammesRepere('cs', 'matiere_grasse', 2), 20)
+  assert.equal(c.grammesRepere('paume', 'autre'), 100)
+})
+
+test('valeurs pour une quantité et sucres ajoutés', () => {
+  const cookie = { kcal: 490, proteines: 6, glucides: 63, sucres: 35, lipides: 23, fibres: 2.5, sucre_ajoute: true }
+  const v = c.valeursPourQuantite(cookie, 24)
+  assert.equal(v.kcal, 118)
+  assert.equal(v.sucres_ajoutes, 8.4)
+  const pomme = { kcal: 53, sucres: 10.4, sucre_ajoute: false }
+  assert.equal(c.valeursPourQuantite(pomme, 150).sucres_ajoutes, 0)
+  const nutella = { kcal: 539, sucres: 56.3, sucres_ajoutes_100g: 52.13 }
+  assert.equal(c.valeursPourQuantite(nutella, 15).sucres_ajoutes, 7.8)
+})
+
 console.log(`\n${ok} test(s) réussi(s)`)

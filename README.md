@@ -17,11 +17,34 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 | `style.css` | Styles. Couleurs, polices et espacements en variables dans `:root` (mode sombre inclus) |
 | `app.js` | Configuration Supabase, client `db`, navigation, outils communs (`esc`, `afficherToast`, `gererErreur`, `dateISO`) |
 | `auth.js` | Connexion par code, session, déconnexion, détection d'un serveur en pause |
+| `calculs.js` | Règles de santé (calculs purs, testés : `node tests/calculs.test.js`) |
+| `profil.js` | Questionnaire, réglages du profil, exclusions alimentaires |
+| `journal.js` | Journal alimentaire, recherche Ciqual, scan Open Food Facts, photos |
 | `init.js` | Démarrage (chargé en dernier) |
 | `manifest.json`, `service-worker.js`, `icons/` | Installation sur iPhone (PWA), cache, notifications |
 | `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre |
+| `import-ciqual.js` | Conversion de la table Ciqual pour l'import (lancé une fois) |
 
-Les modules suivants (`profil.js`, `journal.js`, `menus.js`…) s'ajoutent phase par phase. Ce sont des `<script>` classiques : toutes les fonctions sont globales.
+Les modules s'ajoutent phase par phase (`menus.js`, `sport.js`…). Ce sont des `<script>` classiques : toutes les fonctions sont globales.
+
+---
+
+## Importer la table Ciqual (une seule fois)
+
+La table Ciqual de l'ANSES donne la composition de ~3 200 aliments de base. Elle sert à la recherche d'aliments et au calcul des recettes.
+
+1. **Exécuter `sql/03-journal.sql`** dans le SQL Editor de Supabase (si ce n'est pas déjà fait).
+2. **Télécharger la table** sur [ciqual.anses.fr](https://ciqual.anses.fr), rubrique *Téléchargement*. Prends la version tableur en français, la plus récente (fichier `.xls` ou `.xlsx`). Elle existe aussi sur [data.gouv.fr](https://www.data.gouv.fr/fr/datasets/table-de-composition-nutritionnelle-des-aliments-ciqual-2020/).
+3. **L'exporter en CSV** : ouvre le fichier dans Numbers (ou Excel), puis *Fichier → Exporter vers → CSV* (Numbers) ou *Enregistrer sous → CSV UTF-8* (Excel). Les fichiers `.csv` ne sont jamais publiés sur GitHub (`.gitignore`).
+4. **Le convertir**, dans le Terminal, depuis ce dossier :
+   ```bash
+   node import-ciqual.js "/chemin/vers/Table Ciqual.csv"
+   ```
+   Le script affiche le nombre d'aliments convertis et crée `ciqual-import.csv`.
+5. **L'importer** : Supabase → **Table Editor** → table `aliments_ciqual` → **Insert** → **Import data from CSV** → choisis `ciqual-import.csv` → **Import data**.
+6. Vérifier dans le SQL Editor : `select count(*) from aliments_ciqual;` doit donner environ 3 000 à 3 500.
+
+Pas besoin de clé secrète : le script ne fait que convertir un fichier sur ton ordinateur, et l'import passe par le dashboard.
 
 ---
 

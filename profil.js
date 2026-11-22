@@ -478,7 +478,42 @@ function renduExclusions() {
 
 function majExclusions() { document.getElementById('q-exclusions').innerHTML = renduExclusions() }
 
-function rechercherExclusion(v) { questionnaire.recherche = v; majExclusions() }
+let _exclTimer = null
+let _suggestionsExcl = []
+
+function rechercherExclusion(v) {
+  questionnaire.recherche = v
+  majExclusions()
+  clearTimeout(_exclTimer)
+  if (v.trim().length >= 3) _exclTimer = setTimeout(() => suggestionsCiqualExclusion(v), 300)
+}
+
+// Suggestions depuis la table Ciqual : l'aliment exclu est relié à son code
+async function suggestionsCiqualExclusion(v) {
+  const mots = motsRecherche(v)
+  if (!mots.length) return
+  let req = db.from('aliments_ciqual').select('code, nom').limit(6)
+  for (const m of mots) req = req.ilike('nom_recherche', `%${m}%`)
+  const { data, error } = await req
+  if (error || questionnaire.recherche !== v || !data?.length) return
+  _suggestionsExcl = data.sort((a, b) => a.nom.length - b.nom.length)
+  const el = document.getElementById('q-exclusions')
+  if (!el) return
+  el.insertAdjacentHTML('beforeend', `
+    <div class="resultats-titre" style="margin-top:var(--sp-4);">Dans la base d'aliments</div>
+    <div class="puces">${_suggestionsExcl.map((a, i) => `<button type="button" class="puce" onclick="ajouterExclusionCiqual(${i})">${esc(a.nom)}</button>`).join('')}</div>`)
+}
+
+function ajouterExclusionCiqual(i) {
+  const a = _suggestionsExcl[i]
+  const b = questionnaire.brouillon
+  if (a && !b.exclusions_aliments.some(x => x.ciqual_code === a.code)) {
+    b.exclusions_aliments = [...b.exclusions_aliments, { libelle: a.nom, ciqual_code: a.code }]
+  }
+  questionnaire.recherche = ''
+  document.getElementById('q-recherche').value = ''
+  majExclusions()
+}
 
 function basculerGroupeOuvert(cle) {
   const s = questionnaire.groupesOuverts

@@ -68,6 +68,8 @@ async function ouvrirApp(session) {
   const pageDemandee = location.hash.replace('#', '')
   showPage(PAGES.includes(pageDemandee) ? pageDemandee : 'aujourdhui')
 
+  nettoyerPhotosAnciennes()
+
   // Premier lancement : questionnaire, en reprenant à la première étape incomplète
   if (profil && !profil.onboarding_fait) {
     const etape = !profil.taille_cm || !profil.date_naissance || !profil.poids_depart ? 'toi'
@@ -221,6 +223,7 @@ async function deconnexion() {
   profil = null
   _appDemarree = false
   fermerQuestionnaire()
+  fermerFeuille()
   history.replaceState(null, '', location.pathname)
   afficherConnexion()
 }

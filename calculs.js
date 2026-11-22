@@ -145,10 +145,57 @@ function cibleStabilisation({ cibleDepart, maintien, dateDebut, semaines = 6 }, 
   return { cible: Math.max(REGLES.PLANCHER_KCAL, arrondir(cible, 10)), semaine: semaineEnCours + 1, terminee: false }
 }
 
+// ── Objectifs nutritionnels du jour (en regard des totaux) ───
+// Lipides ≈ 30 % des calories, glucides = le reste, fibres 30 g, sucres : repère max 10 % des calories.
+function objectifsNutriments(cibleKcal, proteinesG) {
+  const lipides = arrondir(cibleKcal * 0.30 / 9)
+  const glucides = Math.max(0, arrondir((cibleKcal - proteinesG * 4 - lipides * 9) / 4))
+  return {
+    kcal: cibleKcal,
+    proteines: proteinesG,
+    glucides,
+    sucres: arrondir(cibleKcal * 0.10 / 4),
+    lipides,
+    fibres: 30,
+  }
+}
+
+// ── Repères visuels → grammes approximatifs, selon le type d'aliment ─
+const REPERES_VISUELS = {
+  paume:    { libelle: 'Paume',            aide: 'Taille et épaisseur de ta paume, sans les doigts', g: { viande_poisson: 100, defaut: 100 } },
+  poing:    { libelle: 'Poing',            aide: 'Volume de ton poing fermé', g: { feculent: 150, legume: 100, fruit: 130, laitier: 150, defaut: 120 } },
+  cs:       { libelle: 'Cuillère à soupe', aide: 'Cuillère bombée', g: { matiere_grasse: 10, defaut: 15 } },
+  cc:       { libelle: 'Cuillère à café',  aide: 'Cuillère rase', g: { matiere_grasse: 4, defaut: 5 } },
+  assiette: { libelle: 'Assiette',         aide: 'Assiette plate bien remplie', g: { legume: 250, feculent: 250, defaut: 300 } },
+}
+
+function grammesRepere(repere, categorie, nombre = 1) {
+  const r = REPERES_VISUELS[repere]
+  if (!r) return null
+  return arrondir((r.g[categorie] ?? r.g.defaut) * nombre)
+}
+
+// Valeurs pour une quantité, à partir des valeurs pour 100 g
+function valeursPourQuantite(pour100, grammes) {
+  const f = grammes / 100
+  const v = k => Math.round((Number(pour100[k]) || 0) * f * 10) / 10
+  const sucres = v('sucres')
+  return {
+    kcal: Math.round((Number(pour100.kcal) || 0) * f),
+    proteines: v('proteines'),
+    glucides: v('glucides'),
+    sucres,
+    sucres_ajoutes: pour100.sucres_ajoutes_100g != null ? v('sucres_ajoutes_100g') : (pour100.sucre_ajoute ? sucres : 0),
+    lipides: v('lipides'),
+    fibres: v('fibres'),
+  }
+}
+
 // Export pour les tests Node (ignoré dans le navigateur)
 if (typeof module !== 'undefined') {
   module.exports = {
     REGLES, NIVEAUX_ACTIVITE, calculerAge, calculerImc, poidsMinSain, calculerTmb, calculerDepense,
     calculerCiblePerte, calculerProteines, calculerObjectifs, besoinRecalcul, alerteRythmeTropRapide, cibleStabilisation,
+    objectifsNutriments, REPERES_VISUELS, grammesRepere, valeursPourQuantite,
   }
 }
