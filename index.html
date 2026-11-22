@@ -125,10 +125,7 @@
         <h1 class="page-title" id="aujourdhui-titre">Bonjour</h1>
         <p class="page-sous-titre" id="aujourdhui-date"></p>
       </div>
-      <div class="carte">
-        <div class="carte-titre">Bienvenue 🌿</div>
-        <p class="carte-texte">Ton espace est prêt. Les prochaines étapes ajouteront ton profil, ton journal de repas, tes menus et tes séances.</p>
-      </div>
+      <div id="aujourdhui-reperes"></div>
     </section>
 
     <!-- REPAS -->
@@ -159,6 +156,8 @@
     <section id="page-reglages" class="page">
       <div class="page-header"><h1 class="page-title">Réglages</h1></div>
 
+      <div id="reglages-profil"></div>
+
       <div class="carte">
         <div class="carte-titre">Compte</div>
         <div class="ligne"><span>Connectée avec</span><span class="ligne-valeur" id="reglages-email"></span></div>
@@ -179,10 +178,25 @@
   </main>
 </div>
 
+<!-- ── Questionnaire (premier lancement et modification du profil) ── -->
+<div id="questionnaire" class="questionnaire hidden" role="dialog" aria-modal="true" aria-label="Questionnaire">
+  <div id="q-progression" class="q-progression"><div></div></div>
+  <div id="q-contenu" class="q-contenu"></div>
+  <div class="q-pied">
+    <div id="q-erreur" class="message-erreur hidden"></div>
+    <div class="q-boutons">
+      <button id="q-retour" type="button" class="btn btn-secondaire" onclick="retourQuestionnaire()">Retour</button>
+      <button id="q-suivant" type="button" class="btn btn-primaire" onclick="suivantQuestionnaire()">Continuer</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-zone" class="toast-zone" aria-live="polite"></div>
 
 <!-- Ordre important : app.js (config + outils) d'abord, init.js en dernier -->
 <script src="app.js"></script>
+<script src="calculs.js"></script>
+<script src="profil.js"></script>
 <script src="auth.js"></script>
 <script src="init.js"></script>
 </body>

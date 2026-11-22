@@ -67,6 +67,13 @@ async function ouvrirApp(session) {
   afficherEcran('app')
   const pageDemandee = location.hash.replace('#', '')
   showPage(PAGES.includes(pageDemandee) ? pageDemandee : 'aujourdhui')
+
+  // Premier lancement : questionnaire, en reprenant à la première étape incomplète
+  if (profil && !profil.onboarding_fait) {
+    const etape = !profil.taille_cm || !profil.date_naissance || !profil.poids_depart ? 'toi'
+      : !profil.poids_objectif ? 'objectif' : 'gouts'
+    ouvrirQuestionnaire('onboarding', etape)
+  }
 }
 
 function afficherConnexion() {
@@ -213,6 +220,7 @@ async function deconnexion() {
   utilisateur = null
   profil = null
   _appDemarree = false
+  fermerQuestionnaire()
   history.replaceState(null, '', location.pathname)
   afficherConnexion()
 }

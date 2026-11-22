@@ -8,7 +8,7 @@
 const SUPABASE_URL = 'https://uwzsqkvzshrnxvpdjelo.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 
-const APP_VERSION = '0.1.0'
+const APP_VERSION = '0.2.0'
 
 const SUPABASE_CONFIGURE = !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_KEY.includes('VOTRE_CLE')
 
@@ -59,6 +59,20 @@ function chargerAujourdhui() {
   document.getElementById('aujourdhui-titre').textContent = prenom ? `${salut}, ${prenom}` : salut
   document.getElementById('aujourdhui-date').textContent =
     new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+
+  const el = document.getElementById('aujourdhui-reperes')
+  const o = objectifsActuels()
+  if (!o || !profil?.cible_kcal) {
+    el.innerHTML = `<div class="carte"><p class="carte-texte">Complète ton profil pour voir tes repères du jour.</p>
+      <button class="btn btn-primaire" style="margin-top:var(--sp-3);" onclick="ouvrirQuestionnaire('onboarding')">Compléter mon profil</button></div>`
+    return
+  }
+  el.innerHTML = `
+    <div class="carte">
+      <div class="carte-titre">Tes repères du jour</div>
+      ${renduCarteObjectifs({ ...o, cible: cibleKcalDuJour() ?? o.cible, proteines: { ...o.proteines, cible: profil.cible_proteines ?? o.proteines.cible } }, profil)}
+    </div>
+    <div class="bientot">Le suivi de tes repas de la journée arrive à l'étape 3.</div>`
 }
 
 // ── RÉGLAGES ─────────────────────────────────────────────────
@@ -66,6 +80,7 @@ function chargerReglages() {
   document.getElementById('reglages-email').textContent = utilisateur?.email || ''
   document.getElementById('reglages-version').textContent = APP_VERSION
   afficherThemeActif()
+  chargerReglagesProfil()
 }
 
 function changerTheme(theme) {

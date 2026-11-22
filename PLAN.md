@@ -65,7 +65,7 @@ Les scripts d'import ont besoin d'écrire dans des tables protégées. Ils liron
 
 **Tables personnelles**, avec `user_id` et RLS :
 - `profils` : âge, taille, objectif, activité, temps de cuisine, % de calories actives compté, matériel, jours et nombre de séances, phase (perte ou stabilisation), cible kcal, poids de référence du dernier recalcul, réglages des rappels.
-- `exclusions` : catégorie ou aliment précis.
+- Exclusions : stockées dans `profils` (`exclusions` = clés de la liste du site, `exclusions_aliments` = aliments précis), pas de table séparée.
 - `produits` : cache Open Food Facts par code-barres, valeurs corrigeables à la main.
 - `journal` : date, heure, type de repas, source (ciqual, produit ou recette), quantité en g, nutriments calculés au moment de la saisie, chemin de la photo.
 - `menus`, `menu_repas` : semaine, statut brouillon ou figé, recette, portions, nombre de personnes.

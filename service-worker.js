@@ -3,13 +3,15 @@
 // Changer CACHE_VERSION à chaque mise en ligne pour forcer la mise à jour.
 // ─────────────────────────────────────────────────────────────
 
-const CACHE_VERSION = 'ss-v0.1.0'
+const CACHE_VERSION = 'ss-v0.2.0'
 
 const FICHIERS_APP = [
   './',
   'index.html',
   'style.css',
   'app.js',
+  'calculs.js',
+  'profil.js',
   'auth.js',
   'init.js',
   'manifest.json',
@@ -38,10 +40,11 @@ self.addEventListener('fetch', event => {
   if (req.method !== 'GET') return
   const url = new URL(req.url)
 
-  // Fichiers du site : réseau d'abord (toujours la dernière version), cache si hors ligne
+  // Fichiers du site : réseau d'abord (toujours la dernière version), cache si hors ligne.
+  // cache: 'no-cache' force la vérification auprès de GitHub Pages (sinon jusqu'à 10 min d'ancienne version).
   if (url.origin === self.location.origin) {
     event.respondWith(
-      fetch(req)
+      fetch(req, { cache: 'no-cache' })
         .then(rep => {
           if (rep.ok) { const copie = rep.clone(); caches.open(CACHE_VERSION).then(c => c.put(req, copie)) }
           return rep
