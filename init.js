@@ -11,8 +11,11 @@ window.addEventListener('hashchange', () => {
 })
 
 // Quand l'app revient au premier plan (iPhone), on rafraîchit la page active
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && utilisateur && pageActive) chargerPage(pageActive)
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState !== 'visible' || !utilisateur) return
+  // Pendant une séance guidée : on garde l'écran allumé (le verrou saute quand l'app passe en arrière-plan)
+  if (guidee) { try { guidee.wakeLock = await navigator.wakeLock?.request('screen') } catch (e) {} return }
+  if (pageActive) chargerPage(pageActive)
 })
 
 // Service worker (PWA : installation, cache, notifications)

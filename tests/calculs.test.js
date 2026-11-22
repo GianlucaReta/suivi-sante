@@ -171,4 +171,69 @@ test('liste de courses : portion de l\'utilisatrice + portions standard des autr
   assert.deepEqual(l, [{ cle: 'R', libelle: 'riz', rayon: 'Épicerie salée', quantite_g: 210 }])
 })
 
+// ── Sport ────────────────────────────────────────────────────
+const { exercices: EXOS } = require('../exercices.json')
+const INTERDITS = /crunch|sit.?up|relev[ée] de buste|superman|v-up|russian|roue|pique|burpee|au-dessus de la t[eê]te/i
+
+test('aucun exercice interdit pour la nuque dans la présélection', () => {
+  for (const e of EXOS) assert.ok(!INTERDITS.test(e.nom), e.nom)
+})
+
+test('matériel : exercices au sol seulement avec le tapis', () => {
+  const sansTapis = c.exercicesDisponibles(EXOS, { elastique: true, tapis: false })
+  assert.ok(sansTapis.length > 10)
+  assert.ok(sansTapis.every(e => e.materiel === 'aucun' || e.materiel === 'elastique'))
+  assert.ok(c.exercicesDisponibles(EXOS, { elastique: true, tapis: true }).some(e => e.id === 'dead-bug'))
+})
+
+test('séance de 20 à 30 min, reproductible, sans doublon', () => {
+  for (const duree of [20, 25, 30]) for (const type of ['A', 'B']) for (const materiel of [{ elastique: true }, { elastique: true, tapis: true }]) {
+    const s = c.construireSeance({ exercices: EXOS, materiel, type, dureeMin: duree, graine: 'abc' + duree + type })
+    assert.ok(s.dureeMin <= duree + 1 && s.dureeMin >= duree - 8, `${type} ${duree} min → ${s.dureeMin} min`)
+    assert.ok(s.tours >= 2 && s.tours <= 4)
+    const ids = [...s.echauffement, ...s.circuit].map(x => x.exercice.id)
+    assert.equal(new Set(ids).size, ids.length)
+  }
+  const a = c.construireSeance({ exercices: EXOS, materiel: { elastique: true }, graine: 'meme' })
+  const b = c.construireSeance({ exercices: EXOS, materiel: { elastique: true }, graine: 'meme' })
+  assert.deepEqual(a.circuit.map(x => x.exercice.id), b.circuit.map(x => x.exercice.id))
+})
+
+test('progression des répétitions : +2 par niveau, au plus le double', () => {
+  const squat = { mode: 'reps', base: 12 }
+  assert.deepEqual([1, 2, 5, 20].map(n => c.valeurExercice(squat, n)), [12, 14, 20, 24])
+  assert.equal(c.valeurExercice({ mode: 'duree', base: 20 }, 3), 30)
+})
+
+test('planning : séances réparties sur les jours possibles', () => {
+  assert.deepEqual(c.joursDeSeance([1, 2, 3, 4, 5, 6, 7], 3), [1, 3, 5])
+  assert.deepEqual(c.joursDeSeance([1, 3, 5], 3), [1, 3, 5])
+  assert.deepEqual(c.joursDeSeance([2, 4, 6, 7], 3), [2, 4, 6])
+})
+
+test('report : prochain jour libre de la semaine, sinon abandon sans pénalité', () => {
+  const lundi = '2026-11-16'
+  const seances = [
+    { id: 'a', semaine_debut: lundi, date_prevue: '2026-11-16', statut: 'prevue' },  // lundi raté
+    { id: 'b', semaine_debut: lundi, date_prevue: '2026-11-18', statut: 'prevue' },  // mercredi
+    { id: 'c', semaine_debut: lundi, date_prevue: '2026-11-20', statut: 'faite' },   // vendredi
+  ]
+  // On est mardi : la séance de lundi va mardi (jour possible ? non → premier jour libre)
+  assert.deepEqual(c.reporterSeances(seances, '2026-11-17', [1, 3, 5]), [{ id: 'a', date_prevue: '2026-11-17' }])
+  // On est jeudi, lundi et mercredi ratés : samedi et dimanche restent libres (vendredi est occupé)
+  assert.deepEqual(c.reporterSeances(seances, '2026-11-19', [1, 3, 5, 6]), [
+    { id: 'a', date_prevue: '2026-11-21' }, { id: 'b', date_prevue: '2026-11-19' }])
+  // Semaine terminée : abandon
+  assert.deepEqual(c.reporterSeances(seances, '2026-11-23', [1, 3, 5]), [{ id: 'a', statut: 'abandonnee' }, { id: 'b', statut: 'abandonnee' }])
+})
+
+test('progression toutes les deux semaines, jamais après une séance difficile', () => {
+  const faites = [{ date_prevue: '2026-11-02', ressenti: 'facile' }, { date_prevue: '2026-11-05', ressenti: 'correct' }, { date_prevue: '2026-11-09', ressenti: 'correct' }]
+  const base = { niveau: 1, dateNiveau: '2026-11-01', seancesParSemaine: 3 }
+  assert.equal(c.verifierProgression({ ...base, seancesFaites: faites, aujourdhui: '2026-11-10' }).monter, false)
+  assert.equal(c.verifierProgression({ ...base, seancesFaites: faites, aujourdhui: '2026-11-16' }).monter, true)
+  assert.equal(c.verifierProgression({ ...base, seancesFaites: [...faites, { date_prevue: '2026-11-12', ressenti: 'difficile' }], aujourdhui: '2026-11-16' }).raison, 'difficile')
+  assert.equal(c.verifierProgression({ ...base, seancesFaites: faites.slice(0, 1), aujourdhui: '2026-11-16' }).raison, 'pas assez de séances')
+})
+
 console.log(`\n${ok} test(s) réussi(s)`)

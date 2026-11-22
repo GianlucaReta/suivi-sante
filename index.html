@@ -127,6 +127,7 @@
       </div>
       <div id="aujourdhui-reperes"></div>
       <div id="aujourdhui-resume"></div>
+      <div id="aujourdhui-sport"></div>
       <div id="aujourdhui-menu"></div>
     </section>
 
@@ -145,7 +146,7 @@
     <!-- SPORT -->
     <section id="page-sport" class="page">
       <div class="page-header"><h1 class="page-title">Sport</h1></div>
-      <div class="bientot">Les séances à la maison arrivent à l'étape 5.</div>
+      <div id="sport-contenu"><div class="spinner" style="margin:var(--sp-6) auto;"></div></div>
     </section>
 
     <!-- SUIVI -->
@@ -205,6 +206,18 @@
   </div>
 </div>
 
+<!-- ── Séance guidée (plein écran) ─────────────────────── -->
+<div id="seance-guidee" class="seance-guidee hidden" role="dialog" aria-modal="true" aria-label="Séance guidée">
+  <div class="q-progression"><div id="sg-barre"></div></div>
+  <div class="sg-haut"><button class="btn btn-lien" onclick="quitterSeance()">Quitter</button></div>
+  <div id="sg-contenu" class="sg-contenu"></div>
+  <div id="sg-commandes" class="sg-commandes">
+    <button class="btn btn-secondaire" onclick="etapePrecedente()" aria-label="Exercice précédent">‹</button>
+    <button id="sg-pause" class="btn btn-secondaire" onclick="basculerPause()">Pause</button>
+    <button id="sg-suivant" class="btn btn-primaire" onclick="etapeSuivante()">Passer</button>
+  </div>
+</div>
+
 <div id="toast-zone" class="toast-zone" aria-live="polite"></div>
 
 <!-- Ordre important : app.js (config + outils) d'abord, init.js en dernier -->
@@ -213,6 +226,7 @@
 <script src="profil.js"></script>
 <script src="journal.js"></script>
 <script src="menus.js"></script>
+<script src="sport.js"></script>
 <script src="auth.js"></script>
 <script src="init.js"></script>
 </body>

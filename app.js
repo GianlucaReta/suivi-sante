@@ -8,7 +8,7 @@
 const SUPABASE_URL = 'https://uwzsqkvzshrnxvpdjelo.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 
-const APP_VERSION = '0.4.0'
+const APP_VERSION = '0.5.0'
 
 const SUPABASE_CONFIGURE = !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_KEY.includes('VOTRE_CLE')
 
@@ -50,6 +50,7 @@ function chargerPage(page) {
   if (page === 'aujourdhui') chargerAujourdhui()
   if (page === 'journal')    chargerJournal()
   if (page === 'menus')      chargerMenus()
+  if (page === 'sport')      chargerSport()
   if (page === 'reglages')   chargerReglages()
 }
 
@@ -100,6 +101,7 @@ function chargerAujourdhui() {
       ${renduCarteObjectifs({ ...o, cible: cibleKcalDuJour() ?? o.cible, proteines: { ...o.proteines, cible: profil.cible_proteines ?? o.proteines.cible } }, profil)}
     </div>`
   chargerResumeJour()
+  chargerSeanceDuJour()
   chargerMenuDuJour()
 }
 

@@ -29,6 +29,9 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 | `profil.js` | Questionnaire, réglages du profil, exclusions alimentaires |
 | `journal.js` | Journal alimentaire, recherche Ciqual, scan Open Food Facts, photos |
 | `menus.js` | Menus de la semaine, portions ajustées, liste de courses |
+| `sport.js` | Planning des séances avec report, séance guidée, progression |
+| `exercices.json` | Exercices présélectionnés (sans risque pour la nuque) |
+| `import-exercices.js` | Récupère les images wger et génère le SQL d'import des exercices |
 | `recettes.json` | Base de recettes (ingrédients reliés aux noms Ciqual) |
 | `import-recettes.js` | Relie les recettes aux codes Ciqual et génère le SQL d'import |
 | `init.js` | Démarrage (chargé en dernier) |
@@ -56,6 +59,18 @@ La table Ciqual de l'ANSES donne la composition de ~3 200 aliments de base. Elle
 6. Vérifier dans le SQL Editor : `select count(*) from aliments_ciqual;` doit donner environ 3 000 à 3 500.
 
 Pas besoin de clé secrète : le script ne fait que convertir un fichier sur ton ordinateur, et l'import passe par le dashboard.
+
+## Importer les exercices
+
+1. Exécuter `sql/05-sport.sql` dans le SQL Editor (si ce n'est pas déjà fait).
+2. Dans le Terminal, depuis ce dossier :
+   ```bash
+   node import-exercices.js
+   ```
+   Le script récupère les images sur l'API gratuite wger et liste les exercices sans image (une image de remplacement est utilisée).
+3. Coller le contenu de `exercices-import.sql` dans le SQL Editor → **Run**.
+
+Pour ajouter ou retirer un exercice : modifier `exercices.json`, puis refaire les étapes 2 et 3. Un exercice retiré est désactivé, pas supprimé.
 
 ## Importer les recettes (après Ciqual)
 

@@ -15,3 +15,4 @@ node_modules/
 supabase/.temp/
 recettes-import.sql
 recettes-rapport.txt
+exercices-import.sql

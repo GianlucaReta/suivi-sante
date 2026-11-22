@@ -284,6 +284,133 @@ function cumulerCourses(repas) {
   return [...parCle.values()].map(l => ({ ...l, quantite_g: l.quantite_g < 50 ? Math.ceil(l.quantite_g) : Math.ceil(l.quantite_g / 10) * 10 }))
 }
 
+// ═════════════════════════════════════════════════════════════
+// SPORT : séances, planning avec report, progression
+// ═════════════════════════════════════════════════════════════
+const SPORT = {
+  REPOS_EXERCICE: 20,     // secondes de repos entre deux exercices
+  REPOS_TOUR: 60,         // secondes de repos entre deux tours
+  ECHAUFFEMENT: 40,       // secondes par exercice d'échauffement
+  SECONDES_PAR_REP: 3,
+  PROGRESSION_JOURS: 14,  // une progression possible toutes les deux semaines
+}
+
+// Générateur pseudo-aléatoire reproductible : une séance garde le même contenu quand on la rouvre
+function aleatoireGraine(texte) {
+  let h = 1779033703 ^ String(texte).length
+  for (let i = 0; i < texte.length; i++) { h = Math.imul(h ^ texte.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19) }
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909)
+    return ((h ^= h >>> 16) >>> 0) / 4294967296
+  }
+}
+
+// Exercices faisables avec le matériel coché (les exercices au sol demandent le tapis)
+function exercicesDisponibles(exercices, materiel = {}) {
+  return exercices.filter(e =>
+    e.materiel === 'aucun' ||
+    (e.materiel === 'tapis' && materiel.tapis) ||
+    (e.materiel === 'elastique' && materiel.elastique) ||
+    (e.materiel === 'tapis_elastique' && materiel.tapis && materiel.elastique))
+}
+
+// Répétitions ou secondes selon le niveau : +2 répétitions ou +5 s par niveau, au plus le double de la base
+function valeurExercice(ex, niveau = 1) {
+  const pas = ex.mode === 'reps' ? 2 : 5
+  return Math.min(ex.base * 2, ex.base + pas * (niveau - 1))
+}
+
+function dureeExercice(ex, valeur) {
+  const s = ex.mode === 'reps' ? valeur * SPORT.SECONDES_PAR_REP : valeur
+  return ex.cote ? s * 2 : s
+}
+
+// Composition d'une séance : échauffement + circuit répété en 2 à 4 tours pour tenir dans la durée choisie.
+// Type A : bas du corps ; type B : haut du corps et gainage.
+function construireSeance({ exercices, materiel, type = 'A', dureeMin = 25, niveau = 1, graine = 'x' }) {
+  const alea = aleatoireGraine(graine)
+  const dispo = exercicesDisponibles(exercices, materiel)
+  const melanger = liste => liste.map(e => [alea(), e]).sort((a, b) => a[0] - b[0]).map(x => x[1])
+  const pris = new Set()
+  const prendre = zones => {
+    for (const z of zones) {
+      const e = melanger(dispo.filter(x => x.zone === z && !pris.has(x.id)))[0]
+      if (e) { pris.add(e.id); return e }
+    }
+    return null
+  }
+
+  const echauffement = [prendre(['cardio']), prendre(['cardio', 'jambes'])].filter(Boolean)
+  const plan = type === 'A'
+    ? [['jambes', 'fessiers'], ['fessiers', 'jambes'], ['gainage'], ['jambes', 'fessiers'], ['haut_du_corps', 'gainage'], ['cardio', 'jambes']]
+    : [['haut_du_corps', 'gainage'], ['gainage', 'haut_du_corps'], ['fessiers', 'jambes'], ['haut_du_corps', 'gainage'], ['gainage', 'fessiers'], ['cardio', 'jambes']]
+  let circuit = plan.map(prendre).filter(Boolean).map(e => ({ exercice: e, valeur: valeurExercice(e, niveau) }))
+
+  const dureeEch = echauffement.length * SPORT.ECHAUFFEMENT
+  const dureeTour = c => c.reduce((s, x) => s + dureeExercice(x.exercice, x.valeur), 0) + SPORT.REPOS_EXERCICE * Math.max(0, c.length - 1)
+  const disponible = dureeMin * 60 - dureeEch
+  // Si même 2 tours dépassent la durée, on retire des exercices
+  while (circuit.length > 3 && 2 * dureeTour(circuit) + SPORT.REPOS_TOUR > disponible) circuit = circuit.slice(0, -1)
+  const tours = Math.max(2, Math.min(4, Math.floor((disponible + SPORT.REPOS_TOUR) / (dureeTour(circuit) + SPORT.REPOS_TOUR))))
+  const dureeTotale = dureeEch + tours * dureeTour(circuit) + (tours - 1) * SPORT.REPOS_TOUR
+
+  return {
+    echauffement: echauffement.map(e => ({ exercice: e, valeur: SPORT.ECHAUFFEMENT, mode: 'duree' })),
+    circuit, tours, dureeMin: Math.round(dureeTotale / 60),
+  }
+}
+
+// Jours de séance de la semaine : n jours répartis parmi les jours possibles (1 = lundi … 7 = dimanche)
+function joursDeSeance(joursPossibles, n) {
+  const jours = [...joursPossibles].sort((a, b) => a - b)
+  if (n >= jours.length) return jours
+  const choisis = []
+  for (let i = 0; i < n; i++) choisis.push(jours[Math.floor(i * jours.length / n)])
+  return [...new Set(choisis)]
+}
+
+function dateDuJour(lundi, numeroJour) {
+  const d = new Date(lundi + 'T12:00:00')
+  d.setDate(d.getDate() + numeroJour - 1)
+  const p = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
+}
+
+// Report des séances ratées : vers le prochain jour libre de la même semaine (de préférence un jour possible),
+// au plus une séance par jour. Si la semaine est finie, la séance est abandonnée, sans pénalité.
+// Renvoie la liste des changements à appliquer : { id, date_prevue } ou { id, statut: 'abandonnee' }.
+function reporterSeances(seances, aujourdhui, joursPossibles) {
+  const changements = []
+  const occupes = new Set(seances.filter(s => s.statut !== 'abandonnee').map(s => s.date_prevue))
+  const aReporter = seances.filter(s => s.statut === 'prevue' && s.date_prevue < aujourdhui).sort((a, b) => a.date_prevue.localeCompare(b.date_prevue))
+  for (const s of aReporter) {
+    occupes.delete(s.date_prevue)
+    const candidats = []
+    for (let j = 1; j <= 7; j++) {
+      const d = dateDuJour(s.semaine_debut, j)
+      if (d >= aujourdhui && !occupes.has(d)) candidats.push({ d, prefere: joursPossibles.includes(j) })
+    }
+    const cible = candidats.find(c => c.prefere) || candidats[0]
+    if (cible) { occupes.add(cible.d); changements.push({ id: s.id, date_prevue: cible.d }) }
+    else changements.push({ id: s.id, statut: 'abandonnee' })
+  }
+  return changements
+}
+
+// Progression lente : environ toutes les deux semaines, si les séances ont été faites
+// et jugées faciles ou correctes. Jamais après une séance jugée difficile.
+function verifierProgression({ niveau, dateNiveau, seancesFaites, seancesParSemaine, aujourdhui }) {
+  const debut = dateNiveau || seancesFaites.map(s => s.date_prevue).sort()[0]
+  if (!debut) return { monter: false, raison: 'pas encore de séance' }
+  const jours = (new Date(aujourdhui + 'T12:00:00') - new Date(debut + 'T12:00:00')) / 86400000
+  if (jours < SPORT.PROGRESSION_JOURS) return { monter: false, raison: 'trop tôt', dans: Math.ceil(SPORT.PROGRESSION_JOURS - jours) }
+  const periode = seancesFaites.filter(s => s.date_prevue >= debut)
+  if (periode.some(s => s.ressenti === 'difficile')) return { monter: false, raison: 'difficile' }
+  if (periode.length < Math.max(2, seancesParSemaine)) return { monter: false, raison: 'pas assez de séances' }
+  if (niveau >= 20) return { monter: false, raison: 'niveau maximum' }
+  return { monter: true }
+}
+
 // Export pour les tests Node (ignoré dans le navigateur)
 if (typeof module !== 'undefined') {
   module.exports = {
@@ -292,5 +419,7 @@ if (typeof module !== 'undefined') {
     objectifsNutriments, REPERES_VISUELS, grammesRepere, valeursPourQuantite,
     PARTS_REPAS, partsDuJour, ingredientExclu, resoudreRecette, nutritionParPortion, facteurPortion,
     adapterPortionsRestantes, cumulerCourses,
+    SPORT, aleatoireGraine, exercicesDisponibles, valeurExercice, dureeExercice, construireSeance,
+    joursDeSeance, dateDuJour, reporterSeances, verifierProgression,
   }
 }

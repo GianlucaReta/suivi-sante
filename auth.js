@@ -224,6 +224,7 @@ async function deconnexion() {
   _appDemarree = false
   fermerQuestionnaire()
   fermerFeuille()
+  fermerSeanceGuidee()
   history.replaceState(null, '', location.pathname)
   afficherConnexion()
 }
