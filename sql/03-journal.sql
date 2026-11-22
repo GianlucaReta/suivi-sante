@@ -102,6 +102,10 @@ CREATE TABLE IF NOT EXISTS public.photos_repas (
 CREATE INDEX IF NOT EXISTS idx_photos_user_date ON public.photos_repas (user_id, date);
 
 -- ── 5. RLS : chaque utilisateur ne voit que ses lignes ───────
+ALTER TABLE public.produits     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.journal      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.photos_repas ENABLE ROW LEVEL SECURITY;
+
 DO $$
 DECLARE t TEXT;
 BEGIN
