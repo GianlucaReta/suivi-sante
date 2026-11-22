@@ -9,6 +9,14 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 
 > Ce README est complété à chaque phase. La version complète (utilisation, vérifications) arrive en phase 9.
 
+## ⏳ À faire plus tard
+
+- [ ] **Importer la table Ciqual** (en attente : ciqual.anses.fr, recherche.data.gouv.fr et les fichiers de data.gouv.fr étaient en maintenance le 22/11/2026).
+  1. Réessayer [ciqual.anses.fr](https://ciqual.anses.fr) (rubrique *Téléchargement*), ou la [page data.gouv.fr](https://www.data.gouv.fr/fr/datasets/table-de-composition-nutritionnelle-des-aliments-ciqual-2020/) → onglet **Fichiers** → « Table Ciqual 2020 en Français » **XLS (3,5 Mo)** → **Télécharger**. Si la version actualisée de recherche.data.gouv.fr est disponible, la préférer.
+  2. Suivre la section **« Importer la table Ciqual »** ci-dessous (export CSV depuis Numbers, `node import-ciqual.js`, import dans Supabase).
+  3. Relier les recettes aux codes Ciqual (phase 4) : `node import-recettes.js "<fichier Ciqual exporté en CSV>"`, puis importer le résultat (voir la section « Importer les recettes »).
+  - En attendant : le scan de code-barres et la saisie libre fonctionnent. La recherche d'aliments et les recettes restent vides tant que Ciqual n'est pas importée.
+
 ## Organisation des fichiers
 
 | Fichier | Rôle |
