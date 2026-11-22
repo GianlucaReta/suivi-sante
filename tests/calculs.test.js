@@ -108,4 +108,67 @@ test('valeurs pour une quantité et sucres ajoutés', () => {
   assert.equal(c.valeursPourQuantite(nutella, 15).sucres_ajoutes, 7.8)
 })
 
+// ── Menus ────────────────────────────────────────────────────
+const poulet = { kcal: 121, proteines: 23, glucides: 0, sucres: 0, lipides: 2.6, fibres: 0 }
+const tofu = { kcal: 125, proteines: 13, glucides: 2, sucres: 0.5, lipides: 7, fibres: 1 }
+const riz = { kcal: 354, proteines: 7.3, glucides: 78, sucres: 0.3, lipides: 0.9, fibres: 1.4 }
+const recette = {
+  id: 'r1', portions_base: 2,
+  ingredients: [
+    { libelle: 'poulet', ciqual_code: 'P', grammes: 240, exclusions: ['viandes:volaille'], aliment: poulet,
+      substituts: [{ libelle: 'tofu', ciqual_code: 'T', exclusions: ['legumineuses:tofu'], aliment: tofu }] },
+    { libelle: 'riz', ciqual_code: 'R', grammes: 140, exclusions: ['feculents:riz'], aliment: riz },
+    { libelle: 'coriandre', ciqual_code: 'C', grammes: 5, exclusions: ['epices:coriandre'], optionnel: true, aliment: { kcal: 23 } },
+  ],
+}
+
+test('répartition des repas : sans petit déjeuner, ses calories vont aux autres', () => {
+  const avec = c.partsDuJour({ petitDejeuner: true, collation: true })
+  const sans = c.partsDuJour({ petitDejeuner: false, collation: true })
+  assert.ok(Math.abs(Object.values(sans).reduce((a, b) => a + b) - 1) < 1e-9)
+  assert.equal(sans.petit_dejeuner, undefined)
+  assert.ok(sans.dejeuner > avec.dejeuner && sans.diner > avec.diner)
+})
+
+test('exclusions : remplacement, retrait du facultatif, recette écartée', () => {
+  const r1 = c.resoudreRecette(recette, ['viandes:volaille', 'epices'])
+  assert.equal(r1.ok, true)
+  assert.deepEqual(r1.ingredients.map(i => i.libelle), ['tofu', 'riz'])
+  assert.deepEqual(r1.remplacements, [{ de: 'poulet', par: 'tofu' }, { de: 'coriandre', par: null }])
+  assert.equal(c.resoudreRecette(recette, ['feculents']).ok, false)                       // riz exclu, pas de substitut
+  assert.equal(c.resoudreRecette(recette, ['viandes', 'legumineuses:tofu']).ok, false)    // substitut exclu aussi
+  assert.equal(c.resoudreRecette(recette, [], [{ libelle: 'riz', ciqual_code: 'R' }]).ok, false) // aliment précis
+})
+
+test('recette incomplète (ingrédient sans code Ciqual) jamais proposée', () => {
+  const r = { ...recette, ingredients: [...recette.ingredients, { libelle: 'sauce', ciqual_code: null, grammes: 20 }] }
+  assert.deepEqual([c.resoudreRecette(r).ok, c.resoudreRecette(r).raison], [false, 'incomplete'])
+})
+
+test('nutrition par portion et facteur de portion', () => {
+  const n = c.nutritionParPortion(c.resoudreRecette(recette).ingredients, 2)
+  assert.equal(Math.round(n.kcal), 394)  // (290 + 496 + 1) / 2, kcal arrondies par ingrédient
+  assert.equal(c.facteurPortion(511, n.kcal), 1.3)
+  assert.equal(c.facteurPortion(100, 400), 0.5)
+  assert.equal(c.facteurPortion(2000, 400), 2)
+})
+
+test('adaptation du dîner selon ce qui a déjà été mangé', () => {
+  const parts = c.partsDuJour({ petitDejeuner: false, collation: true })
+  const normal = c.adapterPortionsRestantes(1460, 0, [{ type: 'diner', kcalParPortion: 450 }], { diner: parts.diner })
+  const [d] = c.adapterPortionsRestantes(1460, 1100, [{ type: 'diner', kcalParPortion: 450 }, { type: 'collation', kcalParPortion: 150 }], parts)
+  assert.equal(normal[0].kcalVisees, 1460)
+  assert.equal(d.kcalVisees, 270)   // 360 kcal restantes, le dîner en prend 30/(30+10)
+  assert.equal(d.facteur, 0.6)
+})
+
+test('liste de courses : portion de l\'utilisatrice + portions standard des autres', () => {
+  const ings = [{ ciqual_code: 'R', libelle: 'riz', grammes: 140, rayon: 'Épicerie salée' }]
+  const l = c.cumulerCourses([
+    { ingredients: ings, portionsBase: 2, facteur: 1.2, nbPersonnes: 2 },  // 70 × 2,2 = 154
+    { ingredients: ings, portionsBase: 2, facteur: 0.8, nbPersonnes: 1 },  // 70 × 0,8 = 56
+  ])
+  assert.deepEqual(l, [{ cle: 'R', libelle: 'riz', rayon: 'Épicerie salée', quantite_g: 210 }])
+})
+
 console.log(`\n${ok} test(s) réussi(s)`)

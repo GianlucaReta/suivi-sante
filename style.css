@@ -704,3 +704,48 @@ select.input { appearance: none; -webkit-appearance: none; background-image: lin
 /* ── Scanner ───────────────────────────────────────────────── */
 .scan-zone { width: 100%; min-height: 240px; background: #000; border-radius: var(--radius-sm); overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .scan-zone video { width: 100% !important; height: auto !important; display: block; }
+
+/* ── Menus ─────────────────────────────────────────────────── */
+.carte-aujourdhui { border-color: var(--brand); }
+.carte-passee { opacity: 0.7; }
+.slot { padding: var(--sp-3) 0; border-top: 1px solid var(--border-soft); }
+.slot:first-of-type { border-top: none; padding-top: var(--sp-1); }
+.slot-tete { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-2); }
+.slot-type { font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.slot-ligne { display: flex; align-items: center; justify-content: space-between; }
+.slot-actions { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-2); margin-top: var(--sp-2); }
+.slot-actions .btn-secondaire { min-height: 38px; padding: 6px 12px; font-size: var(--fs-sm); }
+.slot-mange .option-recette { opacity: 0.65; }
+.personnes { display: inline-flex; align-items: center; gap: 2px; font-size: var(--fs-xs); color: var(--muted); }
+.personnes .btn { padding: 2px 8px; font-size: 16px; }
+.options { display: flex; flex-direction: column; gap: var(--sp-2); }
+.option-recette {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  cursor: pointer;
+}
+.option-recette.active { border-color: var(--brand); background: var(--brand-soft); }
+.option-fige { border-color: var(--border-soft); background: var(--surface-alt); }
+.option-nom { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.option-detail { font-size: var(--fs-xs); color: var(--muted); }
+.option-ajuste { font-size: var(--fs-xs); color: var(--brand-deep); }
+.badge { font-size: var(--fs-xs); color: var(--success); background: var(--success-bg); border-radius: var(--radius-pill); padding: 2px 8px; }
+.etapes { padding-left: 20px; font-size: var(--fs-sm); color: var(--ink-soft); }
+.etapes li { margin-bottom: var(--sp-2); }
+
+/* ── Liste de courses ──────────────────────────────────────── */
+.article { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-2) 0; border-bottom: 1px solid var(--border-soft); cursor: pointer; min-height: 44px; }
+.article:last-child { border-bottom: none; }
+.article input { width: 22px; height: 22px; accent-color: var(--brand); flex-shrink: 0; }
+.article-nom { flex: 1; font-size: var(--fs-sm); }
+.article-qte { font-size: var(--fs-sm); color: var(--muted); white-space: nowrap; }
+.article-coche .article-nom, .article-coche .article-qte { text-decoration: line-through; color: var(--muted-soft); }

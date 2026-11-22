@@ -13,3 +13,5 @@ node_modules/
 .DS_Store
 .claude/
 supabase/.temp/
+recettes-import.sql
+recettes-rapport.txt

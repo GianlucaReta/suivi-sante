@@ -1,0 +1,405 @@
+{
+  "_lisezmoi": "Base de recettes. Chaque ingrédient indique le nom de l'aliment Ciqual visé (champ ciqual) : le code est retrouvé par import-recettes.js à partir de la table Ciqual, et les valeurs nutritionnelles sont toujours calculées depuis Ciqual. Quantités en grammes, crues, pour 'portions' personnes. exclusions = clés de la liste des goûts (profil.js, GROUPES_ALIMENTS).",
+  "recettes": [
+    {
+      "id": "porridge-avoine-pomme-cannelle",
+      "nom": "Porridge d'avoine, pomme et cannelle",
+      "types": ["petit_dejeuner"],
+      "temps": 10, "portions": 1, "mois": [],
+      "etiquettes": ["economique", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "flocons d'avoine", "ciqual": "Flocon d'avoine", "g": 50, "exclusions": ["feculents:flocons_avoine"] },
+        { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 200, "exclusions": ["laitiers:lait"],
+          "substituts": [{ "libelle": "boisson au soja", "ciqual": "Boisson au soja, nature", "exclusions": ["legumineuses:tofu"] }] },
+        { "libelle": "pomme", "ciqual": "Pomme, pulpe et peau, crue", "g": 120, "exclusions": ["fruits:pomme"],
+          "substituts": [{ "libelle": "poire", "ciqual": "Poire, pulpe et peau, crue", "exclusions": ["fruits:poire"] }] },
+        { "libelle": "cannelle", "ciqual": "Cannelle, poudre", "g": 1, "optionnel": true, "exclusions": [] }
+      ],
+      "etapes": [
+        "Faire chauffer le lait avec les flocons à feu doux 4 à 5 minutes en remuant.",
+        "Ajouter la pomme coupée en petits dés et la cannelle, laisser 1 minute de plus."
+      ]
+    },
+    {
+      "id": "fromage-blanc-fruits-rouges-amandes",
+      "nom": "Fromage blanc, fruits rouges et amandes",
+      "types": ["petit_dejeuner", "collation"],
+      "temps": 3, "portions": 1, "mois": [],
+      "etiquettes": ["riche_proteines", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc nature, 0% MG", "g": 200, "exclusions": ["laitiers:fromage_blanc"],
+          "substituts": [{ "libelle": "yaourt nature", "ciqual": "Yaourt, lait demi-écrémé, nature", "exclusions": ["laitiers:yaourt"] }] },
+        { "libelle": "fruits rouges (surgelés ou frais)", "ciqual": "Framboise, crue", "g": 80, "exclusions": ["fruits:fruits_rouges"],
+          "substituts": [{ "libelle": "banane", "ciqual": "Banane, pulpe, crue", "exclusions": ["fruits:banane"] }] },
+        { "libelle": "amandes", "ciqual": "Amande (avec peau)", "g": 15, "optionnel": true, "exclusions": ["autres:fruits_a_coque"] }
+      ],
+      "etapes": ["Mettre le fromage blanc dans un bol, ajouter les fruits et les amandes concassées."]
+    },
+    {
+      "id": "tartines-oeufs-brouilles",
+      "nom": "Tartines complètes et œufs brouillés",
+      "types": ["petit_dejeuner"],
+      "temps": 10, "portions": 1, "mois": [],
+      "etiquettes": ["riche_proteines", "economique", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 60, "exclusions": ["feculents:pain"] },
+        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "beurre", "ciqual": "Beurre à 82% MG, doux", "g": 5, "optionnel": true, "exclusions": ["laitiers:beurre"] }
+      ],
+      "etapes": [
+        "Battre les œufs avec une pincée de sel et de poivre.",
+        "Les cuire à feu doux dans une poêle avec le beurre en remuant sans arrêt, jusqu'à ce qu'ils soient juste pris.",
+        "Servir sur les tranches de pain grillées."
+      ]
+    },
+    {
+      "id": "omelette-epinards-emmental",
+      "nom": "Omelette aux épinards",
+      "types": ["petit_dejeuner", "diner"],
+      "temps": 10, "portions": 1, "mois": [],
+      "etiquettes": ["riche_proteines", "economique", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 120, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "épinards (frais ou surgelés)", "ciqual": "Epinard, cru", "g": 100, "exclusions": ["legumes:epinards"],
+          "substituts": [{ "libelle": "champignons", "ciqual": "Champignon de Paris ou champignon de couche, cru", "exclusions": ["legumes:champignons"] }] },
+        { "libelle": "emmental râpé", "ciqual": "Emmental", "g": 15, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 3, "exclusions": [] }
+      ],
+      "etapes": [
+        "Faire fondre les épinards 2 minutes à la poêle avec l'huile.",
+        "Verser les œufs battus, parsemer d'emmental, cuire 3 minutes à feu moyen et replier."
+      ]
+    },
+    {
+      "id": "yaourt-banane-avoine",
+      "nom": "Yaourt, banane et flocons d'avoine",
+      "types": ["collation", "petit_dejeuner"],
+      "temps": 3, "portions": 1, "mois": [],
+      "etiquettes": ["economique", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "yaourt nature", "ciqual": "Yaourt, lait demi-écrémé, nature", "g": 125, "exclusions": ["laitiers:yaourt"],
+          "substituts": [{ "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc nature, 0% MG", "exclusions": ["laitiers:fromage_blanc"] }] },
+        { "libelle": "banane", "ciqual": "Banane, pulpe, crue", "g": 100, "exclusions": ["fruits:banane"],
+          "substituts": [{ "libelle": "pomme", "ciqual": "Pomme, pulpe et peau, crue", "exclusions": ["fruits:pomme"] }] },
+        { "libelle": "flocons d'avoine", "ciqual": "Flocon d'avoine", "g": 20, "optionnel": true, "exclusions": ["feculents:flocons_avoine"] }
+      ],
+      "etapes": ["Couper la banane en rondelles sur le yaourt, ajouter les flocons."]
+    },
+    {
+      "id": "poulet-riz-courgettes",
+      "nom": "Poulet, riz et courgettes sautées",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [5, 6, 7, 8, 9, 10],
+      "etiquettes": ["riche_proteines", "economique"],
+      "ingredients": [
+        { "libelle": "filets de poulet", "ciqual": "Poulet, filet, sans peau, cru", "g": 260, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "tofu ferme", "ciqual": "Tofu, nature", "exclusions": ["legumineuses:tofu"] }] },
+        { "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "g": 130, "exclusions": ["feculents:riz"],
+          "substituts": [{ "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "exclusions": ["feculents:semoule"] }] },
+        { "libelle": "courgettes", "ciqual": "Courgette, pulpe et peau, crue", "g": 350, "exclusions": ["legumes:courgette"],
+          "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] },
+        { "libelle": "ail", "ciqual": "Ail, cru", "g": 5, "optionnel": true, "exclusions": ["legumes:ail"] }
+      ],
+      "etapes": [
+        "Lancer la cuisson du riz dans l'eau bouillante salée (selon le paquet).",
+        "Couper le poulet en lanières et les courgettes en demi-rondelles.",
+        "Faire dorer le poulet 6 minutes dans l'huile, ajouter les courgettes et l'ail, cuire 8 minutes.",
+        "Servir avec le riz égoutté."
+      ]
+    },
+    {
+      "id": "saumon-patate-douce-brocoli",
+      "nom": "Saumon, patate douce et brocoli",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "pavés de saumon", "ciqual": "Saumon, cru, élevage", "g": 240, "exclusions": ["poissons:saumon"],
+          "substituts": [{ "libelle": "filets de cabillaud", "ciqual": "Cabillaud, cru", "exclusions": ["poissons:poissons_blancs"] }] },
+        { "libelle": "patates douces", "ciqual": "Patate douce, crue", "g": 400, "exclusions": ["feculents:patate_douce"],
+          "substituts": [{ "libelle": "pommes de terre", "ciqual": "Pomme de terre, crue", "exclusions": ["feculents:pommes_de_terre"] }] },
+        { "libelle": "brocoli", "ciqual": "Brocoli, cru", "g": 300, "exclusions": ["legumes:brocoli"],
+          "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Préchauffer le four à 200 °C. Couper les patates douces en cubes, les mélanger avec l'huile et enfourner 25 minutes.",
+        "Ajouter le saumon sur la plaque pour les 12 dernières minutes.",
+        "Pendant ce temps, cuire le brocoli 6 minutes à la vapeur ou à l'eau."
+      ]
+    },
+    {
+      "id": "dahl-lentilles-corail",
+      "nom": "Dahl de lentilles corail et riz",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [],
+      "etiquettes": ["economique", "vegetarien"],
+      "ingredients": [
+        { "libelle": "lentilles corail", "ciqual": "Lentille corail, sèche", "g": 150, "exclusions": ["legumineuses:lentilles"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 250, "exclusions": ["legumes:tomate"] },
+        { "libelle": "lait de coco", "ciqual": "Lait de coco ou Crème de coco", "g": 80, "optionnel": true, "exclusions": ["autres:lait_coco"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "curry", "ciqual": "Curry, poudre", "g": 4, "optionnel": true, "exclusions": ["epices:curry"] },
+        { "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "g": 100, "exclusions": ["feculents:riz"],
+          "substituts": [{ "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "exclusions": ["feculents:pain"] }] }
+      ],
+      "etapes": [
+        "Faire revenir l'oignon émincé avec le curry 2 minutes dans une casserole.",
+        "Ajouter les lentilles rincées, les tomates et 40 cl d'eau. Cuire 20 minutes en remuant.",
+        "Ajouter le lait de coco en fin de cuisson. Servir avec le riz."
+      ]
+    },
+    {
+      "id": "pates-thon-tomate",
+      "nom": "Pâtes complètes au thon et à la tomate",
+      "types": ["dejeuner", "diner"],
+      "temps": 20, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "economique", "rapide"],
+      "ingredients": [
+        { "libelle": "pâtes complètes", "ciqual": "Pâtes sèches au blé complet, crues", "g": 150, "exclusions": ["feculents:pates"] },
+        { "libelle": "thon au naturel", "ciqual": "Thon, au naturel, appertisé, égoutté", "g": 140, "exclusions": ["poissons:thon"],
+          "substituts": [{ "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "exclusions": ["legumineuses:pois_chiches"] }] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 60, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire les pâtes selon le paquet.",
+        "Faire revenir l'oignon dans l'huile, ajouter les tomates et laisser mijoter 10 minutes.",
+        "Ajouter le thon émietté, réchauffer 2 minutes et mélanger avec les pâtes."
+      ]
+    },
+    {
+      "id": "chili-con-carne",
+      "nom": "Chili con carne",
+      "types": ["dejeuner", "diner"],
+      "temps": 35, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "economique"],
+      "ingredients": [
+        { "libelle": "bœuf haché 5 %", "ciqual": "Boeuf, steak haché 5% MG, cru", "g": 220, "exclusions": ["viandes:boeuf"],
+          "substituts": [{ "libelle": "lentilles vertes", "ciqual": "Lentille verte, sèche", "exclusions": ["legumineuses:lentilles"] }] },
+        { "libelle": "haricots rouges", "ciqual": "Haricot rouge, appertisé, égoutté", "g": 240, "exclusions": ["legumineuses:haricots_rouges"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
+        { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "optionnel": true, "exclusions": ["legumes:poivron"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "cumin", "ciqual": "Cumin, graine", "g": 3, "optionnel": true, "exclusions": ["epices:cumin"] },
+        { "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "g": 110, "exclusions": ["feculents:riz"] }
+      ],
+      "etapes": [
+        "Faire revenir l'oignon et le poivron en dés 3 minutes, ajouter la viande et la faire dorer.",
+        "Ajouter les tomates, les haricots égouttés et le cumin. Laisser mijoter 20 minutes.",
+        "Servir avec le riz."
+      ]
+    },
+    {
+      "id": "omelette-pommes-de-terre-salade",
+      "nom": "Omelette aux pommes de terre et salade verte",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "economique", "vegetarien"],
+      "ingredients": [
+        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 300, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, crue", "g": 350, "exclusions": ["feculents:pommes_de_terre"] },
+        { "libelle": "salade verte", "ciqual": "Laitue, crue", "g": 100, "exclusions": ["legumes:salade"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 12, "exclusions": [] }
+      ],
+      "etapes": [
+        "Couper les pommes de terre en fines rondelles, les cuire 15 minutes à la poêle avec la moitié de l'huile.",
+        "Verser les œufs battus, couvrir et cuire 8 minutes à feu doux.",
+        "Servir avec la salade assaisonnée avec le reste de l'huile."
+      ]
+    },
+    {
+      "id": "cabillaud-semoule-carottes",
+      "nom": "Cabillaud, semoule et carottes au cumin",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "filets de cabillaud", "ciqual": "Cabillaud, cru", "g": 280, "exclusions": ["poissons:poissons_blancs"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet, sans peau, cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "g": 120, "exclusions": ["feculents:semoule"],
+          "substituts": [{ "libelle": "boulgour", "ciqual": "Boulgour de blé, cru", "exclusions": ["feculents:boulgour"] }] },
+        { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 300, "exclusions": ["legumes:carotte"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] },
+        { "libelle": "cumin", "ciqual": "Cumin, graine", "g": 2, "optionnel": true, "exclusions": ["epices:cumin"] }
+      ],
+      "etapes": [
+        "Cuire les carottes en rondelles 10 minutes à l'eau, puis les faire revenir avec le cumin et la moitié de l'huile.",
+        "Verser la semoule dans le même volume d'eau bouillante, couvrir 5 minutes.",
+        "Cuire le cabillaud 4 minutes de chaque côté à la poêle avec le reste de l'huile."
+      ]
+    },
+    {
+      "id": "salade-pois-chiches-feta",
+      "nom": "Salade de pois chiches, tomate, concombre et feta",
+      "types": ["dejeuner", "diner"],
+      "temps": 15, "portions": 2, "mois": [5, 6, 7, 8, 9],
+      "etiquettes": ["economique", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "g": 280, "exclusions": ["legumineuses:pois_chiches"],
+          "substituts": [{ "libelle": "lentilles vertes", "ciqual": "Lentille verte, sèche", "exclusions": ["legumineuses:lentilles"] }] },
+        { "libelle": "tomates", "ciqual": "Tomate, crue", "g": 250, "exclusions": ["legumes:tomate"] },
+        { "libelle": "concombre", "ciqual": "Concombre, pulpe et peau, cru", "g": 200, "exclusions": ["legumes:concombre"] },
+        { "libelle": "feta", "ciqual": "Feta", "g": 80, "exclusions": ["laitiers:fromages"],
+          "substituts": [{ "libelle": "œufs durs", "ciqual": "Oeuf, cru", "exclusions": ["oeufs:oeufs"] }] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] }
+      ],
+      "etapes": [
+        "Rincer et égoutter les pois chiches.",
+        "Couper les tomates et le concombre en dés, émietter la feta.",
+        "Mélanger le tout avec l'huile, du sel, du poivre et un filet de citron si tu veux."
+      ]
+    },
+    {
+      "id": "wok-dinde-legumes",
+      "nom": "Wok de dinde aux légumes et nouilles",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope, crue", "g": 240, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "crevettes", "ciqual": "Crevette, crue", "exclusions": ["poissons:crevettes"] }] },
+        { "libelle": "nouilles (ou pâtes)", "ciqual": "Pâtes sèches standard, crues", "g": 130, "exclusions": ["feculents:pates"],
+          "substituts": [{ "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "exclusions": ["feculents:riz"] }] },
+        { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "exclusions": ["legumes:poivron"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, pulpe et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 150, "exclusions": ["legumes:carotte"] },
+        { "libelle": "sauce soja", "ciqual": "Sauce soja, préemballée", "g": 15, "optionnel": true, "exclusions": ["legumineuses:tofu"] },
+        { "libelle": "huile", "ciqual": "Huile de colza", "g": 8, "exclusions": [] },
+        { "libelle": "gingembre", "ciqual": "Gingembre, racine, crue", "g": 5, "optionnel": true, "exclusions": ["epices:gingembre"] }
+      ],
+      "etapes": [
+        "Cuire les nouilles selon le paquet.",
+        "Faire sauter la dinde en lanières 5 minutes à feu vif dans l'huile.",
+        "Ajouter les légumes en bâtonnets et le gingembre râpé, cuire 6 minutes en gardant du croquant.",
+        "Ajouter les nouilles et la sauce soja, mélanger 1 minute."
+      ]
+    },
+    {
+      "id": "soupe-potiron-lentilles",
+      "nom": "Soupe de potiron aux lentilles corail",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [9, 10, 11, 12, 1, 2],
+      "etiquettes": ["economique", "vegetarien"],
+      "ingredients": [
+        { "libelle": "potiron ou butternut", "ciqual": "Potiron, cru", "g": 600, "exclusions": ["legumes:courge"],
+          "substituts": [{ "libelle": "carottes", "ciqual": "Carotte, crue", "exclusions": ["legumes:carotte"] }] },
+        { "libelle": "lentilles corail", "ciqual": "Lentille corail, sèche", "g": 100, "exclusions": ["legumineuses:lentilles"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "crème légère", "ciqual": "Crème de lait, 15 à 20% MG, légère, épaisse", "g": 30, "optionnel": true, "exclusions": ["laitiers:creme"] },
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 80, "exclusions": ["feculents:pain"] }
+      ],
+      "etapes": [
+        "Faire revenir l'oignon, ajouter le potiron en cubes, les lentilles et 80 cl d'eau.",
+        "Cuire 20 minutes, mixer, ajouter la crème. Servir avec le pain."
+      ]
+    },
+    {
+      "id": "gratin-courgettes-jambon",
+      "nom": "Gratin de courgettes au jambon",
+      "types": ["dejeuner", "diner"],
+      "temps": 40, "portions": 2, "mois": [5, 6, 7, 8, 9, 10],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "courgettes", "ciqual": "Courgette, pulpe et peau, crue", "g": 600, "exclusions": ["legumes:courgette"],
+          "substituts": [{ "libelle": "brocoli", "ciqual": "Brocoli, cru", "exclusions": ["legumes:brocoli"] }] },
+        { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix", "g": 150, "exclusions": ["viandes:charcuterie"],
+          "substituts": [{ "libelle": "thon au naturel", "ciqual": "Thon, au naturel, appertisé, égoutté", "exclusions": ["poissons:thon"] }] },
+        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 150, "exclusions": ["laitiers:lait"] },
+        { "libelle": "emmental râpé", "ciqual": "Emmental", "g": 40, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 80, "exclusions": ["feculents:pain"] }
+      ],
+      "etapes": [
+        "Préchauffer le four à 200 °C. Couper les courgettes en rondelles et les faire revenir 8 minutes à la poêle.",
+        "Les répartir dans un plat avec le jambon en lanières.",
+        "Battre les œufs avec le lait, verser sur les courgettes, parsemer d'emmental.",
+        "Enfourner 25 minutes. Servir avec le pain."
+      ]
+    },
+    {
+      "id": "bowl-quinoa-poulet-avocat",
+      "nom": "Bowl de quinoa, poulet, avocat et tomates cerises",
+      "types": ["dejeuner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "quinoa", "ciqual": "Quinoa, cru", "g": 120, "exclusions": ["feculents:quinoa"],
+          "substituts": [{ "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "exclusions": ["feculents:riz"] }] },
+        { "libelle": "filets de poulet", "ciqual": "Poulet, filet, sans peau, cru", "g": 220, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "œufs", "ciqual": "Oeuf, cru", "exclusions": ["oeufs:oeufs"] }] },
+        { "libelle": "avocat", "ciqual": "Avocat, pulpe, cru", "g": 100, "optionnel": true, "exclusions": ["legumes:avocat"] },
+        { "libelle": "tomates cerises", "ciqual": "Tomate cerise, crue", "g": 150, "exclusions": ["legumes:tomate"],
+          "substituts": [{ "libelle": "concombre", "ciqual": "Concombre, pulpe et peau, cru", "exclusions": ["legumes:concombre"] }] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire le quinoa 12 minutes dans deux fois son volume d'eau.",
+        "Cuire le poulet 10 minutes à la poêle, le couper en tranches.",
+        "Répartir dans deux bols le quinoa, le poulet, l'avocat et les tomates coupées. Arroser d'huile."
+      ]
+    },
+    {
+      "id": "steak-hache-haricots-verts-pdt",
+      "nom": "Steak haché, haricots verts et pommes de terre vapeur",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "economique"],
+      "ingredients": [
+        { "libelle": "steaks hachés 5 %", "ciqual": "Boeuf, steak haché 5% MG, cru", "g": 250, "exclusions": ["viandes:boeuf"],
+          "substituts": [{ "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope, crue", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "g": 400, "exclusions": ["legumes:haricots_verts"],
+          "substituts": [{ "libelle": "brocoli", "ciqual": "Brocoli, cru", "exclusions": ["legumes:brocoli"] }] },
+        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, crue", "g": 400, "exclusions": ["feculents:pommes_de_terre"],
+          "substituts": [{ "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "exclusions": ["feculents:riz"] }] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 6, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire les pommes de terre en morceaux et les haricots verts 15 à 20 minutes à la vapeur ou à l'eau.",
+        "Cuire les steaks 2 à 3 minutes de chaque côté dans l'huile."
+      ]
+    },
+    {
+      "id": "curry-pois-chiches-epinards",
+      "nom": "Curry de pois chiches aux épinards",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["economique", "vegetarien"],
+      "ingredients": [
+        { "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "g": 280, "exclusions": ["legumineuses:pois_chiches"],
+          "substituts": [{ "libelle": "lentilles corail", "ciqual": "Lentille corail, sèche", "exclusions": ["legumineuses:lentilles"] }] },
+        { "libelle": "épinards (frais ou surgelés)", "ciqual": "Epinard, cru", "g": 300, "exclusions": ["legumes:epinards"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, pulpe et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 200, "exclusions": ["legumes:tomate"] },
+        { "libelle": "lait de coco", "ciqual": "Lait de coco ou Crème de coco", "g": 80, "optionnel": true, "exclusions": ["autres:lait_coco"] },
+        { "libelle": "curry", "ciqual": "Curry, poudre", "g": 4, "optionnel": true, "exclusions": ["epices:curry"] },
+        { "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "g": 110, "exclusions": ["feculents:riz"] }
+      ],
+      "etapes": [
+        "Faire revenir le curry 1 minute, ajouter les tomates et les pois chiches égouttés, cuire 10 minutes.",
+        "Ajouter les épinards et le lait de coco, cuire 5 minutes. Servir avec le riz."
+      ]
+    },
+    {
+      "id": "galettes-jambon-oeuf-salade",
+      "nom": "Galettes de sarrasin jambon, œuf et salade",
+      "types": ["diner"],
+      "temps": 20, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "rapide"],
+      "ingredients": [
+        { "libelle": "galettes de sarrasin", "ciqual": "Galette de sarrasin (crêpe salée)", "g": 120, "exclusions": ["feculents:pain"] },
+        { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix", "g": 100, "exclusions": ["viandes:charcuterie"],
+          "substituts": [{ "libelle": "champignons", "ciqual": "Champignon de Paris ou champignon de couche, cru", "exclusions": ["legumes:champignons"] }] },
+        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "emmental râpé", "ciqual": "Emmental", "g": 30, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "salade verte", "ciqual": "Laitue, crue", "g": 100, "exclusions": ["legumes:salade"] }
+      ],
+      "etapes": [
+        "Réchauffer une galette dans une poêle chaude, casser un œuf au centre, ajouter jambon et emmental.",
+        "Replier les bords quand le blanc est pris. Recommencer. Servir avec la salade."
+      ]
+    }
+  ]
+}
