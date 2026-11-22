@@ -55,7 +55,7 @@ async function chargerReglagesNotifications() {
     const sub = await abonnementActuel().catch(() => null)
     actif = !!sub && Notification.permission === 'granted'
     etat = actif
-      ? `<p class="carte-texte">✓ Notifications activées sur cet appareil.</p>
+      ? `<p class="carte-texte ico-titre">${icone('cloche')} Notifications activées sur cet appareil.</p>
          <div class="feuille-actions">
            <button class="btn btn-secondaire" onclick="desactiverNotifications()">Désactiver ici</button>
            <button class="btn btn-primaire" onclick="envoyerNotificationTest()">M'envoyer un test</button>
@@ -113,7 +113,7 @@ async function activerNotifications() {
       appareil: estIOS() ? 'iPhone' : navigator.platform || 'navigateur',
     }, { onConflict: 'endpoint' })
     if (error) { gererErreur(error, "Impossible d'enregistrer l'appareil."); return }
-    afficherToast('Notifications activées 🔔')
+    afficherToast('Notifications activées !')
   } catch (e) {
     console.error(e)
     afficherToast("Impossible d'activer les notifications sur cet appareil.", true)

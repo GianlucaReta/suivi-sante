@@ -269,7 +269,7 @@ async function afficherCourbes() {
       <div class="carte-titre">Poids</div>
       ${pesees.length ? `<div class="graphique"><canvas id="g-poids" aria-label="Courbe du poids"></canvas></div>` : '<p class="carte-texte">Pas encore de pesée.</p>'}
       <p class="carte-texte">${proj.date ? `Au rythme actuel (${formatNombre(proj.parSemaine, 2)} kg par semaine), arrivée à ${formatNombre(objectif, 1)} kg vers le <strong>${new Date(proj.date + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>.`
-        : proj.atteint ? 'Objectif atteint 🎉' : proj.raison === 'stable' ? 'Poids stable sur les dernières semaines : c\'est normal par moments (eau, cycle, muscle). La projection reviendra avec les prochaines pesées.'
+        : proj.atteint ? 'Objectif atteint, bravo !' : proj.raison === 'stable' ? 'Poids stable sur les dernières semaines : c\'est normal par moments (eau, cycle, muscle). La projection reviendra avec les prochaines pesées.'
         : 'La projection apparaîtra après quelques pesées hebdomadaires (au moins 2, sur 10 jours ou plus).'}</p>
       ${pesees.length ? `<p class="message-info">${proj.date ? 'Pointillés : la tendance des 4 prochaines semaines au rythme actuel.' : ''}${pesees.some(p => ['regles', 'luteale'].includes(phaseCycle(_cycles, p.date)?.phase)) ? ' Fond coloré : règles ou phase lutéale, quand l\'eau peut faire varier le poids.' : ''}</p>` : ''}
       ${pesees.length ? tableDonnees(['Date', 'Poids (kg)', 'Masse grasse (%)', 'Muscle (%)'], [...pesees].reverse().map(p => [formatDate(p.date), formatNombre(p.poids, 1), p.masse_grasse_pct != null ? formatNombre(p.masse_grasse_pct, 1) : null, p.masse_musculaire_pct != null ? formatNombre(p.masse_musculaire_pct, 1) : null])) : ''}

@@ -6,7 +6,8 @@
 
 const LIBELLES_ZONES = { jambes: 'Jambes', fessiers: 'Fessiers', gainage: 'Gainage', haut_du_corps: 'Haut du corps', cardio: 'Cardio' }
 const LIBELLES_TYPES_SEANCE = { A: 'Bas du corps', B: 'Haut du corps et gainage' }
-const RESSENTIS = [['facile', 'Facile', '😌'], ['correct', 'Correct', '🙂'], ['difficile', 'Difficile', '😮‍💨']]
+const RESSENTIS = [['facile', 'Facile', 'serein'], ['correct', 'Correct', 'visage4'], ['difficile', 'Difficile', 'souffle']]
+const iconeRessenti = cle => icone(RESSENTIS.find(r => r[0] === cle)?.[2] || 'coche', 'ico ico-titre-inline')
 
 let _exercices = null
 let seancesSemaine = []
@@ -89,7 +90,7 @@ async function verifierEtAppliquerProgression(seances) {
   })
   if (!p.monter) return p
   if (await sauvegarderProfil({ sport_niveau: (profil.sport_niveau || 1) + 1, sport_niveau_date: dateISO() })) {
-    afficherToast(`Niveau ${profil.sport_niveau} : un tout petit peu plus de répétitions, tu progresses 💪`)
+    afficherToast(`Niveau ${profil.sport_niveau} : un tout petit peu plus de répétitions, tu progresses !`)
   }
   return { monter: true }
 }
@@ -122,9 +123,10 @@ function afficherSport(prog) {
   if (duJour?.statut === 'prevue') {
     const c = contenuSeance(duJour)
     html += `
-      <div class="carte carte-aujourdhui">
-        <div class="carte-titre">Séance du jour</div>
-        <p class="carte-texte">${LIBELLES_TYPES_SEANCE[duJour.type]} · environ ${c.dureeMin} min · ${c.circuit.length} exercices × ${c.tours} tours</p>
+      <div class="carte carte-aujourdhui carte-cadre avec-etiquette">
+        <span class="etiquette">Séance du jour</span>
+        <div class="carte-titre">${LIBELLES_TYPES_SEANCE[duJour.type]}</div>
+        <p class="carte-texte">Environ ${c.dureeMin} min · ${c.circuit.length} exercices × ${c.tours} tours</p>
         ${duJour.date_initiale !== duJour.date_prevue ? `<p class="message-info">Reportée du ${libelleJourCourt(duJour.date_initiale)}.</p>` : ''}
         <div class="feuille-actions">
           <button class="btn btn-secondaire" onclick="apercuSeance('${duJour.id}')">Voir</button>
@@ -132,7 +134,7 @@ function afficherSport(prog) {
         </div>
       </div>`
   } else if (duJour?.statut === 'faite') {
-    html += `<div class="carte"><div class="carte-titre">Séance faite aujourd'hui ${RESSENTIS.find(r => r[0] === duJour.ressenti)?.[2] || '✓'}</div>
+    html += `<div class="carte carte-cadre"><div class="carte-titre ico-titre">Séance faite aujourd'hui ${iconeRessenti(duJour.ressenti)}</div>
       <p class="carte-texte">Bravo, profite du reste de ta journée.</p></div>`
   } else {
     html += `<div class="carte"><div class="carte-titre">Pas de séance prévue aujourd'hui</div>
@@ -168,7 +170,7 @@ function messageProgression(p) {
 
 function renduLigneSeance(s) {
   const auj = dateISO()
-  const etat = s.statut === 'faite' ? `faite ${RESSENTIS.find(r => r[0] === s.ressenti)?.[2] || '✓'}`
+  const etat = s.statut === 'faite' ? `faite ${iconeRessenti(s.ressenti)}`
     : s.statut === 'abandonnee' ? 'pas cette fois'
     : s.date_prevue === auj ? "aujourd'hui" : 'prévue'
   return `
@@ -336,6 +338,21 @@ function tictac() {
   if (reste <= 0) { bip(990, 0.35); etapeSuivante(); return }
   const chrono = document.getElementById('sg-chrono')
   if (chrono) chrono.textContent = formatChrono(reste)
+  const anneau = document.getElementById('sg-anneau')
+  if (anneau) anneau.style.strokeDashoffset = offsetChrono(reste)
+}
+
+// Anneau du chrono : plein au départ, il se vide au fil des secondes
+function offsetChrono(reste) {
+  const total = guidee.etapes[guidee.index]?.duree || 1
+  return (100 - Math.max(0, Math.min(1, reste / total)) * 100).toFixed(2)
+}
+function chronoAnneau(reste, repos = false) {
+  return `<div class="sg-anneau ${repos ? 'sg-anneau-repos' : ''}">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="anneau-piste" cx="50" cy="50" r="44"/>
+      <circle id="sg-anneau" class="sg-anneau-trait" cx="50" cy="50" r="44" pathLength="100" stroke-dasharray="100" style="stroke-dashoffset:${offsetChrono(reste)}"/></svg>
+    <div id="sg-chrono" class="sg-chrono">${formatChrono(reste)}</div>
+  </div>`
 }
 
 function etapeSuivante() {
@@ -377,7 +394,7 @@ function afficherEtape() {
     const suivant = prochainExercice()
     el.innerHTML = `
       <div class="sg-titre">${esc(e.titre || 'Repos')}</div>
-      <div id="sg-chrono" class="sg-chrono sg-chrono-repos">${formatChrono(guidee.pause ? guidee.reste : e.duree)}</div>
+      ${chronoAnneau(guidee.pause ? guidee.reste : e.duree, true)}
       ${suivant ? `<div class="sg-suivant">Ensuite : <strong>${esc(suivant.exercice.nom)}</strong>${suivant.cote ? ` (${suivant.cote.toLowerCase()})` : ''}</div>
         ${imageExercice(suivant.exercice, true)}` : ''}`
   } else {
@@ -386,7 +403,7 @@ function afficherEtape() {
       <div class="sg-titre">${esc(e.titre || '')}</div>
       ${imageExercice(ex, true)}
       <div class="sg-nom">${esc(ex.nom)}${e.cote ? ` · ${e.cote}` : ''}</div>
-      ${e.duree ? `<div id="sg-chrono" class="sg-chrono">${formatChrono(guidee.pause ? guidee.reste : e.duree)}</div>`
+      ${e.duree ? chronoAnneau(guidee.pause ? guidee.reste : e.duree)
         : `<div class="sg-chrono">${e.reps}<span class="sg-unite">${ex.cote ? ' par côté' : ' répétitions'}</span></div>`}
       <ul class="consignes">${(ex.consignes || []).map(c => `<li>${esc(c)}</li>`).join('')}</ul>`
   }
@@ -417,6 +434,7 @@ function terminerSeance() {
   clearInterval(guidee.timer)
   guidee.fin = null
   bip(990, 0.2); setTimeout(() => bip(1320, 0.35), 220)
+  lancerConfettis(60)
   const minutes = Math.max(1, Math.round((Date.now() - guidee.debut) / 60000))
   guidee.minutes = minutes
   document.getElementById('sg-barre').style.width = '100%'
@@ -424,10 +442,10 @@ function terminerSeance() {
   document.querySelector('.sg-haut').classList.add('invisible')
   document.getElementById('sg-contenu').innerHTML = `
     <div class="sg-titre">Séance terminée</div>
-    <div class="sg-bravo">Bravo ! 🎉</div>
+    <div class="sg-bravo">Bravo !</div>
     <p class="carte-texte" style="text-align:center;">${minutes} minute${minutes > 1 ? 's' : ''} pour toi. Comment l'as-tu trouvée ?</p>
     <div class="ressentis">
-      ${RESSENTIS.map(([cle, lib, emoji]) => `<button class="btn btn-secondaire ressenti" onclick="enregistrerRessenti('${cle}')"><span class="ressenti-emoji">${emoji}</span>${lib}</button>`).join('')}
+      ${RESSENTIS.map(([cle, lib, emoji]) => `<button class="btn btn-secondaire ressenti" onclick="enregistrerRessenti('${cle}')">${icone(emoji, 'ressenti-icone')}${lib}</button>`).join('')}
     </div>
     <p class="message-info" style="text-align:center;">Ton ressenti sert à ajuster la progression. « Difficile » met la progression en pause, sans rien perdre.</p>`
 }
@@ -454,14 +472,20 @@ async function chargerSeanceDuJour() {
   const s = seancesSemaine.find(x => x.date_prevue === dateISO() && x.statut !== 'abandonnee')
   if (!s) { el.innerHTML = ''; return }
   if (s.statut === 'faite') {
-    el.innerHTML = `<div class="carte"><div class="carte-titre">Séance du jour faite ${RESSENTIS.find(r => r[0] === s.ressenti)?.[2] || '✓'}</div></div>`
+    el.innerHTML = `<div class="carte carte-cadre avec-etiquette seance-jour"><span class="etiquette etiquette-droite">Séance du jour</span>
+      <span class="seance-jour-icone">${iconeRessenti(s.ressenti)}</span>
+      <div class="seance-jour-texte"><strong>Séance faite, bravo !</strong><span>Profite de ta journée.</span></div></div>`
     return
   }
   const c = contenuSeance(s)
   el.innerHTML = `
-    <div class="carte">
-      <div class="carte-titre">Séance du jour</div>
-      <p class="carte-texte">${LIBELLES_TYPES_SEANCE[s.type]} · environ ${c.dureeMin} min</p>
-      <button class="btn btn-primaire btn-bloc" style="margin-top:var(--sp-3);" onclick="demarrerSeance('${s.id}')">Commencer</button>
+    <div class="carte carte-cadre avec-etiquette seance-jour">
+      <span class="etiquette etiquette-droite">Séance du jour</span>
+      <span class="seance-jour-icone">${icone('haltere')}</span>
+      <div class="seance-jour-texte">
+        <strong>${LIBELLES_TYPES_SEANCE[s.type]}</strong>
+        <span>environ ${c.dureeMin} min · ${c.circuit.length} exercices × ${c.tours} tours</span>
+      </div>
+      <button class="btn btn-primaire btn-rond" onclick="demarrerSeance('${s.id}')" aria-label="Commencer la séance">${icone('lecture')}</button>
     </div>`
 }

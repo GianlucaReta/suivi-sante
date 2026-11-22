@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 const ONGLETS_SUIVI = [['bilan', 'Bilan'], ['pesee', 'Pesée'], ['sucre', 'Sucre'], ['cycle', 'Cycle'], ['courbes', 'Courbes']]
-const EMOJIS_ECHELLE = ['😞', '😕', '😐', '🙂', '😄']
+const VISAGES_ECHELLE = ['visage1', 'visage2', 'visage3', 'visage4', 'visage5']
 const DECLENCHEURS = [['stress', 'Stress'], ['ennui', 'Ennui'], ['fatigue', 'Fatigue'], ['apres_repas', 'Après un repas'], ['soir', 'Le soir'], ['emotion', 'Émotion'], ['recompense', 'Envie de me faire plaisir'], ['autre', 'Autre']]
 const IDEES_ALTERNATIVES = ['Un thé ou une infusion', 'Un fruit', 'Un yaourt nature avec un peu de miel', 'Un carré de chocolat noir 70 %', 'Une poignée d\'amandes',
   'Un grand verre d\'eau pétillante', 'Marcher 10 minutes', 'Me brosser les dents', 'Appeler ou écrire à quelqu\'un', 'Attendre 10 minutes et voir si l\'envie passe']
@@ -40,7 +40,7 @@ async function chargerSuivi() {
 }
 
 function boutonsEchelle(champ, valeur, fn = 'choisirEchelleBilan') {
-  return `<div class="echelle">${EMOJIS_ECHELLE.map((e, i) => `<button type="button" class="echelle-btn ${valeur === i + 1 ? 'active' : ''}" onclick="${fn}('${champ}', ${i + 1})" aria-label="${i + 1} sur 5">${e}</button>`).join('')}</div>`
+  return `<div class="echelle">${VISAGES_ECHELLE.map((e, i) => `<button type="button" class="echelle-btn ${valeur === i + 1 ? 'active' : ''}" onclick="${fn}('${champ}', ${i + 1})" aria-label="${i + 1} sur 5">${icone(e, 'ico-echelle')}</button>`).join('')}</div>`
 }
 
 function nombreChamp(id) {
@@ -103,7 +103,7 @@ async function afficherBilan() {
       <div class="champ"><span class="champ-label">Humeur de la journée</span>${boutonsEchelle('humeur', _bilanSaisie.humeur)}</div>
       <div class="auto-rempli">
         <div><strong>${formatNombre(d.kcalMangees)}</strong> kcal mangées <span class="option-detail">(journal, ${d.nbAliments} aliment${d.nbAliments > 1 ? 's' : ''})</span></div>
-        <div>${d.seance ? `Séance de sport faite ✓` : 'Pas de séance de sport'}</div>
+        <div>${d.seance ? `Séance de sport faite` : 'Pas de séance de sport'}</div>
         <div>${d.nbEnvies} envie${d.nbEnvies > 1 ? 's' : ''} de sucre notée${d.nbEnvies > 1 ? 's' : ''}</div>
       </div>
       <button class="btn btn-primaire btn-bloc" onclick="enregistrerBilan()">Enregistrer le bilan</button>
@@ -131,7 +131,8 @@ async function enregistrerBilan() {
   }
   const { error } = await db.from('bilans').upsert(ligne, { onConflict: 'user_id,date' })
   if (error) { gererErreur(error, "Impossible d'enregistrer le bilan."); return }
-  afficherToast('Bilan enregistré 🌙')
+  afficherToast('Bilan enregistré, belle soirée !')
+  lancerConfettis(30)
   afficherBilan()
 }
 
@@ -199,7 +200,7 @@ async function afficherPesees() {
       <div class="carte-titre">Pesée de la semaine</div>
       <p class="carte-texte">Pèse-toi <strong>une fois par semaine, le même jour, le matin, à jeun</strong>, après être passée aux toilettes. C'est la tendance sur plusieurs semaines qui compte, pas une pesée isolée.</p>
       ${der ? `<p class="message-info">Dernière pesée ${joursDepuis === 0 ? "aujourd'hui" : joursDepuis === 1 ? 'hier' : `il y a ${joursDepuis} jours`}.</p>` : ''}
-      ${phase && ['luteale', 'regles'].includes(phase.phase) ? `<p class="info-cycle">🌙 ${LIBELLES_PHASES[phase.phase][0]} : ${LIBELLES_PHASES[phase.phase][1]}</p>` : ''}
+      ${phase && ['luteale', 'regles'].includes(phase.phase) ? `<p class="info-cycle ico-titre">${icone('lune')} ${LIBELLES_PHASES[phase.phase][0]} : ${LIBELLES_PHASES[phase.phase][1]}</p>` : ''}
       <button class="btn btn-primaire btn-bloc" style="margin-top:var(--sp-3);" onclick="ouvrirPesee()">${der?.date === dateISO() ? 'Modifier la pesée du jour' : 'Noter une pesée'}</button>
     </div>
     ${der ? `
@@ -256,6 +257,7 @@ async function enregistrerPesee() {
   const { error } = await db.from('pesees').upsert(ligne, { onConflict: 'user_id,date' })
   if (error) { gererErreur(error, "Impossible d'enregistrer la pesée (vérifie que les valeurs sont plausibles)."); return }
   fermerFeuille()
+  feterPeseeEnBaisse(ligne)
   await apresPesee()
   if (pageActive === 'suivi') chargerSuivi(); else chargerPage(pageActive)
 }
@@ -279,7 +281,8 @@ async function apresPesee() {
   // Objectif atteint : début de la stabilisation (remontée progressive des calories)
   if (profil.phase === 'perte' && profil.poids_objectif && poids <= Number(profil.poids_objectif)) {
     await sauvegarderProfil({ phase: 'stabilisation', date_debut_stabilisation: dateISO() })
-    ouvrirFeuille('Objectif atteint 🎉', `
+    lancerConfettis(70)
+    ouvrirFeuille('Objectif atteint !', `
       <p class="carte-texte">Bravo, tu as atteint ${formatNombre(profil.poids_objectif, 1)} kg ! C'est le fruit de semaines de régularité.</p>
       <p class="carte-texte" style="margin-top:var(--sp-3);">Place maintenant à la <strong>stabilisation</strong> : pendant ${profil.semaines_stabilisation} semaines, tes calories vont remonter doucement jusqu'à ton niveau d'équilibre. C'est ce qui permet d'éviter l'effet rebond.</p>
       <button class="btn btn-primaire btn-bloc" style="margin-top:var(--sp-4);" onclick="fermerFeuille()">Super</button>`)
@@ -349,32 +352,34 @@ async function afficherSucre() {
   const cetteSemaine = semaines.at(-1), semPrec = semaines.at(-2)
   const aujourdHui = sucreries.filter(s => s.date === auj)
   const prochainBadge = BADGES_SERIE.find(b => b > serie.actuelle)
+  feterNouveauBadge(serie.record)
 
   el.innerHTML = `
-    <div class="carte">
+    <div class="carte carte-cadre avec-etiquette">
+      <span class="etiquette">Ma série</span>
       <div class="carte-titre">Jours sans cookie ni chocolat</div>
       <div class="reperes">
         <div class="repere"><span class="repere-valeur">${serie.actuelle}</span><span class="repere-unite">jour${serie.actuelle > 1 ? 's' : ''} en cours</span></div>
         <div class="repere"><span class="repere-valeur">${serie.record}</span><span class="repere-unite">ton record</span></div>
       </div>
-      <div class="badges">${BADGES_SERIE.map(b => `<span class="badge-serie ${serie.record >= b ? 'obtenu' : ''}" title="${b} jours">${serie.record >= b ? '🏅' : '○'} ${b} j</span>`).join('')}</div>
-      <p class="message-info">${serie.actuelle === 0 ? 'Une nouvelle série commence demain. Chaque jour compte, et tes badges restent acquis.' : prochainBadge ? `Prochain badge à ${prochainBadge} jours.` : 'Tous les badges sont à toi 🎉'}</p>
+      <div class="badges">${BADGES_SERIE.map(b => `<span class="badge-serie ${serie.record >= b ? 'obtenu' : ''}" title="${b} jours">${icone(serie.record >= b ? 'medaille' : 'cercle', 'ico-badge')} ${b} j</span>`).join('')}</div>
+      <p class="message-info">${serie.actuelle === 0 ? 'Une nouvelle série commence demain. Chaque jour compte, et tes badges restent acquis.' : prochainBadge ? `Prochain badge à ${prochainBadge} jours.` : 'Tous les badges sont à toi, bravo !'}</p>
     </div>
 
     <div class="carte">
       <div class="carte-titre">Aujourd'hui</div>
       <div class="actions-sucre">
-        <button class="btn btn-secondaire" onclick="ajouterSucrerie('cookie')">🍪 + 1 cookie</button>
-        <button class="btn btn-secondaire" onclick="ajouterSucrerie('chocolat')">🍫 + 1 carré</button>
+        <button class="btn btn-secondaire" onclick="ajouterSucrerie('cookie')">${icone('cookie')} + 1 cookie</button>
+        <button class="btn btn-secondaire" onclick="ajouterSucrerie('chocolat')">${icone('chocolat')} + 1 carré</button>
       </div>
-      ${aujourdHui.length ? `<p class="message-info">Noté aujourd'hui : ${aujourdHui.map(s => `${s.type === 'cookie' ? '🍪' : '🍫'}`).join(' ')} <button class="btn btn-lien" onclick="annulerDerniereSucrerie('${aujourdHui.at(-1).id}')">annuler le dernier</button></p>` : ''}
+      ${aujourdHui.length ? `<p class="message-info">Noté aujourd'hui : ${aujourdHui.map(s => `${icone(s.type === 'cookie' ? 'cookie' : 'chocolat')}`).join(' ')} <button class="btn btn-lien" onclick="annulerDerniereSucrerie('${aujourdHui.at(-1).id}')">annuler le dernier</button></p>` : ''}
       <button class="btn btn-primaire btn-bloc" style="margin-top:var(--sp-3);" onclick="ouvrirEnvie()">J'ai une envie de sucre</button>
     </div>
 
     <div class="carte">
       <div class="carte-titre">Cette semaine</div>
-      <div class="ligne"><span>🍪 Cookies</span><span class="ligne-valeur">${formatNombre(cetteSemaine.cookie)} ${comparaison(cetteSemaine.cookie, semPrec.cookie)}</span></div>
-      <div class="ligne"><span>🍫 Carrés de chocolat</span><span class="ligne-valeur">${formatNombre(cetteSemaine.chocolat)} ${comparaison(cetteSemaine.chocolat, semPrec.chocolat)}</span></div>
+      <div class="ligne"><span class="ico-titre">${icone('cookie')} Cookies</span><span class="ligne-valeur">${formatNombre(cetteSemaine.cookie)} ${comparaison(cetteSemaine.cookie, semPrec.cookie)}</span></div>
+      <div class="ligne"><span class="ico-titre">${icone('chocolat')} Carrés de chocolat</span><span class="ligne-valeur">${formatNombre(cetteSemaine.chocolat)} ${comparaison(cetteSemaine.chocolat, semPrec.chocolat)}</span></div>
       ${renduBarresSemaines(semaines)}
       <div class="ligne"><span>Sucres ajoutés (moyenne par jour)</span><span class="ligne-valeur">${sa.semaine != null ? sa.semaine + ' g' : '–'}</span></div>
       ${sa.semaine != null && sa.avant != null ? `<p class="message-info">${sa.semaine < sa.avant ? `En baisse par rapport aux 4 semaines précédentes (${sa.avant} g/jour). Bien joué !` : sa.semaine === sa.avant ? `Stable par rapport aux 4 semaines précédentes (${sa.avant} g/jour).` : `Un peu plus que les 4 semaines précédentes (${sa.avant} g/jour). Pas de quota : on regarde juste la tendance.`}</p>` : '<p class="message-info">Calculé depuis ton journal alimentaire. La comparaison apparaîtra après quelques semaines.</p>'}
@@ -388,13 +393,13 @@ async function afficherSucre() {
         ${analyse.moments.length ? `<div class="ligne"><span>Moment le plus fréquent</span><span class="ligne-valeur">${TRANCHES_HORAIRES.find(t => t[0] === analyse.moments[0][0])[1]}</span></div>` : ''}
         ${analyse.declencheurs.length ? `<div class="ligne"><span>Déclencheurs fréquents</span><span class="ligne-valeur">${analyse.declencheurs.slice(0, 3).map(([k, n]) => `${(DECLENCHEURS.find(d => d[0] === k) || [, k])[1].toLowerCase()} (${n})`).join(', ')}</span></div>` : ''}
       ` : '<p class="carte-texte">Note tes envies quand elles arrivent : le site te montrera les moments et les déclencheurs les plus fréquents.</p>'}
-      ${lien ? `<p class="info-cycle">😴 Les jours après une nuit de moins de 7 h, tu notes en moyenne ${formatNombre(lien.moyCourt, 1)} envie(s), contre ${formatNombre(lien.moyLong, 1)} après une nuit plus longue. Bien dormir t'aide vraiment.</p>` : ''}
+      ${lien ? `<p class="info-cycle">${icone('sommeil')} Les jours après une nuit de moins de 7 h, tu notes en moyenne ${formatNombre(lien.moyCourt, 1)} envie(s), contre ${formatNombre(lien.moyLong, 1)} après une nuit plus longue. Bien dormir t'aide vraiment.</p>` : ''}
     </div>
 
     <div class="carte">
       <div class="carte-titre">Mes alternatives</div>
       <p class="message-info" style="margin-top:0;">Ce qui marche vraiment pour toi : elles te seront proposées quand tu noteras une envie.</p>
-      ${alternatives.map(a => `<div class="ligne"><span>${esc(a.texte)}</span><button class="btn btn-lien" onclick="supprimerAlternative('${a.id}')" aria-label="Retirer">✕</button></div>`).join('')}
+      ${alternatives.map(a => `<div class="ligne"><span>${esc(a.texte)}</span><button class="btn btn-lien" onclick="supprimerAlternative('${a.id}')" aria-label="Retirer">${icone('croix')}</button></div>`).join('')}
       <form class="recherche-barre" style="margin-top:var(--sp-3);" onsubmit="event.preventDefault(); ajouterAlternative(document.getElementById('alt-nouvelle').value)">
         <input id="alt-nouvelle" class="input" type="text" maxlength="120" placeholder="Ex. un carré de chocolat noir" />
         <button class="btn btn-secondaire" type="submit">Ajouter</button>
@@ -492,7 +497,7 @@ async function enregistrerEnvie() {
     humeur: _envie.humeur, satisfaite: _envie.satisfaite, alternative: _envie.alternative })
   if (error) { gererErreur(error, "Impossible d'enregistrer l'envie."); return }
   fermerFeuille()
-  afficherToast(_envie.satisfaite === false ? 'Envie passée sans craquer : bravo 👏' : 'Envie notée')
+  afficherToast(_envie.satisfaite === false ? 'Envie passée sans craquer : bravo !' : 'Envie notée')
   rafraichirSucre()
 }
 
@@ -540,9 +545,9 @@ async function afficherCycle() {
         const suivant = arr[i - 1]
         const duree = suivant ? Math.round((new Date(suivant.date_debut) - new Date(c.date_debut)) / 86400000) : null
         return `<div class="ligne"><span>${formatDate(c.date_debut)}</span><span class="ligne-valeur">${c.duree_regles} j de règles${duree ? ` · cycle de ${duree} j` : ''}</span>
-          <button class="btn btn-lien" onclick="supprimerCycle('${c.id}')" aria-label="Supprimer">✕</button></div>`
+          <button class="btn btn-lien" onclick="supprimerCycle('${c.id}')" aria-label="Supprimer">${icone('croix')}</button></div>`
       }).join('')}</div>` : ''}
-    <p class="message-info" style="text-align:center;">🔒 Ces données sont privées : elles ne sont visibles que par toi.</p>`
+    <p class="message-info ico-titre" style="justify-content:center;">${icone('cadenas')} Ces données sont privées : elles ne sont visibles que par toi.</p>`
 }
 
 async function enregistrerCycle() {
@@ -579,12 +584,34 @@ async function chargerRaccourcisSuivi() {
     <div class="carte">
       <div class="carte-titre">Noter rapidement</div>
       <div class="actions-sucre">
-        <button class="btn btn-secondaire" onclick="ajouterSucrerie('cookie')">🍪 Cookie</button>
-        <button class="btn btn-secondaire" onclick="ajouterSucrerie('chocolat')">🍫 Chocolat</button>
-        <button class="btn btn-secondaire" onclick="ouvrirEnvie()">✋ Envie</button>
+        <button class="btn btn-secondaire" onclick="ajouterSucrerie('cookie')">${icone('cookie')} Cookie</button>
+        <button class="btn btn-secondaire" onclick="ajouterSucrerie('chocolat')">${icone('chocolat')} Chocolat</button>
+        <button class="btn btn-secondaire" onclick="ouvrirEnvie()">${icone('main')} Envie</button>
       </div>
-      ${peseeDue ? `<button class="btn btn-lien" style="padding-left:0;" onclick="ongletSuivi='pesee'; showPage('suivi')">⚖️ C'est le moment de ta pesée de la semaine</button>` : ''}
-      ${!bilan ? `<button class="btn ${soir ? 'btn-primaire' : 'btn-secondaire'} btn-bloc" style="margin-top:var(--sp-3);" onclick="dateBilan = dateISO(); ongletSuivi = 'bilan'; showPage('suivi')">🌙 Faire le bilan du soir</button>`
-        : `<p class="message-info">Bilan du soir fait ✓</p>`}
+      ${peseeDue ? `<button class="btn btn-lien" style="padding-left:0;" onclick="ongletSuivi='pesee'; showPage('suivi')">${icone('balance')} C'est le moment de ta pesée de la semaine</button>` : ''}
+      ${!bilan ? `<button class="btn ${soir ? 'btn-primaire' : 'btn-secondaire'} btn-bloc" style="margin-top:var(--sp-3);" onclick="dateBilan = dateISO(); ongletSuivi = 'bilan'; showPage('suivi')">${icone('lune')} Faire le bilan du soir</button>`
+        : `<p class="message-info ico-titre">${icone('coche')} Bilan du soir fait, bravo !</p>`}
     </div>`
+}
+
+// ── Petites célébrations ─────────────────────────────────────
+// Un nouveau badge sucre n'est fêté qu'une fois (mémorisé sur l'appareil)
+function feterNouveauBadge(record) {
+  const obtenu = [...BADGES_SERIE].reverse().find(b => record >= b)
+  if (!obtenu) return
+  let deja = 0
+  try { deja = Number(localStorage.getItem('ss_badge_fete')) || 0 } catch (e) {}
+  if (obtenu <= deja) return
+  try { localStorage.setItem('ss_badge_fete', String(obtenu)) } catch (e) {}
+  lancerConfettis(60)
+  afficherToast(`Nouveau badge : ${obtenu} jours sans craquage !`)
+}
+
+// Pesée plus basse que la précédente : confettis
+function feterPeseeEnBaisse(ligne) {
+  const precedente = dernierPoids
+  if (precedente && ligne.poids < Number(precedente) && ligne.date >= dateISO()) {
+    lancerConfettis(50)
+    afficherToast(`${formatNombre(Number(precedente) - ligne.poids, 1)} kg de moins, bravo !`)
+  }
 }

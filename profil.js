@@ -181,7 +181,7 @@ async function suivantQuestionnaire() {
     return
   }
   fermerQuestionnaire()
-  if (questionnaire.mode === 'onboarding') afficherToast('Ton espace est prêt 🌿')
+  if (questionnaire.mode === 'onboarding') afficherToast('Ton espace est prêt !')
   else afficherToast('Enregistré')
   chargerPage(pageActive || 'aujourdhui')
 }

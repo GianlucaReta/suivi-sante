@@ -44,8 +44,43 @@ function formatQuantite(g, libelle = '') {
 // ═════════════════════════════════════════════════════════════
 const CHAMPS_ALIMENT = 'code, nom, rayon, categorie, sucre_ajoute, kcal, proteines, glucides, sucres, lipides, fibres'
 
+// ── Favoris (le cœur sur une recette) ───────────────────────
+let _favoris = null
+async function chargerFavoris() {
+  if (_favoris) return _favoris
+  const { data, error } = await db.from('recettes_favorites').select('recette_id')
+  // Table absente (sql/10 pas encore lancé) : pas de favoris, sans bloquer les menus
+  _favoris = new Set(error ? [] : (data || []).map(f => f.recette_id))
+  return _favoris
+}
+const estFavori = id => !!_favoris?.has(id)
+
+async function basculerFavori(recetteId, bouton) {
+  await chargerFavoris()
+  const ajout = !_favoris.has(recetteId)
+  const { error } = ajout
+    ? await db.from('recettes_favorites').insert({ user_id: utilisateur.id, recette_id: recetteId })
+    : await db.from('recettes_favorites').delete().eq('recette_id', recetteId)
+  if (error) { gererErreur(error, "Impossible d'enregistrer le favori."); return }
+  ajout ? _favoris.add(recetteId) : _favoris.delete(recetteId)
+  if (bouton) {
+    bouton.classList.toggle('actif', ajout)
+    bouton.setAttribute('aria-pressed', ajout)
+    bouton.setAttribute('aria-label', ajout ? 'Retirer des favoris' : 'Ajouter aux favoris')
+    bouton.classList.remove('bat'); void bouton.offsetWidth; bouton.classList.add('bat')
+  }
+  afficherToast(ajout ? 'Ajoutée à tes favoris : elle reviendra plus souvent' : 'Retirée de tes favoris')
+}
+
+function boutonFavori(recetteId) {
+  const f = estFavori(recetteId)
+  return `<button type="button" class="btn btn-coeur coeur ${f ? 'actif' : ''}" aria-pressed="${f}" aria-label="${f ? 'Retirer des favoris' : 'Ajouter aux favoris'}"
+    onclick="event.stopPropagation(); basculerFavori('${recetteId}', this)">${icone('coeur', '')}</button>`
+}
+
 async function chargerRecettes(forcer = false) {
-  if (_recettes && !forcer) return _recettes
+  if (_recettes && !forcer) { await chargerFavoris(); return _recettes }
+  chargerFavoris()
   const { data, error } = await db.from('recettes')
     .select(`*, recette_ingredients(*, aliments_ciqual(${CHAMPS_ALIMENT}))`).eq('actif', true)
   if (error) { gererErreur(error, 'Impossible de charger les recettes.'); return null }
@@ -104,6 +139,7 @@ function scoreRecette(p, dejaChoisies) {
   const partProteines = n.kcal ? (n.proteines * 4) / n.kcal : 0
   let s = partProteines * 3
   if (p.recette.etiquettes.includes('economique')) s += 0.25
+  if (estFavori(p.recette.id)) s += 0.6
   s -= (dejaChoisies.get(p.recette.id) || 0) * 0.9
   return s + Math.random() * 0.6
 }
@@ -235,8 +271,9 @@ function afficherMenus() {
     const repasJour = repasMenu.filter(r => r.date === jour).sort((a, b) => TYPES_REPAS.findIndex(([t]) => t === a.type_repas) - TYPES_REPAS.findIndex(([t]) => t === b.type_repas))
     const passe = jour < dateISO()
     html += `
-      <div class="carte ${jour === dateISO() ? 'carte-aujourdhui' : ''} ${passe && fige ? 'carte-passee' : ''}">
-        <div class="carte-titre" style="text-transform:capitalize;">${jour === dateISO() ? "Aujourd'hui · " : ''}${libelleJourCourt(jour)}</div>
+      <div class="carte ${jour === dateISO() ? 'carte-aujourdhui avec-etiquette' : ''} ${passe && fige ? 'carte-passee' : ''}" style="position:relative;">
+        ${jour === dateISO() ? '<span class="etiquette">Aujourd\'hui</span>' : ''}
+        <div class="carte-titre" style="text-transform:capitalize;">${libelleJourCourt(jour)}</div>
         ${repasJour.map(r => fige ? renduRepasFige(r, ajustes) : renduRepasBrouillon(r)).join('')}
       </div>`
   }
@@ -289,7 +326,7 @@ function renduCarteRecetteCourte(id, choisie, onclick) {
   if (!p?.ok) return ''
   return `
     <button type="button" class="option-recette ${choisie ? 'active' : ''}" onclick="${onclick}" aria-pressed="${choisie}">
-      <span class="option-nom">${esc(p.recette.nom)}</span>
+      <span class="option-nom">${esc(p.recette.nom)}${estFavori(id) ? ` <span class="option-favori">${icone('coeur')} favori</span>` : ''}</span>
       <span class="option-detail">${p.recette.temps_min} min · ${formatNombre(p.nutrition.proteines)} g de protéines par portion${p.remplacements.some(x => x.par) ? ' · adaptée à tes goûts' : ''}</span>
     </button>`
 }
@@ -373,6 +410,7 @@ async function figerMenu() {
   menuActuel.statut = 'fige'
   await genererCourses()
   afficherToast('Menu validé, liste de courses prête')
+  lancerConfettis(45)
   ongletMenus = 'menu'
   afficherMenus()
 }
@@ -399,7 +437,7 @@ function renduRepasFige(r, ajustes) {
   const kcal = Math.round(p.nutrition.kcal * f)
   return `
     <div class="slot slot-fige ${r.mange ? 'slot-mange' : ''}">
-      <div class="slot-tete"><span class="slot-type">${libelleRepas(r.type_repas)}</span>${r.mange ? '<span class="badge">mangé ✓</span>' : ''}</div>
+      <div class="slot-tete"><span class="slot-type">${libelleRepas(r.type_repas)}</span>${r.mange ? `<span class="badge ico-titre">${icone('coche')} mangé</span>` : ''}</div>
       <button class="option-recette option-fige" onclick="ouvrirRecette('${r.id}')">
         <span class="option-nom">${esc(p.recette.nom)}</span>
         <span class="option-detail">Ta portion : ${formatPortion(f)} ≈ ${formatNombre(kcal)} kcal · ${formatNombre(p.nutrition.proteines * f)} g de protéines${r.nb_personnes > 1 ? ` · + ${r.nb_personnes - 1} pers.` : ''}</span>
@@ -420,7 +458,10 @@ function ouvrirRecette(repasId) {
   const totalPortions = f + Math.max(0, r.nb_personnes - 1)
   const parPortion = g => g / p.recette.portions_base
   ouvrirFeuille(p.recette.nom, `
-    <p class="message-info" style="margin-top:0;">${p.recette.temps_min} min${p.recette.etiquettes.length ? ' · ' + p.recette.etiquettes.map(e => LIBELLES_ETIQUETTES[e] || e).join(' · ') : ''}</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3);">
+      <p class="message-info" style="margin-top:0;">${p.recette.temps_min} min${p.recette.etiquettes.length ? ' · ' + p.recette.etiquettes.map(e => LIBELLES_ETIQUETTES[e] || e).join(' · ') : ''}</p>
+      ${boutonFavori(p.recette.id)}
+    </div>
     <div class="reperes">
       <div class="repere"><span class="repere-valeur">${formatNombre(p.nutrition.kcal * f)}</span><span class="repere-unite">kcal pour toi (${formatPortion(f)})</span></div>
       <div class="repere"><span class="repere-valeur">${formatNombre(p.nutrition.proteines * f)} g</span><span class="repere-unite">protéines</span></div>
@@ -512,7 +553,7 @@ function renduCourses() {
           <input type="checkbox" ${c.coche ? 'checked' : ''} onchange="cocherCourse('${c.id}', this.checked)" />
           <span class="article-nom">${esc(c.libelle)}</span>
           <span class="article-qte">${c.quantite_g ? formatQuantite(c.quantite_g, c.libelle) : ''}</span>
-          ${c.manuel ? `<button class="btn btn-lien" onclick="event.preventDefault(); supprimerCourse('${c.id}')" aria-label="Retirer">✕</button>` : ''}
+          ${c.manuel ? `<button class="btn btn-lien" onclick="event.preventDefault(); supprimerCourse('${c.id}')" aria-label="Retirer">${icone('croix')}</button>` : ''}
         </label>`).join('')}
     </div>`).join('') + renduAjoutCourse() +
     `<p class="message-info">Quantités pour ta portion et une portion standard par autre personne, arrondies. Les ingrédients de base (sel, poivre…) ne sont pas listés.</p>`

@@ -58,7 +58,7 @@ Le site est pensé pour prendre quelques minutes par jour, sans horaires imposé
 | `import-recettes.js` | Relie les recettes aux codes Ciqual et génère le SQL d'import |
 | `init.js` | Démarrage (chargé en dernier) |
 | `manifest.json`, `service-worker.js`, `icons/` | Installation sur iPhone (PWA), cache, notifications |
-| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre (coller tout le fichier et cliquer sur **Run** sans rien sélectionner). `09-verification.sql` est un contrôle en lecture seule, à relancer quand tu veux. |
+| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre (coller tout le fichier et cliquer sur **Run** sans rien sélectionner). `09-verification.sql` est un contrôle en lecture seule, à relancer quand tu veux. `10-favoris.sql` ajoute les recettes favorites (le cœur ♥ sur une recette). |
 | `import-ciqual.js` | Conversion de la table Ciqual pour l'import (lancé une fois) |
 
 Les modules sont des `<script>` classiques chargés dans l'ordre de `index.html` : toutes les fonctions sont globales, comme dans l'autre site. Les tests des règles de santé se lancent avec `node tests/calculs.test.js`.

@@ -106,6 +106,9 @@ function afficherJournal() {
     <p class="message-info" style="text-align:center;">Chaque repas est facultatif : note seulement ce que tu manges, quand tu le manges.</p>`
 }
 
+// Mêmes couleurs que les anneaux de la page Aujourd'hui
+const COULEURS_BARRES = { kcal: 'var(--lavande)', proteines: 'var(--rose)', sucres: 'var(--jaune)' }
+
 function renduTotaux(t, obj) {
   return LIGNES_NUTRIMENTS.map(([k, lib, unite]) => {
     const val = t[k]
@@ -119,7 +122,7 @@ function renduTotaux(t, obj) {
           <span class="${k === 'sucres' ? 'total-sous' : ''}">${lib}</span>
           <span class="total-valeur"><strong>${formatNombre(val, k === 'kcal' ? 0 : 0)}</strong>${cible ? ` / ${formatNombre(cible)} ${unite}` : ` ${unite}`}</span>
         </div>
-        ${cible ? `<div class="barre" title="${repere}"><div class="barre-remplie ${depasse ? 'barre-haute' : ''} ${(k === 'proteines' && val >= cible) ? 'barre-atteinte' : ''}" style="width:${pct}%"></div></div>` : ''}
+        ${cible ? `<div class="barre" title="${repere}"><div class="barre-remplie ${depasse ? 'barre-haute' : ''} ${(k === 'proteines' && val >= cible) ? 'barre-atteinte' : ''}" style="width:${pct}%;${!depasse && COULEURS_BARRES[k] ? `background:${COULEURS_BARRES[k]};` : ''}"></div></div>` : ''}
       </div>`
   }).join('') + (t.sucres_ajoutes > 0 ? `<p class="message-info">Dont environ ${formatNombre(t.sucres_ajoutes)} g de sucres ajoutés.</p>` : '')
 }
@@ -134,7 +137,7 @@ function renduRepas(type, libelle) {
         <span class="carte-titre" style="margin:0;">${libelle}</span>
         ${entrees.length ? `<span class="repas-kcal">${formatNombre(kcal)} kcal</span>` : ''}
         <label class="btn btn-secondaire btn-icone" title="Ajouter une photo" aria-label="Ajouter une photo ${auRepas(type)}">
-          📷<input type="file" accept="image/*" class="hidden" onchange="ajouterPhoto('${type}', this)" />
+          ${icone('appareil')}<input type="file" accept="image/*" class="hidden" onchange="ajouterPhoto('${type}', this)" />
         </label>
         <button class="btn btn-secondaire btn-icone" onclick="ouvrirAjoutAliment('${type}')" aria-label="Ajouter ${auRepas(type)}">+</button>
       </div>
@@ -861,12 +864,38 @@ async function chargerResumeJour() {
   if (error) { console.error(error); return }
   const t = totauxEntrees(data || [])
   const obj = objectifsDuJour()
-  const reste = obj ? obj.kcal - t.kcal : null
+  if (!obj) { el.innerHTML = ''; return }
+  const reste = Math.round(obj.kcal - t.kcal)
+  const depasse = reste < 0
   el.innerHTML = `
-    <div class="carte">
-      <div class="carte-titre">Mangé aujourd'hui</div>
-      ${renduTotaux(t, obj)}
-      ${reste != null ? `<p class="message-info">${reste >= 0 ? `Il te reste environ <strong>${formatNombre(reste)} kcal</strong> pour la journée.` : `Un peu au-dessus de ton repère aujourd'hui : ce n'est pas grave, c'est la moyenne de la semaine qui compte.`}</p>` : ''}
-      <button class="btn btn-secondaire btn-bloc" style="margin-top:var(--sp-3);" onclick="showPage('journal')">Voir ou ajouter des repas</button>
+    <div class="carte carte-cadre avec-etiquette">
+      <span class="etiquette">Ma journée</span>
+      <div class="anneaux">
+        ${renduAnneau('Calories', t.kcal, obj.kcal, 'var(--lavande)', depasse
+          ? { valeur: `+${formatNombre(-reste)}`, sous: 'en trop' }
+          : { valeur: formatNombre(reste), sous: 'restantes' })}
+        ${renduAnneau('Protéines', t.proteines, obj.proteines, 'var(--rose)', { valeur: `${formatNombre(t.proteines)} g`, sous: `sur ${formatNombre(obj.proteines)}` }, false)}
+        ${renduAnneau('Sucres', t.sucres, obj.sucres, 'var(--jaune)', { valeur: `${formatNombre(t.sucres)} g`, sous: `max ${formatNombre(obj.sucres)}` })}
+      </div>
+      <p class="anneau-resume">${formatNombre(t.kcal)} kcal sur ${formatNombre(obj.kcal)}${depasse ? '' : ' : il te reste de la marge'}</p>
+      ${depasse ? `<div class="alerte-depasse">${icone('alerte')}<div><strong>${formatNombre(-reste)} kcal au-dessus de ta cible</strong>
+        <span>Ça arrive, pas de panique. Demain on reprend tranquillement, sans rien compenser.</span></div></div>` : ''}
+      <button class="btn btn-secondaire btn-bloc" style="margin-top:var(--sp-4);" onclick="showPage('journal')">Voir ou ajouter des repas</button>
+    </div>`
+}
+
+// Un anneau de progression (rempli en %, rouge s'il dépasse un maximum)
+function renduAnneau(nom, valeur, cible, couleur, centre, peutDepasser = true) {
+  const pct = cible ? Math.min(100, (valeur / cible) * 100) : 0
+  const depasse = peutDepasser && cible && valeur > cible
+  return `
+    <div class="anneau-bloc ${depasse ? 'anneau-depasse' : ''}">
+      <div class="anneau-boite" role="img" aria-label="${nom} : ${formatNombre(valeur)} sur ${formatNombre(cible)}">
+        <svg viewBox="0 0 100 100"><circle class="anneau-piste" cx="50" cy="50" r="40"/>
+          <circle class="anneau-trait" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="100"
+            style="stroke:${depasse ? 'var(--danger)' : couleur};stroke-dashoffset:${(100 - pct).toFixed(1)}"/></svg>
+        <div class="anneau-centre"><span class="anneau-valeur">${centre.valeur}</span><span class="anneau-sous">${centre.sous}</span></div>
+      </div>
+      <span class="anneau-nom">${nom}</span>
     </div>`
 }
