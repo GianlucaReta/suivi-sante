@@ -7,7 +7,7 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 - Hébergement : GitHub Pages
 - Connexion : code à 6 chiffres reçu par e-mail, sans mot de passe
 
-> Ce README est complété à chaque phase. La version complète (utilisation, vérifications) arrive en phase 9.
+**Sommaire** : [À faire plus tard](#-à-faire-plus-tard) · [Utilisation au quotidien](#utilisation-au-quotidien) · [Organisation des fichiers](#organisation-des-fichiers) · [Installation](#installation) · [Notifications](#notifications-une-seule-fois) · [Imports (Ciqual, exercices, recettes)](#importer-la-table-ciqual-une-seule-fois) · [Liste de contrôle](#liste-de-contrôle-iphone-et-ordinateur) · [Maintenance](#maintenance) · [Sécurité](#sécurité)
 
 ## ⏳ À faire plus tard
 
@@ -16,6 +16,22 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
   2. Suivre la section **« Importer la table Ciqual »** ci-dessous (export CSV depuis Numbers, `node import-ciqual.js`, import dans Supabase).
   3. Compléter la base de recettes jusqu'à 150 à 200 recettes (demander à Claude, avec le fichier Ciqual sous la main pour reprendre les noms exacts), puis la relier aux codes Ciqual (voir la section « Importer les recettes »).
   - En attendant : le scan de code-barres et la saisie libre fonctionnent. La recherche d'aliments et les recettes restent vides tant que Ciqual n'est pas importée.
+
+## Utilisation au quotidien
+
+Le site est pensé pour prendre quelques minutes par jour, sans horaires imposés.
+
+| Quand | Où | Quoi |
+|---|---|---|
+| Au premier lancement | Questionnaire | Profil, objectif, goûts, cuisine, sport. Tout reste modifiable dans **Réglages**. |
+| À chaque repas | **Repas** | **+** sur le repas : recherche, scan du code-barres ou saisie libre ; quantité en grammes ou en repères (poing, paume, cuillère…). 📷 pour une photo. Depuis **Menus**, « J'ai mangé ce repas » ajoute directement la portion conseillée. |
+| Quand une envie arrive | **Aujourd'hui** ou **Suivi → Sucre** | « Envie » : tes alternatives s'affichent, puis tu notes l'intensité et le déclencheur. 🍪 / 🍫 pour noter un cookie ou un carré de chocolat. |
+| Les jours de sport | **Sport** ou **Aujourd'hui** | « Commencer » : séance guidée de 20 à 30 min, puis ton ressenti (facile, correct, difficile). |
+| Le soir | **Suivi → Bilan** | Chiffres de la montre, sommeil, humeur : moins d'une minute. |
+| Une fois par semaine, le matin à jeun | **Suivi → Pesée** | Poids et valeurs de la balance. Les repères se recalculent seuls tous les 2 kg. |
+| Au début des règles | **Suivi → Cycle** | Date et durée : la phase s'affiche sur les courbes. |
+| Le dimanche | **Menus** et **Aujourd'hui** | Préparer le menu de la semaine suivante (liste de courses automatique) et lire le bilan de la semaine. |
+| Quand tu veux | **Suivi → Courbes** | Courbes sur 7 ou 30 jours et date d'arrivée estimée. |
 
 ## Organisation des fichiers
 
@@ -41,10 +57,10 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 | `import-recettes.js` | Relie les recettes aux codes Ciqual et génère le SQL d'import |
 | `init.js` | Démarrage (chargé en dernier) |
 | `manifest.json`, `service-worker.js`, `icons/` | Installation sur iPhone (PWA), cache, notifications |
-| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre (coller tout le fichier et cliquer sur **Run** sans rien sélectionner) |
+| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre (coller tout le fichier et cliquer sur **Run** sans rien sélectionner). `09-verification.sql` est un contrôle en lecture seule, à relancer quand tu veux. |
 | `import-ciqual.js` | Conversion de la table Ciqual pour l'import (lancé une fois) |
 
-Les modules s'ajoutent phase par phase (`menus.js`, `sport.js`…). Ce sont des `<script>` classiques : toutes les fonctions sont globales.
+Les modules sont des `<script>` classiques chargés dans l'ordre de `index.html` : toutes les fonctions sont globales, comme dans l'autre site. Les tests des règles de santé se lancent avec `node tests/calculs.test.js`.
 
 ---
 
@@ -217,6 +233,42 @@ La session de l'app installée est séparée de celle de Safari. Connecte-toi bi
 
 ---
 
+## Liste de contrôle (iPhone et ordinateur)
+
+À faire une fois tout installé, sur l'iPhone **dans l'app installée**, puis sur l'ordinateur pour vérifier la synchronisation.
+
+- [ ] **Connexion** : code reçu par e-mail ; l'app reste connectée après l'avoir fermée et rouverte.
+- [ ] **Questionnaire** rempli ; repères affichés sur **Aujourd'hui** ; une modification dans **Réglages** reste après rechargement.
+- [ ] **Repas** : un aliment ajouté par scan, un par saisie libre (et par recherche une fois Ciqual importée) ; une photo ajoutée puis affichée ; totaux du jour corrects.
+- [ ] **Synchronisation** : ce qui est noté sur l'iPhone apparaît sur l'ordinateur (et inversement) après rechargement.
+- [ ] **Sport** : séance du jour visible ; séance guidée avec bip et écran allumé ; ressenti enregistré.
+- [ ] **Suivi** : bilan du soir, pesée, cookie, envie, début des règles ; courbes affichées.
+- [ ] **Hors connexion** : en mode avion, l'app affiche un message clair (« Pas de connexion internet ») au lieu d'une page blanche, et se recharge d'elle-même quand la connexion revient. Si la connexion coupe pendant l'utilisation, un bandeau le signale et rien de ce qui était déjà enregistré n'est perdu.
+- [ ] **Notifications** : « M'envoyer un test » arrive sur l'iPhone ; un rappel arrive à l'heure choisie.
+- [ ] **Mode sombre** : Réglages → Apparence → Sombre, puis Auto.
+- [ ] **Sécurité et espace** : `sql/09-verification.sql` ne signale rien.
+
+## Maintenance
+
+### Mettre à jour le site
+
+1. Modifier les fichiers, puis changer `APP_VERSION` dans `app.js` **et** `CACHE_VERSION` dans `service-worker.js` (même numéro).
+2. `git commit` puis `git push` : GitHub Pages publie en une minute environ.
+3. Sur l'iPhone, fermer complètement l'app et la rouvrir (deux fois si besoin) : la version s'affiche en bas des **Réglages**.
+
+### Contrôler la sécurité et l'espace utilisé
+
+Lancer `sql/09-verification.sql` dans le SQL Editor. Il vérifie la RLS de chaque table, les politiques, le bucket privé, et affiche la taille de la base, l'espace des photos, l'état de la tâche des rappels et les derniers rappels envoyés.
+
+Limites du plan gratuit Supabase : **500 Mo** de base, **1 Go** de fichiers (partagé entre tous tes projets), **5 Go** de trafic par mois. L'espace est aussi visible dans **Réglages → Photos et stockage**, avec l'option de suppression automatique des photos de plus de 6 mois.
+
+### Ajouter un deuxième compte (toi, plus tard)
+
+Tout est déjà prévu : chaque ligne est liée à son propriétaire.
+1. Supabase → **Authentication → Users → Add user → Create new user** : ton e-mail, un mot de passe au hasard, **Auto Confirm User**.
+2. Te connecter sur le site avec ton e-mail : le questionnaire s'ouvre pour ton propre profil (choisir « Homme » pour la formule de calcul si besoin).
+Chaque compte ne voit que ses propres données ; les recettes, les exercices et la table Ciqual sont partagés.
+
 ## Projet en pause
 
 Un projet Supabase gratuit se met en pause après **7 jours sans activité**. Le site affiche alors « Le serveur ne répond pas ».
@@ -231,3 +283,6 @@ Pour le relancer : [supabase.com](https://supabase.com) → le projet → **Rest
 - Seule la clé publique figure dans le code.
 - Aucune donnée personnelle dans le dépôt.
 - Les photos sont dans un bucket privé, rangées par utilisateur, et affichées par URL signée temporaire.
+- Inscriptions publiques désactivées : seuls les comptes créés dans le dashboard peuvent se connecter.
+- Notifications : la clé privée VAPID et le secret du cron sont uniquement dans les secrets Supabase (et le Vault) ; l'Edge Function vérifie le secret du cron ou la session.
+- Le site n'appelle aucune API d'IA et aucun service payant : les suggestions reposent sur des règles et sur la base de recettes.

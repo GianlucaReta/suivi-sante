@@ -320,7 +320,8 @@ async function afficherSucre() {
   const auj = dateISO()
   const il8sem = decalerDate(lundiDe(), -49)
   const il35j = decalerDate(auj, -35)
-  const debutSuivi = profil.date_depart || il8sem
+  // La série commence au début du suivi (jamais avant la création du compte)
+  const debutSuivi = profil.date_depart || (profil.created_at ? dateISO(new Date(profil.created_at)) : auj)
   const [rS, rE, rA, rJ, rB, rSerie] = await Promise.all([
     db.from('sucreries').select('*').gte('date', il8sem).order('created_at'),
     db.from('envies').select('*').gte('moment', new Date(decalerDate(auj, -30) + 'T00:00:00').toISOString()).order('moment', { ascending: false }),

@@ -1,5 +1,7 @@
 # Plan d'architecture : site de suivi santé
 
+> **État au 22/11/2026** : phases 1 à 9 réalisées et en ligne. Restent : l'import de la table Ciqual (sites en maintenance) puis la génération de la base complète de recettes, et la configuration des notifications côté Supabase (secrets, Edge Function, pg_cron). Voir « À faire plus tard » dans le README.
+
 Proposition à valider avant de démarrer la phase 1.
 
 ## 1. Ce que je reprends de Suivi-projets-SEGEDIA
