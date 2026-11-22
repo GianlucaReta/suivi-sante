@@ -258,7 +258,7 @@ async function creerMenu() {
   const petitDej = document.getElementById('menu-pdj').checked
   const collation = document.getElementById('menu-collation').checked
   const { data: menu, error } = await db.from('menus')
-    .insert({ semaine_debut: semaineMenu, petit_dejeuner: petitDej, collation, statut: 'brouillon' }).select().single()
+    .insert({ semaine_debut: semaineMenu, petit_dejeuner: petitDej, avec_collation: collation, statut: 'brouillon' }).select().single()
   if (error) { gererErreur(error, 'Impossible de créer le menu.'); return }
 
   const types = ['dejeuner', 'diner']

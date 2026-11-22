@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS public.menus (
   semaine_debut   DATE NOT NULL,                  -- lundi
   statut          TEXT NOT NULL DEFAULT 'brouillon' CHECK (statut IN ('brouillon', 'fige')),
   petit_dejeuner  BOOLEAN NOT NULL DEFAULT false, -- petits déjeuners prévus dans le menu
-  collation       BOOLEAN NOT NULL DEFAULT false,
+  avec_collation  BOOLEAN NOT NULL DEFAULT false, -- « collation » est un mot réservé en SQL
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (user_id, semaine_debut)
