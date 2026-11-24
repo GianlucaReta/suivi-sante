@@ -1071,3 +1071,28 @@ select.input { appearance: none; -webkit-appearance: none; background-image: lin
 .option-ligne .option-recette { flex: 1; min-width: 0; }
 .btn-voir { flex-direction: column; gap: 2px; padding: 4px 10px; min-width: 56px; font-size: var(--fs-xs); border-radius: 16px; }
 .btn-voir svg { width: 20px; height: 20px; }
+
+/* ── Protéines prévues, frigo, repas favoris ───────────────── */
+.proteines-jour { margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 2px dashed var(--border-soft); }
+.proteines-jour .total-tete { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.proteines-juste .barre { background: var(--rose); opacity: .9; }
+.proteines-juste .barre-remplie { background: var(--rose-texte) !important; }
+.proteines-idee { font-size: var(--fs-sm); margin-top: var(--sp-2); color: var(--ink-soft); }
+.proteines-actions { display: flex; gap: var(--sp-2); align-items: center; flex-wrap: wrap; margin-top: var(--sp-2); }
+.proteines-actions .btn-secondaire { min-height: 38px; padding: 6px 12px; font-size: var(--fs-sm); }
+.btn-frigo { margin-bottom: var(--sp-4); justify-content: flex-start; gap: var(--sp-2); }
+#frigo-puces { max-height: 34vh; overflow-y: auto; padding-bottom: var(--sp-2); }
+.repas-actions { display: flex; flex-wrap: wrap; gap: 0 var(--sp-3); margin-top: var(--sp-2); }
+.repas-actions .btn-lien { padding-left: 0; font-size: var(--fs-sm); }
+.repas-favori { display: flex; gap: var(--sp-2); align-items: center; margin-bottom: var(--sp-2); }
+.repas-favori-ajout { flex: 1; min-width: 0; display: flex; gap: var(--sp-2); align-items: center; text-align: left; font-family: inherit; color: var(--ink);
+  background: var(--lavande-doux); border: none; border-radius: 14px; padding: var(--sp-2) var(--sp-3); cursor: pointer; }
+.repas-favori-ajout .pastille-scan { background: var(--rose); color: var(--ink); }
+.repas-favori-ajout .pastille-scan svg { fill: currentColor; }
+.repas-favori-texte { display: flex; flex-direction: column; min-width: 0; }
+.repas-favori-texte .resultat-detail { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#repas-favoris-liste:not(:empty) { margin-bottom: var(--sp-3); }
+.ligne-edition { gap: var(--sp-2); }
+.ligne-edition-nom { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.input-quantite { width: 96px; flex-shrink: 0; }
+.input-quantite .input { width: 100%; padding-right: 28px; }

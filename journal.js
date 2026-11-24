@@ -25,6 +25,8 @@ const LIGNES_NUTRIMENTS = [
 let journalDate = dateISO()
 let entreesJour = []
 let photosJour = []
+let entreesVeille = []     // repas de la veille (bouton « Comme hier »)
+let _repasFavoris = null   // repas favoris (null = pas encore chargés)
 let saisie = null          // aliment en cours d'ajout ou de modification
 let _resultats = []        // résultats de recherche affichés
 let _rechercheTimer = null
@@ -52,10 +54,12 @@ function libelleDate(iso) {
 // PAGE REPAS
 // ═════════════════════════════════════════════════════════════
 async function chargerJournal() {
-  const [rJ, rP] = await Promise.all([
+  const [rJ, rP, rV] = await Promise.all([
     db.from('journal').select('*').eq('date', journalDate).order('heure').order('created_at'),
     db.from('photos_repas').select('*').eq('date', journalDate).order('created_at'),
+    db.from('journal').select('*').eq('date', decalerDate(journalDate, -1)).order('heure'),
   ])
+  entreesVeille = rV.data || []
   if (rJ.error) { gererErreur(rJ.error, 'Impossible de charger le journal.'); return }
   if (rP.error) console.error(rP.error)
   entreesJour = rJ.data || []
@@ -149,6 +153,7 @@ function renduRepas(type, libelle) {
         </button>`).join('')}
       ${photos.length ? `<div class="miniatures">${photos.map(p => `
         <button class="miniature" onclick="ouvrirPhoto('${p.id}')" aria-label="Voir la photo"><img data-chemin="${esc(p.chemin)}" alt="" /></button>`).join('')}</div>` : ''}
+      ${renduActionsRepas(type, entrees)}
     </div>`
 }
 
@@ -169,10 +174,12 @@ function afficherRecherche() {
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg>
       </button>
     </div>
+    <div id="repas-favoris-liste"></div>
     <div id="resultats-aliments" class="resultats"></div>
     <button class="btn btn-lien btn-bloc" onclick="afficherSaisieLibre()">Je ne trouve pas : saisie libre</button>`)
   setTimeout(() => document.getElementById('recherche-aliment')?.focus(), 50)
   afficherRecents()
+  afficherRepasFavorisDansRecherche()
 }
 
 async function afficherRecents() {
@@ -197,6 +204,7 @@ async function afficherRecents() {
 
 function lancerRechercheAliment(v) {
   clearTimeout(_rechercheTimer)
+  document.getElementById('repas-favoris-liste')?.classList.toggle('hidden', !!v.trim())
   if (!v.trim()) { afficherRecents(); return }
   _rechercheTimer = setTimeout(() => rechercherAliments(v), 250)
 }
@@ -930,4 +938,179 @@ function renduAnneau(nom, valeur, cible, couleur, centre, peutDepasser = true) {
       </div>
       <span class="anneau-nom">${nom}</span>
     </div>`
+}
+
+// ═════════════════════════════════════════════════════════════
+// REPAS FAVORIS ET « COMME HIER »
+// ═════════════════════════════════════════════════════════════
+const CHAMPS_VALEURS = ['kcal', 'proteines', 'glucides', 'sucres', 'sucres_ajoutes', 'lipides', 'fibres']
+
+function renduActionsRepas(type, entrees) {
+  const hier = entreesVeille.filter(e => e.type_repas === type)
+  const boutons = []
+  if (!entrees.length && hier.length) {
+    const kcal = hier.reduce((s, e) => s + Number(e.kcal), 0)
+    boutons.push(`<button class="btn btn-lien ico-titre" onclick="copierRepasVeille('${type}')">${icone('copier')} Comme hier (${formatNombre(kcal)} kcal)</button>`)
+  }
+  if (entrees.length) boutons.push(`<button class="btn btn-lien ico-titre" onclick="nommerRepasFavori('${type}')">${icone('coeur')} Enregistrer comme repas favori</button>`)
+  return boutons.length ? `<div class="repas-actions">${boutons.join('')}</div>` : ''
+}
+
+// Heure par défaut d'un repas ajouté d'un coup
+function heureRepas(type) {
+  if (journalDate === dateISO()) return heureActuelle()
+  return { petit_dejeuner: '08:00', dejeuner: '12:30', diner: '19:30', collation: '16:00' }[type] || '12:00'
+}
+
+// Ajoute une liste d'aliments (copie d'hier ou repas favori) au journal du jour affiché
+async function ajouterElements(type, elements) {
+  const lignes = elements.map(e => ({
+    date: journalDate, heure: heureRepas(type), type_repas: type, source: e.source, ref: e.ref ?? null, nom: e.nom,
+    quantite_g: Number(e.quantite_g) || 1, repere: e.repere || null,
+    ...Object.fromEntries(CHAMPS_VALEURS.map(k => [k, Number(e[k]) || 0])),
+  }))
+  const { error } = await db.from('journal').insert(lignes)
+  if (error) { gererErreur(error, "Impossible d'ajouter le repas."); return false }
+  return true
+}
+
+async function copierRepasVeille(type) {
+  const hier = entreesVeille.filter(e => e.type_repas === type)
+  if (!hier.length || !(await ajouterElements(type, hier))) return
+  afficherToast(`${libelleRepas(type)} d'hier ajouté (${formatNombre(hier.reduce((s, e) => s + Number(e.kcal), 0))} kcal)`)
+  chargerJournal()
+}
+
+// ── Enregistrer un repas comme favori ────────────────────────
+function nommerRepasFavori(type) {
+  const proposition = { petit_dejeuner: 'Mon petit déjeuner', dejeuner: 'Mon déjeuner', diner: 'Mon dîner', collation: 'Ma collation' }[type]
+  ouvrirFeuille('Nouveau repas favori', `
+    <p class="message-info" style="margin-top:0;">${entreesJour.filter(e => e.type_repas === type).map(e => esc(e.nom)).join(' · ')}</p>
+    <label class="champ" style="margin-top:var(--sp-3);"><span class="champ-label">Nom du repas</span>
+      <input id="rf-nom" class="input" type="text" maxlength="80" value="${esc(proposition)}" /></label>
+    <div class="feuille-actions">
+      <button class="btn btn-secondaire" onclick="fermerFeuille()">Annuler</button>
+      <button class="btn btn-primaire" onclick="enregistrerRepasFavori('${type}')">Enregistrer</button>
+    </div>`)
+}
+
+async function enregistrerRepasFavori(type) {
+  const nom = document.getElementById('rf-nom').value.trim()
+  if (!nom) { afficherToast('Donne un nom à ce repas.', true); return }
+  const elements = entreesJour.filter(e => e.type_repas === type).map(e => ({
+    source: e.source, ref: e.ref, nom: e.nom, quantite_g: Number(e.quantite_g), repere: e.repere,
+    ...Object.fromEntries(CHAMPS_VALEURS.map(k => [k, Number(e[k]) || 0])),
+  }))
+  const { error } = await db.from('repas_favoris').insert({ user_id: utilisateur.id, nom, type_repas: type, elements })
+  if (error) { gererErreur(error, "Impossible d'enregistrer ce repas favori."); return }
+  _repasFavoris = null
+  fermerFeuille()
+  afficherToast(`« ${nom} » enregistré : retrouve-le en haut de la recherche`)
+}
+
+// ── Liste dans la fenêtre d'ajout ────────────────────────────
+async function chargerRepasFavoris() {
+  if (_repasFavoris) return _repasFavoris
+  const { data, error } = await db.from('repas_favoris').select('*').order('derniere_utilisation', { ascending: false })
+  _repasFavoris = error ? [] : (data || [])
+  return _repasFavoris
+}
+
+const kcalRepas = r => (r.elements || []).reduce((s, e) => s + Number(e.kcal || 0), 0)
+
+async function afficherRepasFavorisDansRecherche() {
+  const liste = await chargerRepasFavoris()
+  const el = document.getElementById('repas-favoris-liste')
+  if (!el || !liste.length) { if (el) el.innerHTML = ''; return }
+  // Les repas du même moment de la journée d'abord
+  const tries = [...liste].sort((a, b) => (b.type_repas === saisie?.type) - (a.type_repas === saisie?.type))
+  el.innerHTML = `<div class="resultats-titre">Mes repas favoris</div>
+    ${tries.map(r => `
+      <div class="repas-favori">
+        <button class="repas-favori-ajout" onclick="ajouterRepasFavori('${r.id}')">
+          <span class="pastille-scan">${icone('coeur')}</span>
+          <span class="repas-favori-texte"><span class="resultat-nom">${esc(r.nom)}</span>
+          <span class="resultat-detail">${formatNombre(kcalRepas(r))} kcal · ${(r.elements || []).map(e => esc(e.nom)).join(', ')}</span></span>
+        </button>
+        <button class="btn btn-secondaire btn-icone" onclick="modifierRepasFavori('${r.id}')" aria-label="Modifier ${esc(r.nom)}">${icone('crayon')}</button>
+      </div>`).join('')}`
+}
+
+async function ajouterRepasFavori(id) {
+  const r = (await chargerRepasFavoris()).find(x => x.id === id)
+  if (!r || !(await ajouterElements(saisie.type, r.elements || []))) return
+  db.from('repas_favoris').update({ derniere_utilisation: new Date().toISOString() }).eq('id', id).then(() => {})
+  _repasFavoris = null
+  fermerFeuille()
+  afficherToast(`« ${r.nom} » ajouté (${formatNombre(kcalRepas(r))} kcal)`)
+  chargerJournal()
+}
+
+// ── Modifier un repas favori (nom, quantités, aliments retirés) ─
+let _edition = null
+async function modifierRepasFavori(id) {
+  const r = (await chargerRepasFavoris()).find(x => x.id === id)
+  if (!r) return
+  _edition = { id, typeRetour: saisie?.type, nom: r.nom, elements: (r.elements || []).map(e => ({ ...e, base: { ...e } })) }
+  afficherEditionFavori()
+}
+
+function afficherEditionFavori() {
+  const e = _edition
+  ouvrirFeuille('Modifier le repas favori', `
+    <label class="champ"><span class="champ-label">Nom</span>
+      <input class="input" type="text" maxlength="80" value="${esc(e.nom)}" oninput="_edition.nom = this.value" /></label>
+    <div class="carte-titre">Aliments</div>
+    ${e.elements.map((x, i) => `
+      <div class="ligne ligne-edition">
+        <span class="ligne-edition-nom">${esc(x.nom)}<span class="resultat-detail">${formatNombre(x.kcal)} kcal</span></span>
+        <span class="input-unite input-quantite"><input class="input input-petit" type="number" inputmode="decimal" min="1" max="2000" value="${formatNombreBrut(x.quantite_g)}"
+          onchange="changerQuantiteFavori(${i}, this.value)" aria-label="Quantité de ${esc(x.nom)} en grammes" /><span>g</span></span>
+        <button class="btn btn-lien" onclick="retirerElementFavori(${i})" aria-label="Retirer ${esc(x.nom)}">${icone('croix')}</button>
+      </div>`).join('') || '<p class="message-info">Plus aucun aliment : supprime ce repas ou ajoutes-en depuis le journal.</p>'}
+    <p class="message-info">Total : <strong>${formatNombre(e.elements.reduce((s, x) => s + Number(x.kcal), 0))} kcal</strong>. Pour ajouter un aliment, note le repas complet dans le journal puis enregistre-le à nouveau comme favori.</p>
+    <div class="feuille-actions">
+      <button class="btn btn-danger" onclick="supprimerRepasFavori()">Supprimer</button>
+      <button class="btn btn-primaire" onclick="sauverRepasFavori()">Enregistrer</button>
+    </div>`)
+}
+
+// Les valeurs suivent la quantité (proportionnellement à la quantité enregistrée au départ)
+function changerQuantiteFavori(i, valeur) {
+  const q = Number(String(valeur).replace(',', '.'))
+  if (!q || q <= 0 || q > 2000) { afficherToast('Indique une quantité entre 1 et 2000 g.', true); afficherEditionFavori(); return }
+  const x = _edition.elements[i]
+  const ratio = q / Number(x.base.quantite_g || q)
+  for (const k of CHAMPS_VALEURS) x[k] = Math.round(Number(x.base[k] || 0) * ratio * 10) / 10
+  x.quantite_g = q
+  x.repere = `${formatNombre(q)} g`
+  afficherEditionFavori()
+}
+
+function retirerElementFavori(i) { _edition.elements.splice(i, 1); afficherEditionFavori() }
+
+async function sauverRepasFavori() {
+  const e = _edition
+  if (!e.nom.trim()) { afficherToast('Donne un nom à ce repas.', true); return }
+  if (!e.elements.length) { supprimerRepasFavori(); return }
+  const elements = e.elements.map(({ base, ...x }) => x)
+  const { error } = await db.from('repas_favoris').update({ nom: e.nom.trim(), elements }).eq('id', e.id)
+  if (error) { gererErreur(error, "Impossible d'enregistrer les modifications."); return }
+  _repasFavoris = null
+  afficherToast('Repas favori modifié')
+  retourAjout(e.typeRetour)
+}
+
+async function supprimerRepasFavori() {
+  if (!confirm(`Supprimer le repas favori « ${_edition.nom} » ? Ton journal n'est pas modifié.`)) return
+  const { error } = await db.from('repas_favoris').delete().eq('id', _edition.id)
+  if (error) { gererErreur(error); return }
+  _repasFavoris = null
+  afficherToast('Repas favori supprimé')
+  retourAjout(_edition.typeRetour)
+}
+
+function retourAjout(type) {
+  if (type) ouvrirAjoutAliment(type)
+  else fermerFeuille()
 }

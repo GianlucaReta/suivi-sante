@@ -1256,6 +1256,778 @@
         "Faire revenir l'oignon et la dinde en morceaux.",
         "Ajouter les carottes en rondelles, les petits pois et un verre d'eau, cuire 15 minutes. Servir avec le riz."
       ]
+    },
+    {
+      "id": "muesli-yaourt-pomme",
+      "nom": "Muesli maison, yaourt et pomme",
+      "types": ["petit_dejeuner"],
+      "temps": 5, "portions": 1, "mois": [],
+      "etiquettes": ["vegetarien", "rapide", "economique"],
+      "ingredients": [
+        { "libelle": "flocons d'avoine", "ciqual": "Flocons d'avoine", "g": 40, "exclusions": ["feculents:flocons_avoine"] },
+        { "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "g": 125, "exclusions": ["laitiers:yaourt"],
+          "substituts": [{ "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "exclusions": ["laitiers:fromage_blanc"] }] },
+        { "libelle": "pomme", "ciqual": "Pomme, chair et peau, crue", "g": 100, "exclusions": ["fruits:pomme"],
+          "substituts": [{ "libelle": "poire", "ciqual": "Poire, chair et peau, crue", "exclusions": ["fruits:poire"] }] },
+        { "libelle": "noisettes", "ciqual": "Noisette, sans sel ajouté", "g": 10, "optionnel": true, "exclusions": ["autres:fruits_a_coque"] },
+        { "libelle": "miel", "ciqual": "Miel", "g": 5, "optionnel": true, "exclusions": [] }
+      ],
+      "etapes": [
+        "Mélanger les flocons et le yaourt.",
+        "Ajouter la pomme râpée, les noisettes concassées et un filet de miel."
+      ]
+    },
+    {
+      "id": "oeufs-brouilles-kiwi",
+      "nom": "Œufs brouillés, pain complet et kiwi",
+      "types": ["petit_dejeuner"],
+      "temps": 10, "portions": 1, "mois": [],
+      "etiquettes": ["riche_proteines", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 50, "exclusions": ["feculents:pain"] },
+        { "libelle": "kiwi", "ciqual": "Kiwi, chair sans peau, avec pépins, cru", "g": 100, "exclusions": ["fruits:kiwi"],
+          "substituts": [{ "libelle": "orange", "ciqual": "Orange, chair sans peau, sans pépins, crue", "exclusions": ["fruits:orange"] }] },
+        { "libelle": "huile de colza", "ciqual": "Huile de colza", "g": 3, "exclusions": [] }
+      ],
+      "etapes": [
+        "Brouiller les œufs à feu doux en remuant sans cesse.",
+        "Servir avec le pain grillé et le kiwi."
+      ]
+    },
+    {
+      "id": "bowl-yaourt-banane-myrtilles",
+      "nom": "Bol de yaourt, banane et myrtilles",
+      "types": ["petit_dejeuner", "collation"],
+      "temps": 5, "portions": 1, "mois": [],
+      "etiquettes": ["vegetarien", "rapide"],
+      "ingredients": [
+        { "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "g": 150, "exclusions": ["laitiers:yaourt"],
+          "substituts": [{ "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "exclusions": ["laitiers:fromage_blanc"] }] },
+        { "libelle": "banane", "ciqual": "Banane, chair sans peau, crue", "g": 100, "exclusions": ["fruits:banane"],
+          "substituts": [{ "libelle": "pomme", "ciqual": "Pomme, chair et peau, crue", "exclusions": ["fruits:pomme"] }] },
+        { "libelle": "myrtilles", "ciqual": "Myrtille, crue", "g": 80, "exclusions": ["fruits:fruits_rouges"],
+          "substituts": [{ "libelle": "kiwi", "ciqual": "Kiwi, chair sans peau, avec pépins, cru", "exclusions": ["fruits:kiwi"] }] },
+        { "libelle": "flocons d'avoine", "ciqual": "Flocons d'avoine", "g": 20, "optionnel": true, "exclusions": ["feculents:flocons_avoine"] }
+      ],
+      "etapes": [
+        "Écraser la moitié de la banane dans le yaourt.",
+        "Ajouter le reste de la banane en rondelles, les myrtilles et les flocons."
+      ]
+    },
+    {
+      "id": "tartine-fb-jambon-tomate",
+      "nom": "Tartines fromage blanc, jambon et tomate",
+      "types": ["petit_dejeuner", "diner"],
+      "temps": 5, "portions": 1, "mois": [],
+      "etiquettes": ["riche_proteines", "rapide"],
+      "ingredients": [
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 60, "exclusions": ["feculents:pain"] },
+        { "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "g": 60, "exclusions": ["laitiers:fromage_blanc"],
+          "substituts": [{ "libelle": "ricotta", "ciqual": "Ricotta", "exclusions": ["laitiers:fromages"] }] },
+        { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix, découenné dégraissé", "g": 40, "exclusions": ["viandes:charcuterie"],
+          "substituts": [{ "libelle": "œuf dur", "ciqual": "Oeuf cru", "exclusions": ["oeufs:oeufs"] }] },
+        { "libelle": "tomate", "ciqual": "Tomate sans précision, crue (aliment moyen)", "g": 80, "exclusions": ["legumes:tomate"],
+          "substituts": [{ "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "exclusions": ["legumes:concombre"] }] }
+      ],
+      "etapes": [
+        "Tartiner le pain de fromage blanc.",
+        "Ajouter le jambon et la tomate en rondelles, poivrer."
+      ]
+    },
+    {
+      "id": "fromage-blanc-avoine-orange",
+      "nom": "Fromage blanc, flocons d'avoine et orange",
+      "types": ["petit_dejeuner"],
+      "temps": 5, "portions": 1, "mois": [11, 12, 1, 2, 3, 4],
+      "etiquettes": ["riche_proteines", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "g": 150, "exclusions": ["laitiers:fromage_blanc"],
+          "substituts": [{ "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "exclusions": ["laitiers:yaourt"] }] },
+        { "libelle": "flocons d'avoine", "ciqual": "Flocons d'avoine", "g": 30, "exclusions": ["feculents:flocons_avoine"] },
+        { "libelle": "orange", "ciqual": "Orange, chair sans peau, sans pépins, crue", "g": 120, "exclusions": ["fruits:orange"],
+          "substituts": [{ "libelle": "pomme", "ciqual": "Pomme, chair et peau, crue", "exclusions": ["fruits:pomme"] }] }
+      ],
+      "etapes": [
+        "Mélanger le fromage blanc et les flocons.",
+        "Ajouter l'orange pelée à vif, coupée en morceaux."
+      ]
+    },
+    {
+      "id": "kiwi-yaourt",
+      "nom": "Kiwi et yaourt nature",
+      "types": ["collation"],
+      "temps": 2, "portions": 1, "mois": [],
+      "etiquettes": ["rapide", "vegetarien", "economique"],
+      "ingredients": [
+        { "libelle": "kiwi", "ciqual": "Kiwi, chair sans peau, avec pépins, cru", "g": 100, "exclusions": ["fruits:kiwi"],
+          "substituts": [{ "libelle": "orange", "ciqual": "Orange, chair sans peau, sans pépins, crue", "exclusions": ["fruits:orange"] }] },
+        { "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "g": 125, "exclusions": ["laitiers:yaourt"],
+          "substituts": [{ "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "exclusions": ["laitiers:fromage_blanc"] }] }
+      ],
+      "etapes": [
+        "Couper le kiwi en dés sur le yaourt."
+      ]
+    },
+    {
+      "id": "poire-noix",
+      "nom": "Poire et noix",
+      "types": ["collation"],
+      "temps": 2, "portions": 1, "mois": [],
+      "etiquettes": ["rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "poire", "ciqual": "Poire, chair et peau, crue", "g": 150, "exclusions": ["fruits:poire"],
+          "substituts": [{ "libelle": "pomme", "ciqual": "Pomme, chair et peau, crue", "exclusions": ["fruits:pomme"] }] },
+        { "libelle": "cerneaux de noix", "ciqual": "Noix, cerneau, séchée", "g": 12, "exclusions": ["autres:fruits_a_coque"],
+          "substituts": [{ "libelle": "amandes", "ciqual": "Amande, avec peau, sans sel ajouté", "exclusions": ["autres:fruits_a_coque"] }] }
+      ],
+      "etapes": [
+        "Une poire et quelques cerneaux de noix."
+      ]
+    },
+    {
+      "id": "galettes-riz-cacahuete",
+      "nom": "Galettes de riz et beurre de cacahuète",
+      "types": ["collation"],
+      "temps": 2, "portions": 1, "mois": [],
+      "etiquettes": ["rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "galettes de riz complet", "ciqual": "Galette de riz complet soufflé", "g": 20, "exclusions": ["feculents:riz"] },
+        { "libelle": "beurre de cacahuète", "ciqual": "Beurre de cacahuète ou pâte d'arachide", "g": 10, "optionnel": true, "exclusions": ["autres:fruits_a_coque"] },
+        { "libelle": "banane", "ciqual": "Banane, chair sans peau, crue", "g": 50, "optionnel": true, "exclusions": ["fruits:banane"] }
+      ],
+      "etapes": [
+        "Tartiner deux galettes de riz d'un peu de beurre de cacahuète, ajouter quelques rondelles de banane."
+      ]
+    },
+    {
+      "id": "batonnets-legumes-fb-herbes",
+      "nom": "Bâtonnets de légumes et fromage blanc aux herbes",
+      "types": ["collation"],
+      "temps": 5, "portions": 1, "mois": [],
+      "etiquettes": ["riche_proteines", "rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "carotte", "ciqual": "Carotte, crue", "g": 100, "exclusions": ["legumes:carotte"],
+          "substituts": [{ "libelle": "tomates cerises", "ciqual": "Tomate cerise, crue", "exclusions": ["legumes:tomate"] }] },
+        { "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "g": 100, "exclusions": ["legumes:concombre"],
+          "substituts": [{ "libelle": "tomates cerises", "ciqual": "Tomate cerise, crue", "exclusions": ["legumes:tomate"] }] },
+        { "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "g": 100, "exclusions": ["laitiers:fromage_blanc"],
+          "substituts": [{ "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "exclusions": ["laitiers:yaourt"] }] },
+        { "libelle": "ciboulette ou persil", "ciqual": "Persil, frais", "g": 3, "optionnel": true, "exclusions": ["epices:persil"] }
+      ],
+      "etapes": [
+        "Couper les légumes en bâtonnets.",
+        "Les tremper dans le fromage blanc assaisonné d'herbes, de sel et de poivre."
+      ]
+    },
+    {
+      "id": "orange-amandes",
+      "nom": "Orange et amandes",
+      "types": ["collation"],
+      "temps": 2, "portions": 1, "mois": [11, 12, 1, 2, 3],
+      "etiquettes": ["rapide", "vegetarien"],
+      "ingredients": [
+        { "libelle": "orange", "ciqual": "Orange, chair sans peau, sans pépins, crue", "g": 150, "exclusions": ["fruits:orange"],
+          "substituts": [{ "libelle": "pomme", "ciqual": "Pomme, chair et peau, crue", "exclusions": ["fruits:pomme"] }] },
+        { "libelle": "amandes", "ciqual": "Amande, avec peau, sans sel ajouté", "g": 12, "exclusions": ["autres:fruits_a_coque"],
+          "substituts": [{ "libelle": "noisettes", "ciqual": "Noisette, sans sel ajouté", "exclusions": ["autres:fruits_a_coque"] }] }
+      ],
+      "etapes": [
+        "Une orange et une petite poignée d'amandes."
+      ]
+    },
+    {
+      "id": "chili-vegetarien-haricots",
+      "nom": "Chili végétarien aux haricots rouges",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [],
+      "etiquettes": ["vegetarien", "economique"],
+      "ingredients": [
+        { "libelle": "haricots rouges", "ciqual": "Haricot rouge, appertisé, égoutté", "g": 400, "exclusions": ["legumineuses:haricots_rouges"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 400, "exclusions": ["legumes:tomate"] },
+        { "libelle": "maïs", "ciqual": "Maïs doux, appertisé, égoutté", "g": 100, "optionnel": true, "exclusions": [] },
+        { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "optionnel": true, "exclusions": ["legumes:poivron"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "riz", "ciqual": "Riz blanc, cru", "g": 120, "exclusions": ["feculents:riz"],
+          "substituts": [{ "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "exclusions": ["feculents:semoule"] }] },
+        { "libelle": "cumin", "ciqual": "Cumin, graine", "g": 2, "optionnel": true, "exclusions": ["epices:cumin"] },
+        { "libelle": "paprika", "ciqual": "Paprika, poudre", "g": 2, "optionnel": true, "exclusions": ["epices:paprika"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Faire revenir l'oignon et le poivron, ajouter les épices.",
+        "Ajouter les tomates, les haricots et le maïs, mijoter 15 minutes.",
+        "Servir avec le riz."
+      ]
+    },
+    {
+      "id": "poulet-citron-boulgour-courgettes",
+      "nom": "Poulet au citron, boulgour et courgettes",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "g": 260, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope crue", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "boulgour", "ciqual": "Boulgour de blé, cru", "g": 120, "exclusions": ["feculents:boulgour"],
+          "substituts": [{ "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "exclusions": ["feculents:semoule"] }] },
+        { "libelle": "courgettes", "ciqual": "Courgette, chair et peau, crue", "g": 300, "exclusions": ["legumes:courgette"],
+          "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
+        { "libelle": "citron", "ciqual": "Citron, chair sans peau, sans pépins, cru", "g": 30, "optionnel": true, "exclusions": [] },
+        { "libelle": "ail", "ciqual": "Ail, cru", "g": 5, "optionnel": true, "exclusions": ["legumes:ail"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire le boulgour.",
+        "Dorer le poulet en lanières avec l'ail, ajouter les courgettes 6 minutes.",
+        "Arroser de jus de citron."
+      ]
+    },
+    {
+      "id": "gnocchis-tomate-mozzarella",
+      "nom": "Gnocchis à la tomate et mozzarella au four",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["vegetarien"],
+      "ingredients": [
+        { "libelle": "gnocchis", "ciqual": "Gnocchi à la pomme de terre, à cuire", "g": 400, "exclusions": ["feculents:pommes_de_terre"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
+        { "libelle": "mozzarella", "ciqual": "Mozzarella au lait de vache", "g": 125, "exclusions": ["laitiers:fromages"],
+          "substituts": [{ "libelle": "emmental", "ciqual": "Emmental ou emmenthal", "exclusions": ["laitiers:fromages"] }] },
+        { "libelle": "basilic", "ciqual": "Basilic, frais", "g": 5, "optionnel": true, "exclusions": ["epices:basilic"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 5, "exclusions": [] }
+      ],
+      "etapes": [
+        "Faire revenir les gnocchis 5 minutes à la poêle.",
+        "Mettre dans un plat avec la tomate et la mozzarella, gratiner 10 minutes à 220 °C."
+      ]
+    },
+    {
+      "id": "polenta-champignons-oeuf",
+      "nom": "Polenta crémeuse, champignons et œuf",
+      "types": ["dejeuner", "diner"],
+      "temps": 20, "portions": 2, "mois": [],
+      "etiquettes": ["vegetarien"],
+      "ingredients": [
+        { "libelle": "polenta", "ciqual": "Polenta ou semoule de maïs, précuite, à cuire", "g": 120, "exclusions": [] },
+        { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 300, "exclusions": ["laitiers:lait"],
+          "substituts": [{ "libelle": "boisson au soja", "ciqual": "Boisson au soja, nature, enrichie en calcium, préemballée", "exclusions": ["legumineuses:tofu"] }] },
+        { "libelle": "champignons de Paris", "ciqual": "Champignon de Paris ou champignon de couche, cru", "g": 300, "exclusions": ["legumes:champignons"],
+          "substituts": [{ "libelle": "épinards", "ciqual": "Epinard, cru", "exclusions": ["legumes:epinards"] }] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "parmesan", "ciqual": "Parmesan", "g": 15, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 5, "exclusions": [] }
+      ],
+      "etapes": [
+        "Verser la polenta en pluie dans le lait et 20 cl d'eau bouillante, remuer 5 minutes.",
+        "Poêler les champignons, cuire les œufs au plat. Servir sur la polenta."
+      ]
+    },
+    {
+      "id": "saumon-lentilles-carottes",
+      "nom": "Saumon, lentilles vertes et carottes",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "pavés de saumon", "ciqual": "Saumon, élevage, cru", "g": 240, "exclusions": ["poissons:saumon"],
+          "substituts": [{ "libelle": "filets de cabillaud", "ciqual": "Cabillaud, cru", "exclusions": ["poissons:poissons_blancs"] }] },
+        { "libelle": "lentilles vertes", "ciqual": "Lentille verte, sèche", "g": 120, "exclusions": ["legumineuses:lentilles"] },
+        { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 250, "exclusions": ["legumes:carotte"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 50, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 6, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire les lentilles 20 minutes avec les carottes en rondelles et l'oignon.",
+        "Cuire le saumon 4 minutes de chaque côté. Servir sur les lentilles."
+      ]
+    },
+    {
+      "id": "veloute-potiron-tartine-jambon",
+      "nom": "Velouté de potiron et tartines au jambon",
+      "types": ["diner"],
+      "temps": 35, "portions": 2, "mois": [9, 10, 11, 12, 1, 2],
+      "etiquettes": ["economique"],
+      "ingredients": [
+        { "libelle": "potiron", "ciqual": "Potiron, cru", "g": 600, "exclusions": ["legumes:courge"] },
+        { "libelle": "pomme de terre", "ciqual": "Pomme de terre, sans peau, crue", "g": 150, "exclusions": ["feculents:pommes_de_terre"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 60, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 100, "exclusions": ["laitiers:lait"],
+          "substituts": [{ "libelle": "boisson au soja", "ciqual": "Boisson au soja, nature, enrichie en calcium, préemballée", "exclusions": ["legumineuses:tofu"] }] },
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 80, "exclusions": ["feculents:pain"] },
+        { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix, découenné dégraissé", "g": 80, "exclusions": ["viandes:charcuterie"] }
+      ],
+      "etapes": [
+        "Cuire le potiron, la pomme de terre et l'oignon 25 minutes dans l'eau, mixer avec le lait.",
+        "Servir avec des tartines de pain complet et de jambon."
+      ]
+    },
+    {
+      "id": "soupe-pois-casses-jambon",
+      "nom": "Soupe de pois cassés au jambon",
+      "types": ["dejeuner", "diner"],
+      "temps": 50, "portions": 2, "mois": [10, 11, 12, 1, 2, 3],
+      "etiquettes": ["economique", "riche_proteines"],
+      "ingredients": [
+        { "libelle": "pois cassés", "ciqual": "Pois cassé, sec", "g": 140, "exclusions": ["legumineuses:pois_casses"] },
+        { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 150, "optionnel": true, "exclusions": ["legumes:carotte"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix, découenné dégraissé", "g": 120, "exclusions": ["viandes:charcuterie"] }
+      ],
+      "etapes": [
+        "Cuire les pois cassés, les carottes et l'oignon 45 minutes dans 1 litre d'eau, puis mixer.",
+        "Ajouter le jambon coupé en dés."
+      ]
+    },
+    {
+      "id": "couscous-legumes-pois-chiches",
+      "nom": "Couscous de légumes et pois chiches",
+      "types": ["dejeuner", "diner"],
+      "temps": 35, "portions": 2, "mois": [],
+      "etiquettes": ["vegetarien", "economique"],
+      "ingredients": [
+        { "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "g": 120, "exclusions": ["feculents:semoule"],
+          "substituts": [{ "libelle": "boulgour", "ciqual": "Boulgour de blé, cru", "exclusions": ["feculents:boulgour"] }] },
+        { "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "g": 240, "exclusions": ["legumineuses:pois_chiches"] },
+        { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 200, "exclusions": ["legumes:carotte"],
+          "substituts": [{ "libelle": "potiron", "ciqual": "Potiron, cru", "exclusions": ["legumes:courge"] }] },
+        { "libelle": "courgettes", "ciqual": "Courgette, chair et peau, crue", "g": 250, "exclusions": ["legumes:courgette"],
+          "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 200, "optionnel": true, "exclusions": ["legumes:tomate"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "cumin", "ciqual": "Cumin, graine", "g": 2, "optionnel": true, "exclusions": ["epices:cumin"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Faire mijoter les légumes, les tomates, l'oignon et le cumin 25 minutes avec un peu d'eau.",
+        "Ajouter les pois chiches 5 minutes. Servir avec la semoule."
+      ]
+    },
+    {
+      "id": "galettes-champignons-fromage",
+      "nom": "Galettes de sarrasin aux champignons et au fromage",
+      "types": ["diner"],
+      "temps": 20, "portions": 2, "mois": [],
+      "etiquettes": ["vegetarien"],
+      "ingredients": [
+        { "libelle": "galettes de sarrasin", "ciqual": "Galette de sarrasin, nature, souple (à garnir) préemballée", "g": 120, "exclusions": ["feculents:pain"] },
+        { "libelle": "champignons de Paris", "ciqual": "Champignon de Paris ou champignon de couche, cru", "g": 200, "exclusions": ["legumes:champignons"],
+          "substituts": [{ "libelle": "épinards", "ciqual": "Epinard, cru", "exclusions": ["legumes:epinards"] }] },
+        { "libelle": "fromage râpé (emmental)", "ciqual": "Emmental ou emmenthal", "g": 40, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "salade", "ciqual": "Laitue, crue", "g": 80, "optionnel": true, "exclusions": ["legumes:salade"] }
+      ],
+      "etapes": [
+        "Poêler les champignons.",
+        "Garnir chaque galette d'un œuf, de champignons et de fromage, plier et servir avec la salade."
+      ]
+    },
+    {
+      "id": "dinde-creme-champignons-riz",
+      "nom": "Dinde à la crème, champignons et riz",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope crue", "g": 260, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "champignons de Paris", "ciqual": "Champignon de Paris ou champignon de couche, cru", "g": 250, "exclusions": ["legumes:champignons"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "crème légère", "ciqual": "Crème 12 à 25% MG, légère, épaisse, rayon frais", "g": 50, "exclusions": ["laitiers:creme"],
+          "substituts": [{ "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "exclusions": ["laitiers:yaourt"] }] },
+        { "libelle": "riz", "ciqual": "Riz blanc, cru", "g": 120, "exclusions": ["feculents:riz"],
+          "substituts": [{ "libelle": "pâtes", "ciqual": "Pâtes sèches, standard, crues", "exclusions": ["feculents:pates"] }] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 50, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 5, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire le riz.",
+        "Dorer la dinde, ajouter l'oignon et les champignons 8 minutes, puis la crème."
+      ]
+    },
+    {
+      "id": "porc-saute-legumes-nouilles",
+      "nom": "Porc sauté aux légumes et nouilles",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "filet mignon de porc", "ciqual": "Porc, filet mignon cru", "g": 260, "exclusions": ["viandes:porc"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "nouilles (ou pâtes)", "ciqual": "Pâtes sèches, standard, crues", "g": 140, "exclusions": ["feculents:pates"] },
+        { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "optionnel": true, "exclusions": ["legumes:poivron"] },
+        { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 150, "exclusions": ["legumes:carotte"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "brocoli", "ciqual": "Brocoli, cru", "g": 200, "exclusions": ["legumes:brocoli"],
+          "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
+        { "libelle": "sauce soja", "ciqual": "Sauce soja, préemballée", "g": 15, "optionnel": true, "exclusions": ["legumineuses:tofu"] },
+        { "libelle": "gingembre", "ciqual": "Gingembre, racine fraîche", "g": 5, "optionnel": true, "exclusions": ["epices:gingembre"] },
+        { "libelle": "huile de colza", "ciqual": "Huile de colza", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire les nouilles.",
+        "Faire sauter la viande en lamelles à feu vif, puis les légumes 5 minutes.",
+        "Ajouter la sauce soja, le gingembre et les nouilles."
+      ]
+    },
+    {
+      "id": "boulettes-boeuf-tomate-pates",
+      "nom": "Boulettes de bœuf à la tomate et pâtes",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "bœuf haché 5 %", "ciqual": "Boeuf, steak haché 5% MG cru", "g": 250, "exclusions": ["viandes:boeuf"],
+          "substituts": [{ "libelle": "filets de poulet hachés", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 400, "exclusions": ["legumes:tomate"] },
+        { "libelle": "pâtes", "ciqual": "Pâtes sèches, standard, crues", "g": 160, "exclusions": ["feculents:pates"],
+          "substituts": [{ "libelle": "riz", "ciqual": "Riz blanc, cru", "exclusions": ["feculents:riz"] }] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 60, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "herbes de Provence", "ciqual": "Herbes de Provence, séchées", "g": 2, "optionnel": true, "exclusions": [] },
+        { "libelle": "parmesan", "ciqual": "Parmesan", "g": 10, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 5, "exclusions": [] }
+      ],
+      "etapes": [
+        "Former des boulettes avec la viande et les herbes, les dorer.",
+        "Ajouter l'oignon et les tomates, mijoter 15 minutes. Servir avec les pâtes."
+      ]
+    },
+    {
+      "id": "omelette-espagnole-poivrons",
+      "nom": "Omelette espagnole aux poivrons",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [],
+      "etiquettes": ["vegetarien", "economique"],
+      "ingredients": [
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 220, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, sans peau, crue", "g": 300, "exclusions": ["feculents:pommes_de_terre"],
+          "substituts": [{ "libelle": "patate douce", "ciqual": "Patate douce, crue", "exclusions": ["feculents:patate_douce"] }] },
+        { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "exclusions": ["legumes:poivron"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Faire cuire doucement les pommes de terre en fines tranches, l'oignon et le poivron 15 minutes à la poêle.",
+        "Verser les œufs battus, cuire à couvert 8 minutes."
+      ]
+    },
+    {
+      "id": "salade-riz-thon-mais",
+      "nom": "Salade de riz, thon et maïs",
+      "types": ["dejeuner"],
+      "temps": 25, "portions": 2, "mois": [5, 6, 7, 8, 9],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "riz", "ciqual": "Riz blanc, cru", "g": 120, "exclusions": ["feculents:riz"] },
+        { "libelle": "thon au naturel", "ciqual": "Thon, au naturel, appertisé, égoutté", "g": 140, "exclusions": ["poissons:thon"] },
+        { "libelle": "maïs", "ciqual": "Maïs doux, appertisé, égoutté", "g": 140, "optionnel": true, "exclusions": [] },
+        { "libelle": "tomates", "ciqual": "Tomate sans précision, crue (aliment moyen)", "g": 200, "exclusions": ["legumes:tomate"],
+          "substituts": [{ "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "exclusions": ["legumes:concombre"] }] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "optionnel": true, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire le riz et le refroidir.",
+        "Mélanger avec le thon, le maïs, les tomates en dés et les œufs durs, assaisonner."
+      ]
+    },
+    {
+      "id": "bowl-saumon-avocat-concombre",
+      "nom": "Bowl de saumon, avocat et concombre",
+      "types": ["dejeuner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "pavés de saumon", "ciqual": "Saumon, élevage, cru", "g": 200, "exclusions": ["poissons:saumon"],
+          "substituts": [{ "libelle": "crevettes", "ciqual": "Crevette, crue", "exclusions": ["poissons:crevettes"] }] },
+        { "libelle": "riz", "ciqual": "Riz blanc, cru", "g": 120, "exclusions": ["feculents:riz"] },
+        { "libelle": "avocat", "ciqual": "Avocat, chair sans peau, sans noyau, cru", "g": 100, "exclusions": ["legumes:avocat"] },
+        { "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "g": 200, "exclusions": ["legumes:concombre"] },
+        { "libelle": "sauce soja", "ciqual": "Sauce soja, préemballée", "g": 15, "optionnel": true, "exclusions": ["legumineuses:tofu"] }
+      ],
+      "etapes": [
+        "Cuire le riz et le saumon (8 minutes à la poêle).",
+        "Assembler dans des bols avec l'avocat et le concombre en dés, un filet de sauce soja."
+      ]
+    },
+    {
+      "id": "cabillaud-coco-riz-epinards",
+      "nom": "Cabillaud au lait de coco, riz et épinards",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "filets de cabillaud", "ciqual": "Cabillaud, cru", "g": 300, "exclusions": ["poissons:poissons_blancs"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "lait de coco", "ciqual": "Lait de coco", "g": 100, "exclusions": ["autres:lait_coco"],
+          "substituts": [{ "libelle": "crème légère", "ciqual": "Crème 12 à 25% MG, légère, épaisse, rayon frais", "exclusions": ["laitiers:creme"] }] },
+        { "libelle": "riz", "ciqual": "Riz blanc, cru", "g": 120, "exclusions": ["feculents:riz"] },
+        { "libelle": "épinards", "ciqual": "Epinard, cru", "g": 200, "exclusions": ["legumes:epinards"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "curry", "ciqual": "Curry, poudre", "g": 3, "optionnel": true, "exclusions": ["epices:curry"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 50, "optionnel": true, "exclusions": ["legumes:oignon"] }
+      ],
+      "etapes": [
+        "Cuire le riz.",
+        "Faire chauffer le lait de coco avec l'oignon et le curry, pocher le poisson 8 minutes, ajouter les épinards 2 minutes."
+      ]
+    },
+    {
+      "id": "poulet-roti-pdt-haricots",
+      "nom": "Poulet rôti, pommes de terre et haricots verts",
+      "types": ["dejeuner", "diner"],
+      "temps": 45, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "cuisses de poulet sans peau", "ciqual": "Poulet, cuisse, viande crue", "g": 300, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, sans peau, crue", "g": 400, "exclusions": ["feculents:pommes_de_terre"],
+          "substituts": [{ "libelle": "patate douce", "ciqual": "Patate douce, crue", "exclusions": ["feculents:patate_douce"] }] },
+        { "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "g": 300, "exclusions": ["legumes:haricots_verts"],
+          "substituts": [{ "libelle": "brocoli", "ciqual": "Brocoli, cru", "exclusions": ["legumes:brocoli"] }] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] },
+        { "libelle": "herbes de Provence", "ciqual": "Herbes de Provence, séchées", "g": 2, "optionnel": true, "exclusions": [] }
+      ],
+      "etapes": [
+        "Rôtir le poulet et les pommes de terre en quartiers 40 minutes à 200 °C avec l'huile et les herbes.",
+        "Cuire les haricots verts à l'eau 10 minutes."
+      ]
+    },
+    {
+      "id": "gratin-pates-jambon-brocoli",
+      "nom": "Gratin de pâtes au jambon et brocoli",
+      "types": ["dejeuner", "diner"],
+      "temps": 35, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "pâtes", "ciqual": "Pâtes sèches, standard, crues", "g": 160, "exclusions": ["feculents:pates"] },
+        { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix, découenné dégraissé", "g": 120, "exclusions": ["viandes:charcuterie"],
+          "substituts": [{ "libelle": "dés de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "brocoli", "ciqual": "Brocoli, cru", "g": 300, "exclusions": ["legumes:brocoli"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 200, "exclusions": ["laitiers:lait"],
+          "substituts": [{ "libelle": "boisson au soja", "ciqual": "Boisson au soja, nature, enrichie en calcium, préemballée", "exclusions": ["legumineuses:tofu"] }] },
+        { "libelle": "fromage râpé (emmental)", "ciqual": "Emmental ou emmenthal", "g": 40, "optionnel": true, "exclusions": ["laitiers:fromages"] }
+      ],
+      "etapes": [
+        "Cuire les pâtes et le brocoli.",
+        "Mélanger dans un plat avec le jambon et le lait, couvrir de fromage, gratiner 15 minutes à 200 °C."
+      ]
+    },
+    {
+      "id": "salade-quinoa-feta-legumes",
+      "nom": "Salade de quinoa, feta et légumes",
+      "types": ["dejeuner"],
+      "temps": 25, "portions": 2, "mois": [5, 6, 7, 8, 9],
+      "etiquettes": ["vegetarien"],
+      "ingredients": [
+        { "libelle": "quinoa", "ciqual": "Quinoa, cru", "g": 120, "exclusions": ["feculents:quinoa"],
+          "substituts": [{ "libelle": "boulgour", "ciqual": "Boulgour de blé, cru", "exclusions": ["feculents:boulgour"] }] },
+        { "libelle": "feta", "ciqual": "Feta, au lait de brebis 70% minimum et lait de chèvre 30% maximum", "g": 80, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "g": 200, "exclusions": ["legumes:concombre"],
+          "substituts": [{ "libelle": "courgette crue", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "tomates", "ciqual": "Tomate sans précision, crue (aliment moyen)", "g": 200, "exclusions": ["legumes:tomate"] },
+        { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 100, "optionnel": true, "exclusions": ["legumes:poivron"] },
+        { "libelle": "menthe", "ciqual": "Menthe, fraîche", "g": 3, "optionnel": true, "exclusions": ["epices:menthe"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire le quinoa et le refroidir.",
+        "Mélanger avec les légumes en dés, la feta émiettée, la menthe et l'huile."
+      ]
+    },
+    {
+      "id": "wok-crevettes-chou-nouilles",
+      "nom": "Wok de crevettes, chou et nouilles",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "crevettes décortiquées", "ciqual": "Crevette, crue", "g": 250, "exclusions": ["poissons:crevettes"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "chou blanc", "ciqual": "Chou blanc, cru", "g": 300, "exclusions": ["legumes:choux"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 150, "optionnel": true, "exclusions": ["legumes:carotte"] },
+        { "libelle": "nouilles (ou pâtes)", "ciqual": "Pâtes sèches, standard, crues", "g": 140, "exclusions": ["feculents:pates"] },
+        { "libelle": "sauce soja", "ciqual": "Sauce soja, préemballée", "g": 15, "optionnel": true, "exclusions": ["legumineuses:tofu"] },
+        { "libelle": "gingembre", "ciqual": "Gingembre, racine fraîche", "g": 5, "optionnel": true, "exclusions": ["epices:gingembre"] },
+        { "libelle": "huile de colza", "ciqual": "Huile de colza", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire les nouilles.",
+        "Faire sauter le chou émincé et les carottes 6 minutes, ajouter les crevettes, le gingembre et la sauce soja 3 minutes.",
+        "Mélanger avec les nouilles."
+      ]
+    },
+    {
+      "id": "brochettes-dinde-taboule",
+      "nom": "Brochettes de dinde et taboulé",
+      "types": ["dejeuner", "diner"],
+      "temps": 30, "portions": 2, "mois": [5, 6, 7, 8, 9],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope crue", "g": 260, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "g": 120, "exclusions": ["feculents:semoule"],
+          "substituts": [{ "libelle": "boulgour", "ciqual": "Boulgour de blé, cru", "exclusions": ["feculents:boulgour"] }] },
+        { "libelle": "tomates", "ciqual": "Tomate sans précision, crue (aliment moyen)", "g": 200, "exclusions": ["legumes:tomate"],
+          "substituts": [{ "libelle": "poivron", "ciqual": "Poivron rouge, cru", "exclusions": ["legumes:poivron"] }] },
+        { "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "g": 150, "optionnel": true, "exclusions": ["legumes:concombre"] },
+        { "libelle": "persil", "ciqual": "Persil, frais", "g": 10, "optionnel": true, "exclusions": ["epices:persil"] },
+        { "libelle": "menthe", "ciqual": "Menthe, fraîche", "g": 3, "optionnel": true, "exclusions": ["epices:menthe"] },
+        { "libelle": "citron", "ciqual": "Citron, chair sans peau, sans pépins, cru", "g": 30, "optionnel": true, "exclusions": [] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] }
+      ],
+      "etapes": [
+        "Réhydrater la semoule à l'eau bouillante, ajouter les légumes en dés, les herbes, le citron et l'huile.",
+        "Griller les brochettes de dinde 10 minutes."
+      ]
+    },
+    {
+      "id": "chou-fleur-roti-pois-chiches",
+      "nom": "Chou-fleur rôti, pois chiches et sauce yaourt",
+      "types": ["dejeuner", "diner"],
+      "temps": 35, "portions": 2, "mois": [9, 10, 11, 12, 1, 2, 3, 4],
+      "etiquettes": ["vegetarien", "economique"],
+      "ingredients": [
+        { "libelle": "chou-fleur", "ciqual": "Chou-fleur, cru", "g": 500, "exclusions": ["legumes:chou_fleur"] },
+        { "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "g": 240, "exclusions": ["legumineuses:pois_chiches"] },
+        { "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "g": 125, "exclusions": ["laitiers:yaourt"],
+          "substituts": [{ "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "exclusions": ["laitiers:fromage_blanc"] }] },
+        { "libelle": "cumin", "ciqual": "Cumin, graine", "g": 2, "optionnel": true, "exclusions": ["epices:cumin"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 12, "exclusions": [] },
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 60, "exclusions": ["feculents:pain"] }
+      ],
+      "etapes": [
+        "Rôtir le chou-fleur en bouquets et les pois chiches avec l'huile et le cumin 25 minutes à 210 °C.",
+        "Servir avec la sauce yaourt et le pain."
+      ]
+    },
+    {
+      "id": "lentilles-corail-epinards-oeuf",
+      "nom": "Lentilles corail, épinards et œuf",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["vegetarien", "economique"],
+      "ingredients": [
+        { "libelle": "lentilles corail", "ciqual": "Lentille corail, sèche", "g": 120, "exclusions": ["legumineuses:lentilles"] },
+        { "libelle": "épinards", "ciqual": "Epinard, cru", "g": 300, "exclusions": ["legumes:epinards"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 150, "optionnel": true, "exclusions": ["legumes:tomate"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 50, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "curry", "ciqual": "Curry, poudre", "g": 2, "optionnel": true, "exclusions": ["epices:curry"] }
+      ],
+      "etapes": [
+        "Cuire les lentilles 15 minutes avec l'oignon, les tomates et le curry.",
+        "Ajouter les épinards, puis casser les œufs dessus et couvrir 5 minutes."
+      ]
+    },
+    {
+      "id": "filet-mignon-patate-douce-brocoli",
+      "nom": "Filet mignon, écrasé de patate douce et brocoli",
+      "types": ["dejeuner", "diner"],
+      "temps": 40, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines"],
+      "ingredients": [
+        { "libelle": "filet mignon de porc", "ciqual": "Porc, filet mignon cru", "g": 280, "exclusions": ["viandes:porc"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "patate douce", "ciqual": "Patate douce, crue", "g": 400, "exclusions": ["feculents:patate_douce"],
+          "substituts": [{ "libelle": "pommes de terre", "ciqual": "Pomme de terre, sans peau, crue", "exclusions": ["feculents:pommes_de_terre"] }] },
+        { "libelle": "brocoli", "ciqual": "Brocoli, cru", "g": 250, "exclusions": ["legumes:brocoli"],
+          "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
+        { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 50, "optionnel": true, "exclusions": ["laitiers:lait"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 6, "exclusions": [] }
+      ],
+      "etapes": [
+        "Rôtir le filet mignon 25 minutes à 200 °C.",
+        "Cuire la patate douce à l'eau et l'écraser avec le lait. Cuire le brocoli à la vapeur."
+      ]
+    },
+    {
+      "id": "wraps-thon-crudites",
+      "nom": "Wraps au thon et crudités",
+      "types": ["dejeuner"],
+      "temps": 15, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "rapide"],
+      "ingredients": [
+        { "libelle": "tortillas de blé", "ciqual": "Tortilla souple (à garnir), à base de blé", "g": 120, "exclusions": ["feculents:pain"] },
+        { "libelle": "thon au naturel", "ciqual": "Thon, au naturel, appertisé, égoutté", "g": 140, "exclusions": ["poissons:thon"],
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "fromage blanc 0 % (sauce)", "ciqual": "Fromage blanc, nature, 0% MG", "g": 80, "exclusions": ["laitiers:fromage_blanc"],
+          "substituts": [{ "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "exclusions": ["laitiers:yaourt"] }] },
+        { "libelle": "salade", "ciqual": "Laitue, crue", "g": 60, "optionnel": true, "exclusions": ["legumes:salade"] },
+        { "libelle": "carotte râpée", "ciqual": "Carotte, crue", "g": 100, "optionnel": true, "exclusions": ["legumes:carotte"] },
+        { "libelle": "maïs", "ciqual": "Maïs doux, appertisé, égoutté", "g": 80, "optionnel": true, "exclusions": [] }
+      ],
+      "etapes": [
+        "Mélanger le thon et le fromage blanc, poivrer.",
+        "Garnir les tortillas de salade, de carotte, de maïs et du mélange au thon, puis rouler."
+      ]
+    },
+    {
+      "id": "riz-cantonais-leger",
+      "nom": "Riz cantonais léger",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "economique"],
+      "ingredients": [
+        { "libelle": "riz", "ciqual": "Riz blanc, cru", "g": 120, "exclusions": ["feculents:riz"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix, découenné dégraissé", "g": 100, "exclusions": ["viandes:charcuterie"],
+          "substituts": [{ "libelle": "crevettes", "ciqual": "Crevette, crue", "exclusions": ["poissons:crevettes"] }] },
+        { "libelle": "petits pois", "ciqual": "Petits pois, crus", "g": 150, "exclusions": ["legumes:petits_pois"],
+          "substituts": [{ "libelle": "carottes", "ciqual": "Carotte, crue", "exclusions": ["legumes:carotte"] }] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 50, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "sauce soja", "ciqual": "Sauce soja, préemballée", "g": 10, "optionnel": true, "exclusions": ["legumineuses:tofu"] },
+        { "libelle": "huile de colza", "ciqual": "Huile de colza", "g": 8, "exclusions": [] }
+      ],
+      "etapes": [
+        "Cuire le riz (idéalement la veille).",
+        "Faire une omelette fine, la couper en lanières.",
+        "Faire sauter le riz avec les petits pois, le jambon, l'oignon, l'omelette et la sauce soja."
+      ]
+    },
+    {
+      "id": "frittata-courgettes-feta",
+      "nom": "Frittata aux courgettes et à la feta",
+      "types": ["dejeuner", "diner"],
+      "temps": 25, "portions": 2, "mois": [],
+      "etiquettes": ["riche_proteines", "vegetarien"],
+      "ingredients": [
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 220, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "courgettes", "ciqual": "Courgette, chair et peau, crue", "g": 300, "exclusions": ["legumes:courgette"] },
+        { "libelle": "feta", "ciqual": "Feta, au lait de brebis 70% minimum et lait de chèvre 30% maximum", "g": 60, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 5, "exclusions": [] },
+        { "libelle": "menthe ou basilic", "ciqual": "Basilic, frais", "g": 3, "optionnel": true, "exclusions": ["epices:basilic", "epices:menthe"] }
+      ],
+      "etapes": [
+        "Faire revenir les courgettes en fines rondelles 8 minutes.",
+        "Verser les œufs battus, la feta émiettée et les herbes, cuire à couvert 8 minutes à feu doux."
+      ]
+    },
+    {
+      "id": "ratatouille-oeufs-plat",
+      "nom": "Ratatouille et œufs au plat",
+      "types": ["dejeuner", "diner"],
+      "temps": 40, "portions": 2, "mois": [6, 7, 8, 9],
+      "etiquettes": ["vegetarien", "economique"],
+      "ingredients": [
+        { "libelle": "aubergine", "ciqual": "Aubergine, crue", "g": 200, "exclusions": ["legumes:aubergine"],
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "courgettes", "ciqual": "Courgette, chair et peau, crue", "g": 200, "exclusions": ["legumes:courgette"],
+          "substituts": [{ "libelle": "poivron", "ciqual": "Poivron rouge, cru", "exclusions": ["legumes:poivron"] }] },
+        { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "optionnel": true, "exclusions": ["legumes:poivron"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 60, "optionnel": true, "exclusions": ["legumes:oignon"] },
+        { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] },
+        { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 60, "exclusions": ["feculents:pain"] }
+      ],
+      "etapes": [
+        "Faire revenir les légumes en dés 10 minutes, ajouter les tomates et mijoter 25 minutes.",
+        "Cuire les œufs au plat et les servir sur la ratatouille, avec le pain."
+      ]
     }
   ]
 }

@@ -224,7 +224,8 @@ function afficherMenus() {
     <div class="segmente segmente-large" style="margin-bottom:var(--sp-4);">
       <button class="${semaineMenu === lundiCourant ? 'active' : ''}" onclick="changerSemaineMenu('${lundiCourant}')">Cette semaine</button>
       <button class="${semaineMenu === lundiSuivant ? 'active' : ''}" onclick="changerSemaineMenu('${lundiSuivant}')">Semaine prochaine</button>
-    </div>`
+    </div>
+    ${nbProposables ? `<button class="btn btn-secondaire btn-bloc btn-frigo" onclick="ouvrirFrigo()">${icone('frigo')} Qu'est-ce que je cuisine avec ce que j'ai ?</button>` : ''}`
 
   if (!menuActuel) {
     html += nbProposables === 0 ? `
@@ -275,6 +276,7 @@ function afficherMenus() {
         ${jour === dateISO() ? '<span class="etiquette">Aujourd\'hui</span>' : ''}
         <div class="carte-titre" style="text-transform:capitalize;">${libelleJourCourt(jour)}</div>
         ${repasJour.map(r => fige ? renduRepasFige(r, ajustes) : renduRepasBrouillon(r)).join('')}
+        ${renduProteinesJour(jour, repasJour)}
       </div>`
   }
 
@@ -332,6 +334,7 @@ function renduCarteRecetteCourte(id, choisie, onclick) {
 }
 
 function renduRepasBrouillon(r) {
+  if (r.restes && r.recette_id) return renduSlotRestes(r)
   const options = r.propositions.filter(id => recettePourProfil(id)?.ok)
   return `
     <div class="slot">
@@ -348,7 +351,10 @@ function renduRepasBrouillon(r) {
           <span class="option-nom">Sans recette</span><span class="option-detail">Repas dehors, restes, cantine…</span>
         </button>
       </div>
-      <button class="btn btn-lien" onclick="autresPropositions('${r.id}')">Autres idées</button>
+      <div class="slot-actions">
+        <button class="btn btn-lien" onclick="autresPropositions('${r.id}')">Autres idées</button>
+        ${boutonRestes(r)}
+      </div>
     </div>`
 }
 
@@ -369,7 +375,12 @@ async function majRepas(id, champs) {
 }
 
 async function choisirRecetteSlot(id, recetteId) {
-  if (await majRepas(id, { recette_id: recetteId })) {
+  const r = repasMenu.find(x => x.id === id)
+  // Choisir un autre plat pour un déjeuner « restes » annule les restes
+  if (await majRepas(id, r?.restes ? { recette_id: recetteId, restes: false } : { recette_id: recetteId })) {
+    // Le dîner change : les restes du lendemain midi suivent
+    const midi = r?.type_repas === 'diner' ? dejeunerRestes(r) : null
+    if (midi) await majRepas(midi.id, recetteId ? { recette_id: recetteId } : { restes: false })
     if (menuActuel.statut === 'fige') await genererCourses()
     rafraichirVuesMenu()
   }
@@ -440,7 +451,7 @@ function renduRepasFige(r, ajustes) {
   const kcal = Math.round(p.nutrition.kcal * f)
   return `
     <div class="slot slot-fige ${r.mange ? 'slot-mange' : ''}">
-      <div class="slot-tete"><span class="slot-type">${libelleRepas(r.type_repas)}</span>${r.mange ? `<span class="badge ico-titre">${icone('coche')} mangé</span>` : ''}</div>
+      <div class="slot-tete"><span class="slot-type">${libelleRepas(r.type_repas)}${r.restes ? ' · restes du dîner d\'hier' : ''}</span>${r.mange ? `<span class="badge ico-titre">${icone('coche')} mangé</span>` : ''}</div>
       <button class="option-recette option-fige" onclick="ouvrirRecette('${r.id}')">
         <span class="option-nom">${esc(p.recette.nom)}</span>
         <span class="option-detail">Ta portion : ${formatPortion(f)} ≈ ${formatNombre(kcal)} kcal · ${formatNombre(p.nutrition.proteines * f)} g de protéines${r.nb_personnes > 1 ? ` · + ${r.nb_personnes - 1} pers.` : ''}</span>
@@ -448,6 +459,7 @@ function renduRepasFige(r, ajustes) {
       </button>
       ${!r.mange ? `<div class="slot-actions">
         <button class="btn btn-lien" onclick="ouvrirChangementRepas('${r.id}')">Changer</button>
+        ${boutonRestes(r)}
         ${r.date <= dateISO() ? `<button class="btn btn-secondaire" onclick="marquerRepasMange('${r.id}')">J'ai mangé ce repas</button>` : ''}
       </div>` : ''}
     </div>`
@@ -461,9 +473,17 @@ function ouvrirRecette(repasId, recetteId = null) {
   const p = recettePourProfil(r.recette_id)
   if (!p?.ok) return
   const f = recetteId ? facteurPrevu(r) : facteurRepas(r, r.date === dateISO() ? facteursAjustesAujourdhui() : null)
-  const totalPortions = f + Math.max(0, r.nb_personnes - 1)
+  // Restes : le dîner se cuisine aussi pour le déjeuner du lendemain
+  const midi = !recetteId && r.type_repas === 'diner' ? dejeunerRestes(r) : null
+  const fMidi = midi ? facteurPrevu(midi) + Math.max(0, midi.nb_personnes - 1) : 0
+  if (r.restes && !recetteId) {
+    ouvrirFicheRecette(p.recette.id, r.type_repas, { facteur: f, note: 'Ce sont les restes du dîner d\'hier : rien à cuisiner, il suffit de réchauffer ta portion.' })
+    return
+  }
+  const totalPortions = f + Math.max(0, r.nb_personnes - 1) + fMidi
   const parPortion = g => g / p.recette.portions_base
   ouvrirFeuille(p.recette.nom, `
+    ${midi ? `<p class="info-cycle">${icone('frigo')} Cuisine aussi pour demain midi : les quantités incluent ${formatPortion(fMidi)} de restes.</p>` : ''}
     <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3);">
       <p class="message-info" style="margin-top:0;">${p.recette.temps_min} min${p.recette.etiquettes.length ? ' · ' + p.recette.etiquettes.map(e => LIBELLES_ETIQUETTES[e] || e).join(' · ') : ''}</p>
       ${boutonFavori(p.recette.id)}
@@ -622,4 +642,182 @@ async function chargerMenuDuJour() {
       <div class="carte-titre">Au menu aujourd'hui</div>
       ${repasJour.map(r => renduRepasFige(r, ajustes)).join('')}
     </div>`
+}
+
+// ═════════════════════════════════════════════════════════════
+// RESTES : le dîner cuisiné en plus pour le déjeuner du lendemain
+// ═════════════════════════════════════════════════════════════
+function dejeunerRestes(diner) {
+  const lendemain = decalerDate(diner.date, 1)
+  return repasMenu.find(x => x.date === lendemain && x.type_repas === 'dejeuner' && x.restes) || null
+}
+
+function boutonRestes(r) {
+  if (r.type_repas !== 'diner' || !r.recette_id || r.mange) return ''
+  const lendemain = decalerDate(r.date, 1)
+  const midi = repasMenu.find(x => x.date === lendemain && x.type_repas === 'dejeuner')
+  if (!midi || midi.mange) return ''
+  const actif = midi.restes && midi.recette_id === r.recette_id
+  return `<button class="btn btn-lien ico-titre" onclick="basculerRestes('${r.id}')">${icone('frigo')} ${actif ? 'Annuler les restes' : 'Restes pour demain midi'}</button>`
+}
+
+async function basculerRestes(dinerId) {
+  const diner = repasMenu.find(x => x.id === dinerId)
+  const midi = repasMenu.find(x => x.date === decalerDate(diner.date, 1) && x.type_repas === 'dejeuner')
+  if (!midi) return
+  const actif = midi.restes && midi.recette_id === diner.recette_id
+  const champs = actif ? { restes: false } : { restes: true, recette_id: diner.recette_id }
+  if (!(await majRepas(midi.id, champs))) return
+  if (menuActuel.statut === 'fige') await genererCourses()
+  afficherToast(actif ? 'Restes annulés : choisis un autre déjeuner.' : 'Le dîner sera cuisiné en plus pour demain midi')
+  rafraichirVuesMenu()
+}
+
+function renduSlotRestes(r) {
+  const p = recettePourProfil(r.recette_id)
+  return `
+    <div class="slot">
+      <div class="slot-tete"><span class="slot-type">${libelleRepas(r.type_repas)} · restes</span></div>
+      <button type="button" class="option-recette option-fige" onclick="ouvrirRecette('${r.id}')">
+        <span class="option-nom ico-titre">${icone('frigo')} ${esc(p?.recette.nom || 'Restes du dîner')}</span>
+        <span class="option-detail">Les restes du dîner de la veille : rien à cuisiner.</span>
+      </button>
+    </div>`
+}
+
+// ═════════════════════════════════════════════════════════════
+// PROTÉINES PRÉVUES DANS LA JOURNÉE
+// ═════════════════════════════════════════════════════════════
+function objectifProteines() {
+  const poids = poidsActuel()
+  const reco = poids ? calculerProteines(poids) : null
+  return { min: reco?.min || 0, cible: profil.cible_proteines || reco?.cible || 0 }
+}
+
+function renduProteinesJour(jour, repasJour) {
+  const obj = objectifProteines()
+  const avecRecette = repasJour.filter(r => r.recette_id && recettePourProfil(r.recette_id)?.ok)
+  if (!obj.cible || !avecRecette.length) return ''
+  const prevu = avecRecette.reduce((s, r) => s + recettePourProfil(r.recette_id).nutrition.proteines * facteurPrevu(r), 0)
+  const pct = Math.min(100, prevu / obj.cible * 100)
+  const juste = prevu < obj.min
+  let idee = ''
+  if (juste) {
+    const collation = repasJour.find(r => r.type_repas === 'collation' && !r.mange)
+    const meilleure = recettesEligibles('collation', jour)
+      .filter(p => !avecRecette.some(r => r.recette_id === p.recette.id))
+      .sort((a, b) => b.nutrition.proteines - a.nutrition.proteines)[0]
+    if (meilleure) idee = `
+      <p class="proteines-idee">Un peu juste en protéines ce jour-là. Idée de collation : <strong>${esc(meilleure.recette.nom)}</strong> (+${formatNombre(meilleure.nutrition.proteines)} g).</p>
+      <div class="proteines-actions">
+        <button class="btn btn-lien" onclick="ouvrirFicheRecette('${meilleure.recette.id}', 'collation')">Voir</button>
+        ${collation ? `<button class="btn btn-secondaire" onclick="choisirRecetteSlot('${collation.id}', '${meilleure.recette.id}')">La mettre en collation</button>` : ''}
+      </div>`
+  }
+  return `
+    <div class="proteines-jour ${juste ? 'proteines-juste' : ''}">
+      <div class="total-tete"><span>Protéines prévues</span><span class="total-valeur"><strong>${formatNombre(prevu)}</strong> / ${formatNombre(obj.cible)} g</span></div>
+      <div class="barre"><div class="barre-remplie" style="width:${pct}%; background:var(--rose);"></div></div>
+      ${idee}
+    </div>`
+}
+
+// ═════════════════════════════════════════════════════════════
+// FICHE RECETTE HORS MENU (idées, « avec ce que j'ai »)
+// ═════════════════════════════════════════════════════════════
+function ouvrirFicheRecette(recetteId, type = 'dejeuner', options = {}) {
+  const p = recettePourProfil(recetteId)
+  if (!p?.ok) return
+  const parts = partsDuJour({ petitDejeuner: true, collation: true })
+  const f = options.facteur ?? facteurPortion((cibleKcalDuJour() || 1500) * (parts[type] || 0.3), p.nutrition.kcal)
+  const parPortion = g => g / p.recette.portions_base
+  ouvrirFeuille(p.recette.nom, `
+    ${options.note ? `<p class="info-cycle">${icone('frigo')} ${esc(options.note)}</p>` : ''}
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3);">
+      <p class="message-info" style="margin-top:0;">${p.recette.temps_min} min${p.recette.etiquettes.length ? ' · ' + p.recette.etiquettes.map(e => LIBELLES_ETIQUETTES[e] || e).join(' · ') : ''}</p>
+      ${boutonFavori(p.recette.id)}
+    </div>
+    <div class="reperes">
+      <div class="repere"><span class="repere-valeur">${formatNombre(p.nutrition.kcal * f)}</span><span class="repere-unite">kcal pour toi (${formatPortion(f)})</span></div>
+      <div class="repere"><span class="repere-valeur">${formatNombre(p.nutrition.proteines * f)} g</span><span class="repere-unite">protéines</span></div>
+    </div>
+    <div class="carte-titre">Ingrédients · pour toi</div>
+    ${p.ingredients.map(i => `<div class="ligne"><span>${esc(i.libelle)}</span><span class="ligne-valeur">${formatQuantite(Math.round(parPortion(i.grammes) * f), i.libelle)}</span></div>`).join('')}
+    ${p.remplacements.length ? `<p class="message-info">${p.remplacements.map(x => x.par ? `${esc(x.de)} remplacé par ${esc(x.par)}` : `sans ${esc(x.de)}`).join(' · ')} (selon tes goûts)</p>` : ''}
+    <div class="carte-titre" style="margin-top:var(--sp-4);">Préparation</div>
+    <ol class="etapes">${p.recette.etapes.map(e => `<li>${esc(e)}</li>`).join('')}</ol>
+    ${options.retour ? `<button class="btn btn-secondaire btn-bloc" onclick="${options.retour}">Retour aux idées</button>` : ''}`)
+}
+
+// ═════════════════════════════════════════════════════════════
+// « AVEC CE QUE J'AI » : recettes à partir des ingrédients du frigo
+// ═════════════════════════════════════════════════════════════
+let _frigo = new Set()     // codes Ciqual choisis
+let _frigoFiltre = ''
+
+// Ingrédients proposables : ceux des recettes possibles pour le profil (sans les épices, l'huile…)
+function ingredientsFrigo() {
+  const parCode = new Map()
+  for (const id of _recettes?.keys() || []) {
+    const p = recettePourProfil(id)
+    if (!p?.ok) continue
+    for (const i of p.ingredients) {
+      if (!i.ciqual_code || Number(i.grammes) < 20 || i.optionnel) continue
+      const lib = i.libelle.replace(/\s*\(.*?\)\s*/g, ' ').trim()
+      const ex = parCode.get(i.ciqual_code)
+      if (!ex || lib.length < ex.length) parCode.set(i.ciqual_code, lib)
+    }
+  }
+  return [...parCode.entries()].map(([code, libelle]) => ({ code, libelle })).sort((a, b) => a.libelle.localeCompare(b.libelle, 'fr'))
+}
+
+function ouvrirFrigo() {
+  ouvrirFeuille("Avec ce que j'ai", `
+    <p class="message-info" style="margin-top:0;">Coche ce que tu as sous la main : les recettes qui les utilisent le plus remontent en premier.</p>
+    <input class="input" type="search" placeholder="Filtrer (ex. poulet, courgette)…" value="${esc(_frigoFiltre)}"
+      oninput="_frigoFiltre = this.value; afficherPucesFrigo()" style="margin:var(--sp-3) 0;" />
+    <div id="frigo-puces" class="puces"></div>
+    <div id="frigo-resultats"></div>`)
+  afficherPucesFrigo()
+  afficherResultatsFrigo()
+}
+
+function afficherPucesFrigo() {
+  const el = document.getElementById('frigo-puces')
+  if (!el) return
+  const f = sansAccents(_frigoFiltre.trim())
+  const liste = ingredientsFrigo().filter(i => _frigo.has(i.code) || !f || sansAccents(i.libelle).includes(f))
+  el.innerHTML = liste.map(i => `<button type="button" class="puce puce-choix ${_frigo.has(i.code) ? 'active' : ''}" aria-pressed="${_frigo.has(i.code)}"
+    onclick="basculerFrigo('${i.code}')">${esc(i.libelle)}</button>`).join('') || '<p class="message-info">Aucun ingrédient ne correspond.</p>'
+}
+
+function basculerFrigo(code) {
+  _frigo.has(code) ? _frigo.delete(code) : _frigo.add(code)
+  afficherPucesFrigo()
+  afficherResultatsFrigo()
+}
+
+function afficherResultatsFrigo() {
+  const el = document.getElementById('frigo-resultats')
+  if (!el) return
+  if (!_frigo.size) { el.innerHTML = ''; return }
+  const res = []
+  for (const id of _recettes?.keys() || []) {
+    const p = recettePourProfil(id)
+    if (!p?.ok || p.recette.temps_min > (profil.temps_cuisine_max || 40)) continue
+    const utiles = p.ingredients.filter(i => !i.optionnel && Number(i.grammes) >= 20)
+    const trouves = utiles.filter(i => _frigo.has(i.ciqual_code))
+    if (!trouves.length) continue
+    const manquants = utiles.filter(i => !_frigo.has(i.ciqual_code))
+    res.push({ p, n: trouves.length, manquants })
+  }
+  res.sort((a, b) => b.n - a.n || a.manquants.length - b.manquants.length)
+  const type = r => r.types_repas.includes('dejeuner') ? 'dejeuner' : r.types_repas.includes('diner') ? 'diner' : r.types_repas[0]
+  el.innerHTML = `<div class="resultats-titre" style="margin-top:var(--sp-4);">${res.length ? `${res.length} idée${res.length > 1 ? 's' : ''}` : 'Aucune recette avec ces ingrédients'}</div>
+    <div class="options">${res.slice(0, 12).map(({ p, n, manquants }) => `
+      <button type="button" class="option-recette" onclick="ouvrirFicheRecette('${p.recette.id}', '${type(p.recette)}', { retour: 'ouvrirFrigo()' })">
+        <span class="option-nom">${esc(p.recette.nom)}${estFavori(p.recette.id) ? ` <span class="option-favori">${icone('coeur')} favori</span>` : ''}</span>
+        <span class="option-detail">${n} ingrédient${n > 1 ? 's' : ''} sur ${n + manquants.length} · ${p.recette.temps_min} min</span>
+        ${manquants.length ? `<span class="option-detail">Il te manque : ${manquants.map(i => esc(i.libelle.replace(/\s*\(.*?\)/g, ''))).join(', ')}</span>` : '<span class="option-ajuste">Tu as tout ce qu\'il faut !</span>'}
+      </button>`).join('')}</div>`
 }
