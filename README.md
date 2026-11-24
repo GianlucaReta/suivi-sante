@@ -11,11 +11,8 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 
 ## ⏳ À faire plus tard
 
-- [ ] **Importer la table Ciqual** (en attente : ciqual.anses.fr, recherche.data.gouv.fr et les fichiers de data.gouv.fr étaient en maintenance le 22/11/2026).
-  1. Réessayer [ciqual.anses.fr](https://ciqual.anses.fr) (rubrique *Téléchargement*), ou la [page data.gouv.fr](https://www.data.gouv.fr/fr/datasets/table-de-composition-nutritionnelle-des-aliments-ciqual-2020/) → onglet **Fichiers** → « Table Ciqual 2020 en Français » **XLS (3,5 Mo)** → **Télécharger**. Si la version actualisée de recherche.data.gouv.fr est disponible, la préférer.
-  2. Suivre la section **« Importer la table Ciqual »** ci-dessous (export CSV depuis Numbers, `node import-ciqual.js`, import dans Supabase).
-  3. Compléter la base de recettes jusqu'à 150 à 200 recettes (demander à Claude, avec le fichier Ciqual sous la main pour reprendre les noms exacts), puis la relier aux codes Ciqual (voir la section « Importer les recettes »).
-  - En attendant : le scan de code-barres et la saisie libre fonctionnent. La recherche d'aliments et les recettes restent vides tant que Ciqual n'est pas importée.
+- [x] **Table Ciqual 2025 importée** le 24/11/2026 (3 484 aliments) ; les 20 recettes sont reliées sans approximation.
+- [ ] **Compléter la base de recettes** jusqu'à 150 à 200 recettes (demander à Claude, avec `ciqual-import.csv` sous la main pour reprendre les noms exacts de Ciqual 2025), puis la relier aux codes Ciqual (voir « Importer les recettes »).
 - [ ] **Vérifier les protéines des menus** (après Ciqual) : les calories des menus suivent la cible du jour, mais rien ne garantit encore que le total de protéines prévu atteint 1,6 à 1,8 g/kg. À ajouter : un contrôle du menu, avec un message doux et une collation protéinée suggérée si le total est trop bas.
 
 ## Utilisation au quotidien
@@ -67,7 +64,7 @@ Les modules sont des `<script>` classiques chargés dans l'ordre de `index.html`
 
 ## Importer la table Ciqual (une seule fois)
 
-La table Ciqual de l'ANSES donne la composition de ~3 200 aliments de base. Elle sert à la recherche d'aliments et au calcul des recettes.
+La table Ciqual de l'ANSES donne la composition de ~3 200 aliments de base. Elle sert à la recherche d'aliments et au calcul des recettes. La version 2025 (`table-ciqual-2025.xlsx`) est déjà reconnue par le script.
 
 1. **Exécuter `sql/03-journal.sql`** dans le SQL Editor de Supabase (si ce n'est pas déjà fait).
 2. **Télécharger la table** sur [ciqual.anses.fr](https://ciqual.anses.fr), rubrique *Téléchargement*. Prends la version tableur en français, la plus récente (fichier `.xls` ou `.xlsx`). Elle existe aussi sur [data.gouv.fr](https://www.data.gouv.fr/fr/datasets/table-de-composition-nutritionnelle-des-aliments-ciqual-2020/).

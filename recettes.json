@@ -8,11 +8,11 @@
       "temps": 10, "portions": 1, "mois": [],
       "etiquettes": ["economique", "rapide", "vegetarien"],
       "ingredients": [
-        { "libelle": "flocons d'avoine", "ciqual": "Flocon d'avoine", "g": 50, "exclusions": ["feculents:flocons_avoine"] },
+        { "libelle": "flocons d'avoine", "ciqual": "Flocons d'avoine", "g": 50, "exclusions": ["feculents:flocons_avoine"] },
         { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 200, "exclusions": ["laitiers:lait"],
-          "substituts": [{ "libelle": "boisson au soja", "ciqual": "Boisson au soja, nature", "exclusions": ["legumineuses:tofu"] }] },
-        { "libelle": "pomme", "ciqual": "Pomme, pulpe et peau, crue", "g": 120, "exclusions": ["fruits:pomme"],
-          "substituts": [{ "libelle": "poire", "ciqual": "Poire, pulpe et peau, crue", "exclusions": ["fruits:poire"] }] },
+          "substituts": [{ "libelle": "boisson au soja", "ciqual": "Boisson au soja, nature, enrichie en calcium, préemballée", "exclusions": ["legumineuses:tofu"] }] },
+        { "libelle": "pomme", "ciqual": "Pomme, chair et peau, crue", "g": 120, "exclusions": ["fruits:pomme"],
+          "substituts": [{ "libelle": "poire", "ciqual": "Poire, chair et peau, crue", "exclusions": ["fruits:poire"] }] },
         { "libelle": "cannelle", "ciqual": "Cannelle, poudre", "g": 1, "optionnel": true, "exclusions": [] }
       ],
       "etapes": [
@@ -27,11 +27,11 @@
       "temps": 3, "portions": 1, "mois": [],
       "etiquettes": ["riche_proteines", "rapide", "vegetarien"],
       "ingredients": [
-        { "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc nature, 0% MG", "g": 200, "exclusions": ["laitiers:fromage_blanc"],
-          "substituts": [{ "libelle": "yaourt nature", "ciqual": "Yaourt, lait demi-écrémé, nature", "exclusions": ["laitiers:yaourt"] }] },
+        { "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "g": 200, "exclusions": ["laitiers:fromage_blanc"],
+          "substituts": [{ "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "exclusions": ["laitiers:yaourt"] }] },
         { "libelle": "fruits rouges (surgelés ou frais)", "ciqual": "Framboise, crue", "g": 80, "exclusions": ["fruits:fruits_rouges"],
-          "substituts": [{ "libelle": "banane", "ciqual": "Banane, pulpe, crue", "exclusions": ["fruits:banane"] }] },
-        { "libelle": "amandes", "ciqual": "Amande (avec peau)", "g": 15, "optionnel": true, "exclusions": ["autres:fruits_a_coque"] }
+          "substituts": [{ "libelle": "banane", "ciqual": "Banane, chair sans peau, crue", "exclusions": ["fruits:banane"] }] },
+        { "libelle": "amandes", "ciqual": "Amande, avec peau, sans sel ajouté", "g": 15, "optionnel": true, "exclusions": ["autres:fruits_a_coque"] }
       ],
       "etapes": ["Mettre le fromage blanc dans un bol, ajouter les fruits et les amandes concassées."]
     },
@@ -43,8 +43,8 @@
       "etiquettes": ["riche_proteines", "economique", "rapide", "vegetarien"],
       "ingredients": [
         { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 60, "exclusions": ["feculents:pain"] },
-        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
-        { "libelle": "beurre", "ciqual": "Beurre à 82% MG, doux", "g": 5, "optionnel": true, "exclusions": ["laitiers:beurre"] }
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "beurre", "ciqual": "Beurre à 80% MG minimum, doux", "g": 5, "optionnel": true, "exclusions": ["laitiers:beurre"] }
       ],
       "etapes": [
         "Battre les œufs avec une pincée de sel et de poivre.",
@@ -59,10 +59,10 @@
       "temps": 10, "portions": 1, "mois": [],
       "etiquettes": ["riche_proteines", "economique", "rapide", "vegetarien"],
       "ingredients": [
-        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 120, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 120, "exclusions": ["oeufs:oeufs"] },
         { "libelle": "épinards (frais ou surgelés)", "ciqual": "Epinard, cru", "g": 100, "exclusions": ["legumes:epinards"],
           "substituts": [{ "libelle": "champignons", "ciqual": "Champignon de Paris ou champignon de couche, cru", "exclusions": ["legumes:champignons"] }] },
-        { "libelle": "emmental râpé", "ciqual": "Emmental", "g": 15, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "emmental râpé", "ciqual": "Emmental ou emmenthal", "g": 15, "optionnel": true, "exclusions": ["laitiers:fromages"] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 3, "exclusions": [] }
       ],
       "etapes": [
@@ -77,11 +77,11 @@
       "temps": 3, "portions": 1, "mois": [],
       "etiquettes": ["economique", "rapide", "vegetarien"],
       "ingredients": [
-        { "libelle": "yaourt nature", "ciqual": "Yaourt, lait demi-écrémé, nature", "g": 125, "exclusions": ["laitiers:yaourt"],
-          "substituts": [{ "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc nature, 0% MG", "exclusions": ["laitiers:fromage_blanc"] }] },
-        { "libelle": "banane", "ciqual": "Banane, pulpe, crue", "g": 100, "exclusions": ["fruits:banane"],
-          "substituts": [{ "libelle": "pomme", "ciqual": "Pomme, pulpe et peau, crue", "exclusions": ["fruits:pomme"] }] },
-        { "libelle": "flocons d'avoine", "ciqual": "Flocon d'avoine", "g": 20, "optionnel": true, "exclusions": ["feculents:flocons_avoine"] }
+        { "libelle": "yaourt nature", "ciqual": "Yaourt ou lait fermenté, nature", "g": 125, "exclusions": ["laitiers:yaourt"],
+          "substituts": [{ "libelle": "fromage blanc 0 %", "ciqual": "Fromage blanc, nature, 0% MG", "exclusions": ["laitiers:fromage_blanc"] }] },
+        { "libelle": "banane", "ciqual": "Banane, chair sans peau, crue", "g": 100, "exclusions": ["fruits:banane"],
+          "substituts": [{ "libelle": "pomme", "ciqual": "Pomme, chair et peau, crue", "exclusions": ["fruits:pomme"] }] },
+        { "libelle": "flocons d'avoine", "ciqual": "Flocons d'avoine", "g": 20, "optionnel": true, "exclusions": ["feculents:flocons_avoine"] }
       ],
       "etapes": ["Couper la banane en rondelles sur le yaourt, ajouter les flocons."]
     },
@@ -92,11 +92,11 @@
       "temps": 25, "portions": 2, "mois": [5, 6, 7, 8, 9, 10],
       "etiquettes": ["riche_proteines", "economique"],
       "ingredients": [
-        { "libelle": "filets de poulet", "ciqual": "Poulet, filet, sans peau, cru", "g": 260, "exclusions": ["viandes:volaille"],
-          "substituts": [{ "libelle": "tofu ferme", "ciqual": "Tofu, nature", "exclusions": ["legumineuses:tofu"] }] },
+        { "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "g": 260, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "tofu ferme", "ciqual": "Tofu nature, préemballé", "exclusions": ["legumineuses:tofu"] }] },
         { "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "g": 130, "exclusions": ["feculents:riz"],
           "substituts": [{ "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "exclusions": ["feculents:semoule"] }] },
-        { "libelle": "courgettes", "ciqual": "Courgette, pulpe et peau, crue", "g": 350, "exclusions": ["legumes:courgette"],
+        { "libelle": "courgettes", "ciqual": "Courgette, chair et peau, crue", "g": 350, "exclusions": ["legumes:courgette"],
           "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] },
         { "libelle": "ail", "ciqual": "Ail, cru", "g": 5, "optionnel": true, "exclusions": ["legumes:ail"] }
@@ -115,10 +115,10 @@
       "temps": 30, "portions": 2, "mois": [],
       "etiquettes": ["riche_proteines"],
       "ingredients": [
-        { "libelle": "pavés de saumon", "ciqual": "Saumon, cru, élevage", "g": 240, "exclusions": ["poissons:saumon"],
+        { "libelle": "pavés de saumon", "ciqual": "Saumon, élevage, cru", "g": 240, "exclusions": ["poissons:saumon"],
           "substituts": [{ "libelle": "filets de cabillaud", "ciqual": "Cabillaud, cru", "exclusions": ["poissons:poissons_blancs"] }] },
         { "libelle": "patates douces", "ciqual": "Patate douce, crue", "g": 400, "exclusions": ["feculents:patate_douce"],
-          "substituts": [{ "libelle": "pommes de terre", "ciqual": "Pomme de terre, crue", "exclusions": ["feculents:pommes_de_terre"] }] },
+          "substituts": [{ "libelle": "pommes de terre", "ciqual": "Pomme de terre, sans peau, crue", "exclusions": ["feculents:pommes_de_terre"] }] },
         { "libelle": "brocoli", "ciqual": "Brocoli, cru", "g": 300, "exclusions": ["legumes:brocoli"],
           "substituts": [{ "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "exclusions": ["legumes:haricots_verts"] }] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
@@ -137,8 +137,8 @@
       "etiquettes": ["economique", "vegetarien"],
       "ingredients": [
         { "libelle": "lentilles corail", "ciqual": "Lentille corail, sèche", "g": 150, "exclusions": ["legumineuses:lentilles"] },
-        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 250, "exclusions": ["legumes:tomate"] },
-        { "libelle": "lait de coco", "ciqual": "Lait de coco ou Crème de coco", "g": 80, "optionnel": true, "exclusions": ["autres:lait_coco"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 250, "exclusions": ["legumes:tomate"] },
+        { "libelle": "lait de coco", "ciqual": "Lait de coco", "g": 80, "optionnel": true, "exclusions": ["autres:lait_coco"] },
         { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
         { "libelle": "curry", "ciqual": "Curry, poudre", "g": 4, "optionnel": true, "exclusions": ["epices:curry"] },
         { "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "g": 100, "exclusions": ["feculents:riz"],
@@ -157,10 +157,10 @@
       "temps": 20, "portions": 2, "mois": [],
       "etiquettes": ["riche_proteines", "economique", "rapide"],
       "ingredients": [
-        { "libelle": "pâtes complètes", "ciqual": "Pâtes sèches au blé complet, crues", "g": 150, "exclusions": ["feculents:pates"] },
+        { "libelle": "pâtes complètes", "ciqual": "Pâtes sèches, au blé complet, crues", "g": 150, "exclusions": ["feculents:pates"] },
         { "libelle": "thon au naturel", "ciqual": "Thon, au naturel, appertisé, égoutté", "g": 140, "exclusions": ["poissons:thon"],
           "substituts": [{ "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "exclusions": ["legumineuses:pois_chiches"] }] },
-        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
         { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 60, "optionnel": true, "exclusions": ["legumes:oignon"] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
       ],
@@ -177,10 +177,10 @@
       "temps": 35, "portions": 2, "mois": [],
       "etiquettes": ["riche_proteines", "economique"],
       "ingredients": [
-        { "libelle": "bœuf haché 5 %", "ciqual": "Boeuf, steak haché 5% MG, cru", "g": 220, "exclusions": ["viandes:boeuf"],
+        { "libelle": "bœuf haché 5 %", "ciqual": "Boeuf, steak haché 5% MG cru", "g": 220, "exclusions": ["viandes:boeuf"],
           "substituts": [{ "libelle": "lentilles vertes", "ciqual": "Lentille verte, sèche", "exclusions": ["legumineuses:lentilles"] }] },
         { "libelle": "haricots rouges", "ciqual": "Haricot rouge, appertisé, égoutté", "g": 240, "exclusions": ["legumineuses:haricots_rouges"] },
-        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 300, "exclusions": ["legumes:tomate"] },
         { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "optionnel": true, "exclusions": ["legumes:poivron"] },
         { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
         { "libelle": "cumin", "ciqual": "Cumin, graine", "g": 3, "optionnel": true, "exclusions": ["epices:cumin"] },
@@ -199,8 +199,8 @@
       "temps": 30, "portions": 2, "mois": [],
       "etiquettes": ["riche_proteines", "economique", "vegetarien"],
       "ingredients": [
-        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 300, "exclusions": ["oeufs:oeufs"] },
-        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, crue", "g": 350, "exclusions": ["feculents:pommes_de_terre"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 300, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, sans peau, crue", "g": 350, "exclusions": ["feculents:pommes_de_terre"] },
         { "libelle": "salade verte", "ciqual": "Laitue, crue", "g": 100, "exclusions": ["legumes:salade"] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 12, "exclusions": [] }
       ],
@@ -218,7 +218,7 @@
       "etiquettes": ["riche_proteines"],
       "ingredients": [
         { "libelle": "filets de cabillaud", "ciqual": "Cabillaud, cru", "g": 280, "exclusions": ["poissons:poissons_blancs"],
-          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet, sans peau, cru", "exclusions": ["viandes:volaille"] }] },
+          "substituts": [{ "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "exclusions": ["viandes:volaille"] }] },
         { "libelle": "semoule", "ciqual": "Semoule de blé dur, crue", "g": 120, "exclusions": ["feculents:semoule"],
           "substituts": [{ "libelle": "boulgour", "ciqual": "Boulgour de blé, cru", "exclusions": ["feculents:boulgour"] }] },
         { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 300, "exclusions": ["legumes:carotte"] },
@@ -240,10 +240,10 @@
       "ingredients": [
         { "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "g": 280, "exclusions": ["legumineuses:pois_chiches"],
           "substituts": [{ "libelle": "lentilles vertes", "ciqual": "Lentille verte, sèche", "exclusions": ["legumineuses:lentilles"] }] },
-        { "libelle": "tomates", "ciqual": "Tomate, crue", "g": 250, "exclusions": ["legumes:tomate"] },
-        { "libelle": "concombre", "ciqual": "Concombre, pulpe et peau, cru", "g": 200, "exclusions": ["legumes:concombre"] },
-        { "libelle": "feta", "ciqual": "Feta", "g": 80, "exclusions": ["laitiers:fromages"],
-          "substituts": [{ "libelle": "œufs durs", "ciqual": "Oeuf, cru", "exclusions": ["oeufs:oeufs"] }] },
+        { "libelle": "tomates", "ciqual": "Tomate sans précision, crue (aliment moyen)", "g": 250, "exclusions": ["legumes:tomate"] },
+        { "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "g": 200, "exclusions": ["legumes:concombre"] },
+        { "libelle": "feta", "ciqual": "Feta, au lait de brebis 70% minimum et lait de chèvre 30% maximum", "g": 80, "exclusions": ["laitiers:fromages"],
+          "substituts": [{ "libelle": "œufs durs", "ciqual": "Oeuf cru", "exclusions": ["oeufs:oeufs"] }] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 10, "exclusions": [] }
       ],
       "etapes": [
@@ -259,16 +259,16 @@
       "temps": 25, "portions": 2, "mois": [],
       "etiquettes": ["riche_proteines"],
       "ingredients": [
-        { "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope, crue", "g": 240, "exclusions": ["viandes:volaille"],
+        { "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope crue", "g": 240, "exclusions": ["viandes:volaille"],
           "substituts": [{ "libelle": "crevettes", "ciqual": "Crevette, crue", "exclusions": ["poissons:crevettes"] }] },
-        { "libelle": "nouilles (ou pâtes)", "ciqual": "Pâtes sèches standard, crues", "g": 130, "exclusions": ["feculents:pates"],
+        { "libelle": "nouilles (ou pâtes)", "ciqual": "Pâtes sèches, standard, crues", "g": 130, "exclusions": ["feculents:pates"],
           "substituts": [{ "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "exclusions": ["feculents:riz"] }] },
         { "libelle": "poivron", "ciqual": "Poivron rouge, cru", "g": 150, "exclusions": ["legumes:poivron"],
-          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, pulpe et peau, crue", "exclusions": ["legumes:courgette"] }] },
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
         { "libelle": "carottes", "ciqual": "Carotte, crue", "g": 150, "exclusions": ["legumes:carotte"] },
         { "libelle": "sauce soja", "ciqual": "Sauce soja, préemballée", "g": 15, "optionnel": true, "exclusions": ["legumineuses:tofu"] },
         { "libelle": "huile", "ciqual": "Huile de colza", "g": 8, "exclusions": [] },
-        { "libelle": "gingembre", "ciqual": "Gingembre, racine, crue", "g": 5, "optionnel": true, "exclusions": ["epices:gingembre"] }
+        { "libelle": "gingembre", "ciqual": "Gingembre, racine fraîche", "g": 5, "optionnel": true, "exclusions": ["epices:gingembre"] }
       ],
       "etapes": [
         "Cuire les nouilles selon le paquet.",
@@ -288,7 +288,7 @@
           "substituts": [{ "libelle": "carottes", "ciqual": "Carotte, crue", "exclusions": ["legumes:carotte"] }] },
         { "libelle": "lentilles corail", "ciqual": "Lentille corail, sèche", "g": 100, "exclusions": ["legumineuses:lentilles"] },
         { "libelle": "oignon", "ciqual": "Oignon, cru", "g": 80, "optionnel": true, "exclusions": ["legumes:oignon"] },
-        { "libelle": "crème légère", "ciqual": "Crème de lait, 15 à 20% MG, légère, épaisse", "g": 30, "optionnel": true, "exclusions": ["laitiers:creme"] },
+        { "libelle": "crème légère", "ciqual": "Crème 12 à 25% MG, légère, épaisse, rayon frais", "g": 30, "optionnel": true, "exclusions": ["laitiers:creme"] },
         { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 80, "exclusions": ["feculents:pain"] }
       ],
       "etapes": [
@@ -303,13 +303,13 @@
       "temps": 40, "portions": 2, "mois": [5, 6, 7, 8, 9, 10],
       "etiquettes": ["riche_proteines"],
       "ingredients": [
-        { "libelle": "courgettes", "ciqual": "Courgette, pulpe et peau, crue", "g": 600, "exclusions": ["legumes:courgette"],
+        { "libelle": "courgettes", "ciqual": "Courgette, chair et peau, crue", "g": 600, "exclusions": ["legumes:courgette"],
           "substituts": [{ "libelle": "brocoli", "ciqual": "Brocoli, cru", "exclusions": ["legumes:brocoli"] }] },
         { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix", "g": 150, "exclusions": ["viandes:charcuterie"],
           "substituts": [{ "libelle": "thon au naturel", "ciqual": "Thon, au naturel, appertisé, égoutté", "exclusions": ["poissons:thon"] }] },
-        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
         { "libelle": "lait demi-écrémé", "ciqual": "Lait demi-écrémé, pasteurisé", "g": 150, "exclusions": ["laitiers:lait"] },
-        { "libelle": "emmental râpé", "ciqual": "Emmental", "g": 40, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "emmental râpé", "ciqual": "Emmental ou emmenthal", "g": 40, "optionnel": true, "exclusions": ["laitiers:fromages"] },
         { "libelle": "pain complet", "ciqual": "Pain complet ou intégral (à la farine T150)", "g": 80, "exclusions": ["feculents:pain"] }
       ],
       "etapes": [
@@ -328,11 +328,11 @@
       "ingredients": [
         { "libelle": "quinoa", "ciqual": "Quinoa, cru", "g": 120, "exclusions": ["feculents:quinoa"],
           "substituts": [{ "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "exclusions": ["feculents:riz"] }] },
-        { "libelle": "filets de poulet", "ciqual": "Poulet, filet, sans peau, cru", "g": 220, "exclusions": ["viandes:volaille"],
-          "substituts": [{ "libelle": "œufs", "ciqual": "Oeuf, cru", "exclusions": ["oeufs:oeufs"] }] },
-        { "libelle": "avocat", "ciqual": "Avocat, pulpe, cru", "g": 100, "optionnel": true, "exclusions": ["legumes:avocat"] },
+        { "libelle": "filets de poulet", "ciqual": "Poulet, filet sans peau cru", "g": 220, "exclusions": ["viandes:volaille"],
+          "substituts": [{ "libelle": "œufs", "ciqual": "Oeuf cru", "exclusions": ["oeufs:oeufs"] }] },
+        { "libelle": "avocat", "ciqual": "Avocat, chair sans peau, sans noyau, cru", "g": 100, "optionnel": true, "exclusions": ["legumes:avocat"] },
         { "libelle": "tomates cerises", "ciqual": "Tomate cerise, crue", "g": 150, "exclusions": ["legumes:tomate"],
-          "substituts": [{ "libelle": "concombre", "ciqual": "Concombre, pulpe et peau, cru", "exclusions": ["legumes:concombre"] }] },
+          "substituts": [{ "libelle": "concombre", "ciqual": "Concombre, chair et peau, cru", "exclusions": ["legumes:concombre"] }] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 8, "exclusions": [] }
       ],
       "etapes": [
@@ -348,11 +348,11 @@
       "temps": 25, "portions": 2, "mois": [],
       "etiquettes": ["riche_proteines", "economique"],
       "ingredients": [
-        { "libelle": "steaks hachés 5 %", "ciqual": "Boeuf, steak haché 5% MG, cru", "g": 250, "exclusions": ["viandes:boeuf"],
-          "substituts": [{ "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope, crue", "exclusions": ["viandes:volaille"] }] },
+        { "libelle": "steaks hachés 5 %", "ciqual": "Boeuf, steak haché 5% MG cru", "g": 250, "exclusions": ["viandes:boeuf"],
+          "substituts": [{ "libelle": "escalopes de dinde", "ciqual": "Dinde, escalope crue", "exclusions": ["viandes:volaille"] }] },
         { "libelle": "haricots verts", "ciqual": "Haricot vert, cru", "g": 400, "exclusions": ["legumes:haricots_verts"],
           "substituts": [{ "libelle": "brocoli", "ciqual": "Brocoli, cru", "exclusions": ["legumes:brocoli"] }] },
-        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, crue", "g": 400, "exclusions": ["feculents:pommes_de_terre"],
+        { "libelle": "pommes de terre", "ciqual": "Pomme de terre, sans peau, crue", "g": 400, "exclusions": ["feculents:pommes_de_terre"],
           "substituts": [{ "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "exclusions": ["feculents:riz"] }] },
         { "libelle": "huile d'olive", "ciqual": "Huile d'olive vierge extra", "g": 6, "exclusions": [] }
       ],
@@ -371,9 +371,9 @@
         { "libelle": "pois chiches", "ciqual": "Pois chiche, appertisé, égoutté", "g": 280, "exclusions": ["legumineuses:pois_chiches"],
           "substituts": [{ "libelle": "lentilles corail", "ciqual": "Lentille corail, sèche", "exclusions": ["legumineuses:lentilles"] }] },
         { "libelle": "épinards (frais ou surgelés)", "ciqual": "Epinard, cru", "g": 300, "exclusions": ["legumes:epinards"],
-          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, pulpe et peau, crue", "exclusions": ["legumes:courgette"] }] },
-        { "libelle": "tomates concassées", "ciqual": "Tomate, pulpe, appertisée", "g": 200, "exclusions": ["legumes:tomate"] },
-        { "libelle": "lait de coco", "ciqual": "Lait de coco ou Crème de coco", "g": 80, "optionnel": true, "exclusions": ["autres:lait_coco"] },
+          "substituts": [{ "libelle": "courgette", "ciqual": "Courgette, chair et peau, crue", "exclusions": ["legumes:courgette"] }] },
+        { "libelle": "tomates concassées", "ciqual": "Tomate, chair, appertisée", "g": 200, "exclusions": ["legumes:tomate"] },
+        { "libelle": "lait de coco", "ciqual": "Lait de coco", "g": 80, "optionnel": true, "exclusions": ["autres:lait_coco"] },
         { "libelle": "curry", "ciqual": "Curry, poudre", "g": 4, "optionnel": true, "exclusions": ["epices:curry"] },
         { "libelle": "riz blanc", "ciqual": "Riz blanc, cru", "g": 110, "exclusions": ["feculents:riz"] }
       ],
@@ -389,11 +389,11 @@
       "temps": 20, "portions": 2, "mois": [],
       "etiquettes": ["riche_proteines", "rapide"],
       "ingredients": [
-        { "libelle": "galettes de sarrasin", "ciqual": "Galette de sarrasin (crêpe salée)", "g": 120, "exclusions": ["feculents:pain"] },
+        { "libelle": "galettes de sarrasin", "ciqual": "Galette de sarrasin, nature, souple (à garnir) préemballée", "g": 120, "exclusions": ["feculents:pain"] },
         { "libelle": "jambon blanc", "ciqual": "Jambon cuit, choix", "g": 100, "exclusions": ["viandes:charcuterie"],
           "substituts": [{ "libelle": "champignons", "ciqual": "Champignon de Paris ou champignon de couche, cru", "exclusions": ["legumes:champignons"] }] },
-        { "libelle": "œufs", "ciqual": "Oeuf, cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
-        { "libelle": "emmental râpé", "ciqual": "Emmental", "g": 30, "optionnel": true, "exclusions": ["laitiers:fromages"] },
+        { "libelle": "œufs", "ciqual": "Oeuf cru", "g": 110, "exclusions": ["oeufs:oeufs"] },
+        { "libelle": "emmental râpé", "ciqual": "Emmental ou emmenthal", "g": 30, "optionnel": true, "exclusions": ["laitiers:fromages"] },
         { "libelle": "salade verte", "ciqual": "Laitue, crue", "g": 100, "exclusions": ["legumes:salade"] }
       ],
       "etapes": [

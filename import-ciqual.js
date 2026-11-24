@@ -60,15 +60,15 @@ function colonne(nom, ...tests) {
 }
 
 const C = {
-  code:     colonne('code', 'alim_code'),
-  nom:      colonne('nom', 'alim_nom_fr'),
-  groupe:   colonne('groupe', 'alim_grp_nom_fr'),
-  sousGrp:  colonne('sous-groupe', 'alim_ssgrp_nom_fr'),
-  ssSsGrp:  colonne('sous-sous-groupe', 'alim_ssssgrp_nom_fr'),
+  code:     colonne('code', 'alim_code', 'code ciqual'),
+  nom:      colonne('nom', 'alim_nom_fr', 'aliment'),
+  groupe:   colonne('groupe', 'alim_grp_nom_fr', 'groupe'),
+  sousGrp:  colonne('sous-groupe', 'alim_ssgrp_nom_fr', 'sous-groupe'),
+  ssSsGrp:  colonne('sous-sous-groupe', 'alim_ssssgrp_nom_fr', 'sous-sous-groupe'),
   kcal:     colonne('kcal', h => h.includes('energie') && h.includes('kcal') && h.includes('1169'), h => h.includes('energie') && h.includes('kcal')),
   proteines:colonne('protéines', h => h.startsWith('proteines, n x facteur de jones'), h => h.startsWith('proteines')),
   glucides: colonne('glucides', h => h.startsWith('glucides')),
-  sucres:   colonne('sucres', h => h.startsWith('sucres (') || h === 'sucres (g/100g)'),
+  sucres:   colonne('sucres', h => h.startsWith('sucres (') || h === 'sucres (g/100g)' || h.startsWith('sucres totaux')),
   lipides:  colonne('lipides', h => h.startsWith('lipides')),
   fibres:   colonne('fibres', h => h.startsWith('fibres alimentaires')),
   sel:      colonne('sel', h => h.startsWith('sel chlorure de sodium'), h => h.startsWith('sel')),
