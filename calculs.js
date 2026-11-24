@@ -213,12 +213,33 @@ function ingredientExclu(ing, exclusions = [], exclusionsAliments = []) {
 
 // Applique les exclusions : remplacement si possible, sinon retrait d'un ingrédient facultatif,
 // sinon la recette n'est pas proposée. Un ingrédient sans code Ciqual rend la recette incomplète.
+// Un ingrédient est « principal » s'il donne son nom à la recette (« Curry de pois chiches »).
+// S'il est exclu, la recette n'est pas proposée du tout, même avec un remplacement.
+const MOTS_GENERIQUES = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'l', 'd', 'au', 'aux', 'a', 'en', 'et', 'ou', 'frais', 'fraiche',
+  'fraiches', 'surgeles', 'surgelees', 'pave', 'paves', 'filet', 'filets', 'escalope', 'escalopes', 'tranche', 'tranches', 'rape', 'rapee',
+  'cuit', 'cuits', 'cru', 'crus', 'nature', 'naturel', 'boite', 'conserve', 'egoutte', 'egouttes',
+  'blanc', 'blancs', 'blanche', 'rouge', 'rouges', 'vert', 'verts', 'verte', 'complet', 'complete', 'completes', 'demi', 'ecreme',
+  'leger', 'legere', 'concasse', 'concassees', 'hache', 'haches', 'hachee', 'petit', 'petits', 'gros', 'grosse', 'moyen', 'moyenne'])
+function racineMot(m) { return m.replace(/(x|s)$/, '') }
+function motsSignificatifs(texte) {
+  return String(texte || '').toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\(.*?\)/g, ' ').replace(/[^a-z0-9]+/g, ' ').split(' ')
+    .filter(m => m.length >= 3 && !MOTS_GENERIQUES.has(m)).map(racineMot)
+}
+function estIngredientPrincipal(ing, nomRecette) {
+  const mots = motsSignificatifs(ing.libelle)
+  if (!mots.length) return false
+  const nom = new Set(motsSignificatifs(nomRecette))
+  return mots.some(m => nom.has(m))
+}
+
 function resoudreRecette(recette, exclusions = [], exclusionsAliments = []) {
   const ingredients = []
   const remplacements = []
   for (const ing of recette.ingredients || []) {
     let retenu = ing
     if (ingredientExclu(ing, exclusions, exclusionsAliments)) {
+      if (recette.nom && estIngredientPrincipal(ing, recette.nom)) return { ok: false, raison: 'exclusion', ingredients: [], remplacements }
       const sub = (ing.substituts || []).find(s => s.ciqual_code && !ingredientExclu(s, exclusions, exclusionsAliments))
       if (sub) {
         retenu = { ...ing, libelle: sub.libelle, ciqual_code: sub.ciqual_code, exclusions: sub.exclusions || [], aliment: sub.aliment }
@@ -602,7 +623,7 @@ if (typeof module !== 'undefined') {
     REGLES, NIVEAUX_ACTIVITE, calculerAge, calculerImc, poidsMinSain, calculerTmb, calculerDepense,
     calculerCiblePerte, calculerProteines, calculerObjectifs, besoinRecalcul, alerteRythmeTropRapide, cibleStabilisation,
     objectifsNutriments, REPERES_VISUELS, grammesRepere, valeursPourQuantite,
-    PARTS_REPAS, partsDuJour, ingredientExclu, resoudreRecette, nutritionParPortion, facteurPortion,
+    PARTS_REPAS, partsDuJour, ingredientExclu, estIngredientPrincipal, resoudreRecette, nutritionParPortion, facteurPortion,
     adapterPortionsRestantes, cumulerCourses,
     SPORT, aleatoireGraine, exercicesDisponibles, valeurExercice, dureeExercice, construireSeance,
     joursDeSeance, dateDuJour, reporterSeances, verifierProgression,

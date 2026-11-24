@@ -340,7 +340,10 @@ function renduRepasBrouillon(r) {
         ${renduPersonnes(r)}
       </div>
       <div class="options">
-        ${options.map(id => renduCarteRecetteCourte(id, r.recette_id === id, `choisirRecetteSlot('${r.id}', '${id}')`)).join('')}
+        ${options.map(id => `<div class="option-ligne">
+          ${renduCarteRecetteCourte(id, r.recette_id === id, `choisirRecetteSlot('${r.id}', '${id}')`)}
+          <button type="button" class="btn btn-secondaire btn-voir" onclick="ouvrirRecette('${r.id}', '${id}')" aria-label="Voir la recette">${icone('oeil')}<span>Voir</span></button>
+        </div>`).join('')}
         <button type="button" class="option-recette ${!r.recette_id ? 'active' : ''}" onclick="choisirRecetteSlot('${r.id}', null)">
           <span class="option-nom">Sans recette</span><span class="option-detail">Repas dehors, restes, cantine…</span>
         </button>
@@ -409,9 +412,9 @@ async function figerMenu() {
   if (error) { gererErreur(error, 'Impossible de valider le menu.'); return }
   menuActuel.statut = 'fige'
   await genererCourses()
-  afficherToast('Menu validé, liste de courses prête')
+  afficherToast('Menu validé, voici ta liste de courses')
+  ongletMenus = 'courses'
   lancerConfettis(45)
-  ongletMenus = 'menu'
   afficherMenus()
 }
 
@@ -450,11 +453,14 @@ function renduRepasFige(r, ajustes) {
     </div>`
 }
 
-function ouvrirRecette(repasId) {
-  const r = repasMenu.find(x => x.id === repasId)
+// recetteId : pour voir une proposition du brouillon avant de la choisir
+function ouvrirRecette(repasId, recetteId = null) {
+  const r0 = repasMenu.find(x => x.id === repasId)
+  if (!r0) return
+  const r = recetteId ? { ...r0, recette_id: recetteId } : r0
   const p = recettePourProfil(r.recette_id)
   if (!p?.ok) return
-  const f = facteurRepas(r, r.date === dateISO() ? facteursAjustesAujourdhui() : null)
+  const f = recetteId ? facteurPrevu(r) : facteurRepas(r, r.date === dateISO() ? facteursAjustesAujourdhui() : null)
   const totalPortions = f + Math.max(0, r.nb_personnes - 1)
   const parPortion = g => g / p.recette.portions_base
   ouvrirFeuille(p.recette.nom, `

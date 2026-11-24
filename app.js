@@ -12,7 +12,7 @@ const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 // La clé privée correspondante est seulement dans les secrets Supabase.
 const VAPID_PUBLIC_KEY = 'BKgpiCoIeOnZHPbybYc60n9EVdPEXekNwRdx2_o3_-q2qU9Zx7q3j0Hyw7nTqtw8QuU_yfJS3vU-j147hvCct60'
 
-const APP_VERSION = '0.10.0'
+const APP_VERSION = '0.11.0'
 
 const SUPABASE_CONFIGURE = !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_KEY.includes('VOTRE_CLE')
 
@@ -235,6 +235,8 @@ const TRACES_ICONES = {
   feuille: '<path d="M5 19c0-8 5-13 14-14 0 9-5 14-14 14z"/><path d="M5 19l7-7"/>',
   alerte: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/>',
   coche: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  scanner: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M8 8v8M11 8v8M14 8v8M17 8v8" stroke-width="1.4"/>',
+  oeil: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
   visage1: '<circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01" stroke-width="2.6"/><path d="M8.5 16.5c1-1.6 2.2-2.3 3.5-2.3s2.5.7 3.5 2.3"/>',
   visage2: '<circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01" stroke-width="2.6"/><path d="M9 16c1-.7 2-1 3-1s2 .3 3 1"/>',
   visage3: '<circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01" stroke-width="2.6"/><path d="M9 15.5h6"/>',

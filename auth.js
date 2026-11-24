@@ -71,6 +71,7 @@ async function ouvrirApp(session) {
   showPage(PAGES.includes(pageDemandee) ? pageDemandee : 'aujourdhui')
 
   nettoyerPhotosAnciennes()
+  nettoyerProduitsAnciens()
 
   // Premier lancement : questionnaire, en reprenant à la première étape incomplète
   if (profil && !profil.onboarding_fait) {

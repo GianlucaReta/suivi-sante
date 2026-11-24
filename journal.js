@@ -217,10 +217,7 @@ async function rechercherAliments(q) {
     .select('code, nom, categorie, sucre_ajoute, kcal, proteines, glucides, sucres, lipides, fibres')
     .not('kcal', 'is', null).limit(80)
   for (const m of mots) reqCiqual = reqCiqual.ilike('nom_recherche', `%${m}%`)
-  const motProduit = mots.reduce((a, b) => (b.length > a.length ? b : a))
-  const reqProduits = db.from('produits').select('*').or(`nom.ilike.%${motProduit}%,marque.ilike.%${motProduit}%`).limit(10)
-
-  const [rC, rP] = await Promise.all([reqCiqual, reqProduits])
+  const [rC, produitsTrouves] = await Promise.all([reqCiqual, rechercherProduits(mots)])
   if (document.getElementById('recherche-aliment')?.value.trim() !== q.trim()) return // saisie modifiée entre-temps
   if (rC.error) { gererErreur(rC.error, 'La recherche a échoué.'); el.innerHTML = ''; return }
 
@@ -233,18 +230,51 @@ async function rechercherAliments(q) {
   }).slice(0, 40)
 
   _resultats = [
-    ...(rP.data || []).map(alimentDepuisProduit),
+    ...produitsTrouves.map(alimentDepuisProduit),
     ...ciqual.map(alimentDepuisCiqual),
   ]
   el.innerHTML = _resultats.length ? renduResultats()
     : `<p class="message-info">Aucun résultat. Essaie un mot plus simple (« yaourt » plutôt que « yaourt grec 0 % »), scanne le produit ou utilise la saisie libre.</p>`
 }
 
+// Produits scannés : tous les mots cherchés dans « nom + marque » sans accents (sql/11).
+// Classement : nombre de mots trouvés, puis le plus récemment utilisé.
+async function rechercherProduits(mots) {
+  const utiles = mots.filter(m => m.length >= 3)
+  if (!utiles.length) return []
+  const { data, error } = await db.from('produits').select('*')
+    .or(utiles.map(m => `recherche.ilike.%${m}%`).join(',')).order('derniere_utilisation', { ascending: false }).limit(30)
+  if (error) {
+    // Ancienne base (sql/11 pas encore lancé) : recherche simple sur le nom
+    const m = utiles.reduce((a, b) => (b.length > a.length ? b : a))
+    const r = await db.from('produits').select('*').or(`nom.ilike.%${m}%,marque.ilike.%${m}%`).limit(10)
+    return r.data || []
+  }
+  const score = p => utiles.filter(m => (p.recherche || '').includes(m)).length
+  return (data || []).sort((a, b) => score(b) - score(a)).slice(0, 8)
+}
+
+// Mémorise l'utilisation d'un produit scanné (il reste en tête et n'est pas effacé)
+function noterUtilisationProduit(id) {
+  if (!id) return
+  db.from('produits').update({ derniere_utilisation: new Date().toISOString() }).eq('id', id).then(({ error }) => { if (error) console.warn(error) })
+}
+
+// Produits scannés non utilisés depuis 30 jours : supprimés (une fois par jour, à l'ouverture)
+const JOURS_CONSERVATION_PRODUITS = 30
+async function nettoyerProduitsAnciens() {
+  try { if (localStorage.getItem('ss_nettoyage_produits') === dateISO()) return } catch (e) {}
+  const limite = new Date(Date.now() - JOURS_CONSERVATION_PRODUITS * 86400000).toISOString()
+  const { error } = await db.from('produits').delete().lt('derniere_utilisation', limite)
+  if (error) { console.warn(error); return }
+  try { localStorage.setItem('ss_nettoyage_produits', dateISO()) } catch (e) {}
+}
+
 function renduResultats() {
   return _resultats.map((r, i) => `
-    <button class="resultat" onclick="choisirResultat(${i})">
-      <span class="resultat-nom">${esc(r.nom)}${r.marque ? ` <span class="resultat-marque">${esc(r.marque)}</span>` : ''}</span>
-      <span class="resultat-detail">${r.pour100 ? `${formatNombre(r.pour100.kcal)} kcal / 100 g` : ''}${r.source === 'produit' ? ' · produit scanné' : ''}</span>
+    <button class="resultat ${r.source === 'produit' ? 'resultat-scanne' : ''}" onclick="choisirResultat(${i})">
+      <span class="resultat-nom">${r.source === 'produit' ? `<span class="pastille-scan" title="Produit scanné">${icone('scanner')}</span>` : ''}${esc(r.nom)}${r.marque ? ` <span class="resultat-marque">${esc(r.marque)}</span>` : ''}</span>
+      <span class="resultat-detail">${r.pour100 ? `${formatNombre(r.pour100.kcal)} kcal / 100 g` : ''}${r.source === 'produit' ? ' · déjà scanné' : ''}</span>
     </button>`).join('')
 }
 
@@ -286,6 +316,7 @@ async function choisirResultat(i) {
     if (!a) { afficherToast("Cet aliment n'existe plus dans la base.", true); return }
   }
   saisie.aliment = a
+  if (a.source === 'produit') noterUtilisationProduit(a.ref)
   saisie.quantite = a.portion_g || 100
   saisie.repere = a.portion_g ? { cle: 'portion', nombre: 1 } : null
   afficherQuantite()
@@ -584,6 +615,7 @@ async function traiterCodeBarres(code) {
 function choisirProduit(p) {
   if (!saisie) saisie = { type: 'collation', heure: heureActuelle(), entreeId: null }
   saisie.aliment = alimentDepuisProduit(p)
+  noterUtilisationProduit(p.id)
   saisie.quantite = saisie.aliment.portion_g || 100
   saisie.repere = saisie.aliment.portion_g ? { cle: 'portion', nombre: 1 } : null
   afficherQuantite()

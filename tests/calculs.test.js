@@ -140,6 +140,21 @@ test('exclusions : remplacement, retrait du facultatif, recette écartée', () =
   assert.equal(c.resoudreRecette(recette, [], [{ libelle: 'riz', ciqual_code: 'R' }]).ok, false) // aliment précis
 })
 
+test('ingrédient principal exclu (dans le nom de la recette) : recette écartée, même avec un substitut', () => {
+  const curry = { nom: 'Curry de pois chiches aux épinards', portions_base: 2, ingredients: [
+    { libelle: 'pois chiches', ciqual_code: 'PC', grammes: 280, exclusions: ['legumineuses:pois_chiches'], aliment: riz,
+      substituts: [{ libelle: 'lentilles corail', ciqual_code: 'L', exclusions: ['legumineuses:lentilles'], aliment: riz }] },
+    { libelle: 'épinards (frais ou surgelés)', ciqual_code: 'E', grammes: 300, exclusions: ['legumes:epinards'], aliment: riz,
+      substituts: [{ libelle: 'courgette', ciqual_code: 'C', exclusions: [], aliment: riz }] },
+  ] }
+  assert.equal(c.resoudreRecette(curry, ['legumineuses:pois_chiches']).ok, false)
+  assert.equal(c.resoudreRecette(curry, ['legumes:epinards']).ok, false)
+  assert.equal(c.estIngredientPrincipal({ libelle: 'pavés de saumon' }, 'Saumon, patate douce et brocoli'), true)
+  assert.equal(c.estIngredientPrincipal({ libelle: 'huile d\'olive' }, 'Saumon, patate douce et brocoli'), false)
+  const salade = { ...curry, nom: 'Salade composée' }
+  assert.equal(c.resoudreRecette(salade, ['legumineuses:pois_chiches']).ok, true) // secondaire : remplacé
+})
+
 test('recette incomplète (ingrédient sans code Ciqual) jamais proposée', () => {
   const r = { ...recette, ingredients: [...recette.ingredients, { libelle: 'sauce', ciqual_code: null, grammes: 20 }] }
   assert.deepEqual([c.resoudreRecette(r).ok, c.resoudreRecette(r).raison], [false, 'incomplete'])

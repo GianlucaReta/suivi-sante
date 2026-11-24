@@ -11,8 +11,8 @@ Site personnel de suivi forme et perte de poids, pensé pour l'iPhone (installab
 
 ## ⏳ À faire plus tard
 
-- [x] **Table Ciqual 2025 importée** le 24/11/2026 (3 484 aliments) ; les 20 recettes sont reliées sans approximation.
-- [ ] **Compléter la base de recettes** jusqu'à 150 à 200 recettes (demander à Claude, avec `ciqual-import.csv` sous la main pour reprendre les noms exacts de Ciqual 2025), puis la relier aux codes Ciqual (voir « Importer les recettes »).
+- [x] **Table Ciqual 2025 importée** le 24/11/2026 (3 484 aliments). **62 recettes** reliées sans approximation (24/11/2026).
+- [ ] **Compléter la base de recettes** (62 aujourd'hui) jusqu'à 150 à 200 recettes (demander à Claude, avec `ciqual-import.csv` sous la main pour reprendre les noms exacts de Ciqual 2025), puis la relier aux codes Ciqual (voir « Importer les recettes »).
 - [ ] **Vérifier les protéines des menus** (après Ciqual) : les calories des menus suivent la cible du jour, mais rien ne garantit encore que le total de protéines prévu atteint 1,6 à 1,8 g/kg. À ajouter : un contrôle du menu, avec un message doux et une collation protéinée suggérée si le total est trop bas.
 
 ## Utilisation au quotidien
@@ -55,7 +55,7 @@ Le site est pensé pour prendre quelques minutes par jour, sans horaires imposé
 | `import-recettes.js` | Relie les recettes aux codes Ciqual et génère le SQL d'import |
 | `init.js` | Démarrage (chargé en dernier) |
 | `manifest.json`, `service-worker.js`, `icons/` | Installation sur iPhone (PWA), cache, notifications |
-| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre (coller tout le fichier et cliquer sur **Run** sans rien sélectionner). `09-verification.sql` est un contrôle en lecture seule, à relancer quand tu veux. `10-favoris.sql` ajoute les recettes favorites (le cœur ♥ sur une recette). |
+| `sql/` | Scripts à exécuter dans Supabase, un par phase, dans l'ordre (coller tout le fichier et cliquer sur **Run** sans rien sélectionner). `09-verification.sql` est un contrôle en lecture seule, à relancer quand tu veux. `10-favoris.sql` ajoute les recettes favorites (le cœur ♥ sur une recette). `11-produits-recherche.sql` fait remonter les produits déjà scannés en tête de recherche (nom + marque, sans accents) et permet d'effacer ceux qui ne servent plus depuis 30 jours. |
 | `import-ciqual.js` | Conversion de la table Ciqual pour l'import (lancé une fois) |
 
 Les modules sont des `<script>` classiques chargés dans l'ordre de `index.html` : toutes les fonctions sont globales, comme dans l'autre site. Les tests des règles de santé se lancent avec `node tests/calculs.test.js`.
