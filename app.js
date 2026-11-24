@@ -12,7 +12,7 @@ const SUPABASE_KEY = 'sb_publishable_br0DoDL0Zpm82A_rtGkBeQ_MRpdmrK7'
 // La clé privée correspondante est seulement dans les secrets Supabase.
 const VAPID_PUBLIC_KEY = 'BKgpiCoIeOnZHPbybYc60n9EVdPEXekNwRdx2_o3_-q2qU9Zx7q3j0Hyw7nTqtw8QuU_yfJS3vU-j147hvCct60'
 
-const APP_VERSION = '0.12.1'
+const APP_VERSION = '0.13.0'
 
 const SUPABASE_CONFIGURE = !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_KEY.includes('VOTRE_CLE')
 
@@ -238,6 +238,8 @@ const TRACES_ICONES = {
   scanner: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M8 8v8M11 8v8M14 8v8M17 8v8" stroke-width="1.4"/>',
   copier: '<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   crayon: '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/><path d="M14 7l3 3"/>',
+  placard: '<rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M12 3.5v17M9.5 11v2M14.5 11v2"/>',
+  partage: '<circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/>',
   frigo: '<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M6 9.5h12M9 5.5v2M9 12.5v3"/>',
   oeil: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
   visage1: '<circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01" stroke-width="2.6"/><path d="M8.5 16.5c1-1.6 2.2-2.3 3.5-2.3s2.5.7 3.5 2.3"/>',

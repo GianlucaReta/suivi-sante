@@ -25,4 +25,12 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   })
 }
 
-demarrerAuth()
+// Lien de liste de courses partagée : page à part, sans connexion
+const _jetonCourses = new URLSearchParams(location.search).get('courses')
+if (_jetonCourses) {
+  afficherCoursesPartagees(_jetonCourses)
+  // Rafraîchit quand on revient sur l'onglet (l'autre personne a pu cocher)
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && _partage) afficherCoursesPartagees(_partage.jeton) })
+} else {
+  demarrerAuth()
+}

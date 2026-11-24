@@ -3,7 +3,7 @@
 // Changer CACHE_VERSION à chaque mise en ligne pour forcer la mise à jour.
 // ─────────────────────────────────────────────────────────────
 
-const CACHE_VERSION = 'ss-v0.12.1'
+const CACHE_VERSION = 'ss-v0.13.0'
 
 const FICHIERS_APP = [
   './',

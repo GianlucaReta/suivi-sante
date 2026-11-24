@@ -134,15 +134,26 @@ function recettesEligibles(type, dateIso) {
   return res
 }
 
-// Score : priorité aux protéines, bonus économique, variété dans la semaine, part de hasard
+// Recettes des 3 semaines précédentes (pour varier d'une semaine à l'autre)
+let _recentes = new Map()
+async function chargerRecettesRecentes(lundi) {
+  const { data: menus } = await db.from('menus').select('id').gte('semaine_debut', decalerDate(lundi, -21)).lt('semaine_debut', lundi)
+  _recentes = new Map()
+  if (!menus?.length) return
+  const { data } = await db.from('menu_repas').select('recette_id').in('menu_id', menus.map(m => m.id))
+  for (const r of data || []) if (r.recette_id) _recentes.set(r.recette_id, (_recentes.get(r.recette_id) || 0) + 1)
+}
+
+// Score : priorité aux protéines, bonus économique et favori, variété (semaine et semaines passées), part de hasard
 function scoreRecette(p, dejaChoisies) {
   const n = p.nutrition
   const partProteines = n.kcal ? (n.proteines * 4) / n.kcal : 0
   let s = partProteines * 3
   if (p.recette.etiquettes.includes('economique')) s += 0.25
-  if (estFavori(p.recette.id)) s += 0.6
+  if (estFavori(p.recette.id)) s += 0.5
   s -= (dejaChoisies.get(p.recette.id) || 0) * 0.9
-  return s + Math.random() * 0.6
+  s -= Math.min(3, _recentes.get(p.recette.id) || 0) * 0.35
+  return s + Math.random() * 1.1
 }
 
 function proposer(type, dateIso, dejaChoisies, exclure = []) {
@@ -200,6 +211,7 @@ async function chargerMenus() {
   if (!recettes) return
   if (rMenu.error) { gererErreur(rMenu.error, 'Impossible de charger le menu.'); return }
   noterJournalDuJour(rJour.data)
+  await chargerRecettesRecentes(semaineMenu)
   menuActuel = rMenu.data
   repasMenu = []
   coursesMenu = []
@@ -549,7 +561,8 @@ async function genererCourses() {
     if (!p?.ok) return null
     return { ingredients: p.ingredients, portionsBase: p.recette.portions_base, facteur: facteurPrevu(r), nbPersonnes: r.nb_personnes }
   }).filter(Boolean)
-  const lignes = cumulerCourses(repas)
+  const placard = new Set((profil.placard || []).map(x => x.cle))
+  const lignes = cumulerCourses(repas).filter(l => !placard.has(l.cle))
 
   // On garde les cases déjà cochées et les ajouts manuels
   const cochees = new Set(coursesMenu.filter(c => c.coche && !c.manuel).map(c => c.cle))
@@ -565,14 +578,14 @@ async function genererCourses() {
 }
 
 function renduCourses() {
-  if (!coursesMenu.length) return `<div class="bientot">La liste est vide : choisis des recettes dans le menu.</div>${renduAjoutCourse()}`
+  if (!coursesMenu.length) return `${renduPartageCourses()}<div class="bientot">La liste est vide : choisis des recettes dans le menu.</div>${renduAjoutCourse()}${renduPlacard()}`
   const parRayon = new Map()
   for (const c of coursesMenu) {
     if (!parRayon.has(c.rayon)) parRayon.set(c.rayon, [])
     parRayon.get(c.rayon).push(c)
   }
   const rayons = [...parRayon.keys()].sort((a, b) => ORDRE_RAYONS.indexOf(a) - ORDRE_RAYONS.indexOf(b))
-  return rayons.map(rayon => `
+  return renduPartageCourses() + rayons.map(rayon => `
     <div class="carte">
       <div class="carte-titre">${esc(rayon)}</div>
       ${parRayon.get(rayon).sort((a, b) => a.coche - b.coche || a.libelle.localeCompare(b.libelle)).map(c => `
@@ -580,9 +593,10 @@ function renduCourses() {
           <input type="checkbox" ${c.coche ? 'checked' : ''} onchange="cocherCourse('${c.id}', this.checked)" />
           <span class="article-nom">${esc(c.libelle)}</span>
           <span class="article-qte">${c.quantite_g ? formatQuantite(c.quantite_g, c.libelle) : ''}</span>
-          ${c.manuel ? `<button class="btn btn-lien" onclick="event.preventDefault(); supprimerCourse('${c.id}')" aria-label="Retirer">${icone('croix')}</button>` : ''}
+          ${c.manuel ? `<button class="btn btn-lien" onclick="event.preventDefault(); supprimerCourse('${c.id}')" aria-label="Retirer">${icone('croix')}</button>`
+            : `<button class="btn btn-lien btn-placard" onclick="event.preventDefault(); mettreAuPlacard('${c.id}')" aria-label="J'en ai toujours à la maison : ${esc(c.libelle)}" title="J'en ai toujours à la maison">${icone('placard')}</button>`}
         </label>`).join('')}
-    </div>`).join('') + renduAjoutCourse() +
+    </div>`).join('') + renduAjoutCourse() + renduPlacard() +
     `<p class="message-info">Quantités pour ta portion et une portion standard par autre personne, arrondies. Les ingrédients de base (sel, poivre…) ne sont pas listés.</p>`
 }
 
@@ -827,4 +841,148 @@ function afficherResultatsFrigo() {
     : (possibles.length ? titre(`Possible tout de suite (${possibles.length})`) + `<div class="options">${possibles.map(carte).join('')}</div>`
       : titre('Rien de complet avec ces ingrédients pour l\'instant'))
     + (autres.length ? titre('Avec un peu de courses') + `<div class="options">${autres.slice(0, 10).map(carte).join('')}</div>` : '')
+}
+
+// ═════════════════════════════════════════════════════════════
+// PLACARD : ce qu'on a toujours à la maison (retiré de la liste)
+// ═════════════════════════════════════════════════════════════
+function renduPlacard() {
+  const placard = profil.placard || []
+  if (!placard.length) return `<p class="message-info ico-titre">${icone('placard')} Astuce : touche l'icône placard d'un article que tu as toujours à la maison (riz, huile, épices…) : il ne sera plus ajouté à tes listes.</p>`
+  return `
+    <div class="carte">
+      <div class="carte-titre ico-titre">${icone('placard')} Au placard</div>
+      <p class="carte-texte">Jamais ajoutés à la liste : ${placard.map(x => esc(x.libelle)).join(', ')}.</p>
+      <button class="btn btn-lien" style="padding-left:0;" onclick="gererPlacard()">Gérer le placard</button>
+    </div>`
+}
+
+async function mettreAuPlacard(courseId) {
+  const c = coursesMenu.find(x => x.id === courseId)
+  if (!c?.cle) return
+  const placard = [...(profil.placard || []).filter(x => x.cle !== c.cle), { cle: c.cle, libelle: c.libelle }]
+  if (!(await sauvegarderProfil({ placard }))) return
+  const { error } = await db.from('courses').delete().eq('id', courseId)
+  if (error) { gererErreur(error); return }
+  coursesMenu = coursesMenu.filter(x => x.id !== courseId)
+  afficherToast(`${c.libelle} : au placard, il ne sera plus ajouté à tes listes`)
+  afficherMenus()
+}
+
+function gererPlacard() {
+  const placard = profil.placard || []
+  ouvrirFeuille('Mon placard', `
+    <p class="message-info" style="margin-top:0;">Ces aliments ne sont jamais ajoutés à la liste de courses. Retire ceux qu'il faut racheter.</p>
+    ${placard.map(x => `<div class="ligne"><span>${esc(x.libelle)}</span>
+      <button class="btn btn-lien" onclick="retirerDuPlacard('${esc(x.cle)}')" aria-label="Retirer ${esc(x.libelle)} du placard">${icone('croix')}</button></div>`).join('')
+      || '<p class="message-info">Le placard est vide.</p>'}`)
+}
+
+async function retirerDuPlacard(cle) {
+  const placard = (profil.placard || []).filter(x => x.cle !== cle)
+  if (!(await sauvegarderProfil({ placard }))) return
+  if (menuActuel?.statut === 'fige') await genererCourses()   // l'article revient dans la liste
+  gererPlacard()
+  afficherMenus()
+}
+
+// ═════════════════════════════════════════════════════════════
+// LISTE DE COURSES PARTAGÉE (lien à ouvrir sans compte)
+// ═════════════════════════════════════════════════════════════
+function lienPartage(jeton) {
+  return `${location.origin}${location.pathname}?courses=${jeton}`
+}
+
+function renduPartageCourses() {
+  const jeton = menuActuel?.partage_jeton
+  return `
+    <div class="carte carte-partage">
+      <div class="carte-titre ico-titre">${icone('partage')} Partager la liste</div>
+      ${jeton ? `
+        <p class="carte-texte">Toute personne qui a le lien voit cette liste et peut cocher les articles en magasin, sans compte. Elle ne voit rien d'autre.</p>
+        <div class="feuille-actions">
+          <button class="btn btn-secondaire" onclick="arreterPartage()">Arrêter le partage</button>
+          <button class="btn btn-primaire" onclick="envoyerLienPartage()">Envoyer le lien</button>
+        </div>`
+      : `<p class="carte-texte">Crée un lien pour que quelqu'un fasse les courses avec toi : les cases cochées se mettent à jour des deux côtés.</p>
+        <button class="btn btn-secondaire btn-bloc" style="margin-top:var(--sp-3);" onclick="creerPartage()">Créer un lien de partage</button>`}
+    </div>`
+}
+
+async function creerPartage() {
+  const jeton = crypto.randomUUID()
+  const { error } = await db.from('menus').update({ partage_jeton: jeton }).eq('id', menuActuel.id)
+  if (error) { gererErreur(error, 'Impossible de créer le lien.'); return }
+  menuActuel.partage_jeton = jeton
+  afficherMenus()
+  envoyerLienPartage()
+}
+
+async function envoyerLienPartage() {
+  const url = lienPartage(menuActuel.partage_jeton)
+  try {
+    if (navigator.share) { await navigator.share({ title: 'Liste de courses', text: 'La liste de courses de la semaine :', url }); return }
+  } catch (e) { if (e.name === 'AbortError') return }
+  try { await navigator.clipboard.writeText(url); afficherToast('Lien copié : colle-le dans un message') }
+  catch (e) { prompt('Copie ce lien :', url) }
+}
+
+async function arreterPartage() {
+  if (!confirm('Arrêter le partage ? Le lien envoyé ne fonctionnera plus.')) return
+  const { error } = await db.from('menus').update({ partage_jeton: null }).eq('id', menuActuel.id)
+  if (error) { gererErreur(error); return }
+  menuActuel.partage_jeton = null
+  afficherToast('Partage arrêté')
+  afficherMenus()
+}
+
+// ── Page ouverte depuis le lien (sans connexion) ─────────────
+let _partage = null
+async function afficherCoursesPartagees(jeton) {
+  document.title = 'Liste de courses · Suivi santé'
+  ;['ecran-chargement', 'ecran-connexion', 'app'].forEach(id => document.getElementById(id)?.classList.add('hidden'))
+  let el = document.getElementById('courses-partagees')
+  if (!el) { el = document.createElement('main'); el.id = 'courses-partagees'; el.className = 'page-partage'; document.body.appendChild(el) }
+  if (!/^[0-9a-f-]{36}$/i.test(jeton)) { el.innerHTML = '<div class="carte"><p class="carte-texte">Ce lien n\'est pas valide.</p></div>'; return }
+  const { data, error } = await db.rpc('courses_partagees', { p_jeton: jeton })
+  if (error) { el.innerHTML = '<div class="carte"><p class="carte-texte">Impossible de charger la liste. Vérifie ta connexion et réessaie.</p></div>'; return }
+  if (!data?.length) { el.innerHTML = '<div class="carte"><div class="carte-titre">Liste introuvable</div><p class="carte-texte">Ce lien n\'est plus partagé, ou la liste est vide.</p></div>'; return }
+  _partage = { jeton, lignes: data }
+  renduCoursesPartagees()
+}
+
+function renduCoursesPartagees() {
+  const el = document.getElementById('courses-partagees')
+  const lignes = _partage.lignes
+  const parRayon = new Map()
+  for (const c of lignes) { if (!parRayon.has(c.rayon)) parRayon.set(c.rayon, []); parRayon.get(c.rayon).push(c) }
+  const rayons = [...parRayon.keys()].sort((a, b) => ORDRE_RAYONS.indexOf(a) - ORDRE_RAYONS.indexOf(b))
+  const faits = lignes.filter(c => c.coche).length
+  el.innerHTML = `
+    <div class="page-header">
+      <p class="page-sous-titre">Semaine du ${new Date(lignes[0].semaine + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</p>
+      <h1 class="page-title">Liste de courses</h1>
+      <p class="salut-sous">${faits} / ${lignes.length} dans le panier</p>
+    </div>
+    ${rayons.map(rayon => `
+      <div class="carte">
+        <div class="carte-titre">${esc(rayon)}</div>
+        ${parRayon.get(rayon).sort((a, b) => a.coche - b.coche || a.libelle.localeCompare(b.libelle)).map(c => `
+          <label class="article ${c.coche ? 'article-coche' : ''}">
+            <input type="checkbox" ${c.coche ? 'checked' : ''} onchange="cocherCoursePartagee('${c.id}', this.checked)" />
+            <span class="article-nom">${esc(c.libelle)}</span>
+            <span class="article-qte">${c.quantite_g ? formatQuantite(Number(c.quantite_g), c.libelle) : ''}</span>
+          </label>`).join('')}
+      </div>`).join('')}
+    <button class="btn btn-secondaire btn-bloc" onclick="afficherCoursesPartagees(_partage.jeton)">Actualiser</button>
+    <p class="message-info" style="text-align:center;">Les cases cochées ici apparaissent aussi chez la personne qui a partagé la liste.</p>`
+}
+
+async function cocherCoursePartagee(id, coche) {
+  const c = _partage.lignes.find(x => x.id === id)
+  c.coche = coche
+  renduCoursesPartagees()
+  const { data, error } = await db.rpc('cocher_course_partagee', { p_jeton: _partage.jeton, p_id: id, p_coche: coche })
+  if (error || !data) { c.coche = !coche; renduCoursesPartagees(); afficherToast("La case n'a pas pu être enregistrée.", true) }
+  if (coche && _partage.lignes.every(x => x.coche)) lancerConfettis(50)
 }

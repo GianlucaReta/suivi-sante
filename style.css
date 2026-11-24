@@ -1096,3 +1096,9 @@ select.input { appearance: none; -webkit-appearance: none; background-image: lin
 .ligne-edition-nom { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .input-quantite { width: 96px; flex-shrink: 0; }
 .input-quantite .input { width: 100%; padding-right: 28px; }
+
+/* ── Courses partagées et placard ──────────────────────────── */
+.btn-placard { color: var(--muted-soft); padding: 6px; min-height: 0; }
+.btn-placard:hover { color: var(--brand); }
+.carte-partage { background: var(--lavande-doux); }
+.page-partage { max-width: var(--contenu-max); margin: 0 auto; padding: calc(var(--sp-5) + var(--safe-top)) var(--sp-4) calc(var(--sp-6) + var(--safe-bottom)); }
