@@ -35,7 +35,8 @@ function libelleJourCourt(iso) {
 function formatPortion(f) { return `${formatNombre(f, f % 1 ? 1 : 0)} portion${f > 1 ? 's' : ''}` }
 
 function formatQuantite(g, libelle = '') {
-  if (/oeuf|œuf/i.test(libelle)) { const n = Math.max(1, Math.round(g / 55)); return `${n} œuf${n > 1 ? 's' : ''}` }
+  // Des œufs, mais pas le « bœuf » (qui contient « œuf ») : le mot doit commencer par « œuf » / « oeuf »
+  if (/(?<![a-zà-ÿ])(œ|oe)ufs?(?![a-zà-ÿ])/i.test(libelle)) { const n = Math.max(1, Math.round(g / 55)); return `${n} œuf${n > 1 ? 's' : ''}` }
   return g >= 1000 ? `${formatNombre(g / 1000, 1)} kg` : `${formatNombre(g)} g`
 }
 
@@ -811,13 +812,19 @@ function afficherResultatsFrigo() {
     const manquants = utiles.filter(i => !_frigo.has(i.ciqual_code))
     res.push({ p, n: trouves.length, manquants })
   }
-  res.sort((a, b) => b.n - a.n || a.manquants.length - b.manquants.length)
+  // D'abord ce qu'on peut cuisiner tout de suite, puis ce qui demande quelques courses
+  const possibles = res.filter(r => !r.manquants.length).sort((a, b) => b.n - a.n)
+  const autres = res.filter(r => r.manquants.length).sort((a, b) => a.manquants.length - b.manquants.length || b.n - a.n)
   const type = r => r.types_repas.includes('dejeuner') ? 'dejeuner' : r.types_repas.includes('diner') ? 'diner' : r.types_repas[0]
-  el.innerHTML = `<div class="resultats-titre" style="margin-top:var(--sp-4);">${res.length ? `${res.length} idée${res.length > 1 ? 's' : ''}` : 'Aucune recette avec ces ingrédients'}</div>
-    <div class="options">${res.slice(0, 12).map(({ p, n, manquants }) => `
+  const carte = ({ p, n, manquants }) => `
       <button type="button" class="option-recette" onclick="ouvrirFicheRecette('${p.recette.id}', '${type(p.recette)}', { retour: 'ouvrirFrigo()' })">
         <span class="option-nom">${esc(p.recette.nom)}${estFavori(p.recette.id) ? ` <span class="option-favori">${icone('coeur')} favori</span>` : ''}</span>
         <span class="option-detail">${n} ingrédient${n > 1 ? 's' : ''} sur ${n + manquants.length} · ${p.recette.temps_min} min</span>
         ${manquants.length ? `<span class="option-detail">Il te manque : ${manquants.map(i => esc(i.libelle.replace(/\s*\(.*?\)/g, ''))).join(', ')}</span>` : '<span class="option-ajuste">Tu as tout ce qu\'il faut !</span>'}
-      </button>`).join('')}</div>`
+      </button>`
+  const titre = t => `<div class="resultats-titre" style="margin-top:var(--sp-4);">${t}</div>`
+  el.innerHTML = !res.length ? titre('Aucune recette avec ces ingrédients')
+    : (possibles.length ? titre(`Possible tout de suite (${possibles.length})`) + `<div class="options">${possibles.map(carte).join('')}</div>`
+      : titre('Rien de complet avec ces ingrédients pour l\'instant'))
+    + (autres.length ? titre('Avec un peu de courses') + `<div class="options">${autres.slice(0, 10).map(carte).join('')}</div>` : '')
 }
